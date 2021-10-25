@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "216295992635",
+    "project_id": "khealth-942c7",
+    "storage_bucket": "khealth-942c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216295992635:android:20c6f74b7b6e4ca53bdb1e",
+        "android_client_info": {
+          "package_name": "com.example.k_health"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "216295992635-18ue7bmi2p0hb77368ueou3ns8ls5h98.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUhWMO17OM96WmuOx1-S3lGXTgdbQk7Y4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "216295992635-18ue7bmi2p0hb77368ueou3ns8ls5h98.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
