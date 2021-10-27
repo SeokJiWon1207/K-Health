@@ -1,5 +1,6 @@
 package com.example.k_health
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -23,17 +24,23 @@ import com.kakao.sdk.auth.*
 import com.kakao.sdk.user.UserApiClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause
-import com.kakao.sdk.common.util.Utility
+import com.nhn.android.naverlogin.OAuthLogin
+import com.nhn.android.naverlogin.OAuthLogin.mOAuthLoginHandler
 
 
-class LoginActivity: AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var callbackManager: CallbackManager
+    private lateinit var mOAuthLoginInstance : OAuthLogin
+    private lateinit var mContext: Context
     private val db = FirebaseFirestore.getInstance()
 
     companion object {
         const val TAG = "LoginActivity"
+        const val naver_client_id = (R.string.naver_client_id).toString()
+        const val naver_client_password = (R.string.naver_client_password).toString()
+        const val naver_client_name = "K-Health"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,16 +48,29 @@ class LoginActivity: AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var keyHash = Utility.getKeyHash(this)
-        Log.d(TAG,"hashkey: $keyHash")
         // Firebase Authentication 관리 클래스
         auth = Firebase.auth
 
         // Facebook 로그인 처리 결과 관리 클래스
         callbackManager = CallbackManager.Factory.create()
 
+        mContext = this
+
+        mOAuthLoginInstance = OAuthLogin.getInstance()
+        mOAuthLoginInstance.init(mContext, naver_client_id, naver_client_password, naver_client_name)
+
+        binding.naverLoginButton.setOAuthLoginHandler(mOAuthLoginHandler)
+
         initKakaoLoginButton()
         initFacebookLoginButton()
+    }
+
+    private fun initNaverLoginButton() {
+
+    }
+
+    private fun mOAuthLoginHandler() {
+
     }
 
     private fun initKakaoLoginButton() {
@@ -64,7 +84,8 @@ class LoginActivity: AppCompatActivity() {
                         Toast.makeText(this, "유효하지 않은 앱", Toast.LENGTH_SHORT).show()
                     }
                     error.toString() == AuthErrorCause.InvalidGrant.toString() -> {
-                        Toast.makeText(this, "인증 수단이 유효하지 않아 인증할 수 없는 상태", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "인증 수단이 유효하지 않아 인증할 수 없는 상태", Toast.LENGTH_SHORT)
+                            .show()
                     }
                     error.toString() == AuthErrorCause.InvalidRequest.toString() -> {
                         Toast.makeText(this, "요청 파라미터 오류", Toast.LENGTH_SHORT).show()
@@ -73,7 +94,8 @@ class LoginActivity: AppCompatActivity() {
                         Toast.makeText(this, "유효하지 않은 scope ID", Toast.LENGTH_SHORT).show()
                     }
                     error.toString() == Misconfigured.toString() -> {
-                        Toast.makeText(this, "설정이 올바르지 않음(android key hash)", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "설정이 올바르지 않음(android key hash)", Toast.LENGTH_SHORT)
+                            .show()
                     }
                     error.toString() == ServerError.toString() -> {
                         Toast.makeText(this, "서버 내부 에러", Toast.LENGTH_SHORT).show()
@@ -85,13 +107,12 @@ class LoginActivity: AppCompatActivity() {
                         Log.d(TAG, "etc error : $error")
                     }
                 }
-            }
-            else if (token != null) {
+            } else if (token != null) {
                 startMainActivity()
             }
         }
 
-        binding.kakaoLoginButton.setOnClickListener{
+        binding.kakaoLoginButton.setOnClickListener {
             // 로그인 공통 callback 구성
 
             // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
@@ -106,8 +127,8 @@ class LoginActivity: AppCompatActivity() {
     }
 
     private fun initFacebookLoginButton() {
-        binding.facebookLoginButton.setPermissions("email","public_profile")
-        binding.facebookLoginButton.registerCallback(callbackManager, object:
+        binding.facebookLoginButton.setPermissions("email", "public_profile")
+        binding.facebookLoginButton.registerCallback(callbackManager, object :
             FacebookCallback<LoginResult> {
             override fun onSuccess(result: LoginResult) {
                 // 로그인이 성공됐을때
@@ -117,7 +138,7 @@ class LoginActivity: AppCompatActivity() {
                 startMainActivity()
             }
 
-            override fun onCancel() { }
+            override fun onCancel() {}
 
             override fun onError(error: FacebookException?) {
                 Toast.makeText(this@LoginActivity, "로그인이 실패했습니다.", Toast.LENGTH_SHORT).show()
@@ -132,7 +153,8 @@ class LoginActivity: AppCompatActivity() {
                 if (task.isSuccessful) {
                     successLogin()
                 } else {
-                    Toast.makeText(this@LoginActivity, "페이스북 로그인이 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "페이스북 로그인이 실패했습니다.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
     }
@@ -140,7 +162,7 @@ class LoginActivity: AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        callbackManager.onActivityResult(requestCode,resultCode,data)
+        callbackManager.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun successLogin() {
@@ -151,7 +173,7 @@ class LoginActivity: AppCompatActivity() {
 
         val userId = auth.currentUser?.uid.orEmpty()
         // 현재 유저의 아이디를 가져온다
-        val user = mutableMapOf<String,Any>()
+        val user = mutableMapOf<String, Any>()
         user["userId"] = userId
         db.collection(COLLECTION_NAME_USERS)
             .document(userId)
@@ -161,7 +183,7 @@ class LoginActivity: AppCompatActivity() {
                 Toast.makeText(this, "유저의 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { errorMessage ->
-                Log.d(TAG,"Error: $errorMessage")
+                Log.d(TAG, "Error: $errorMessage")
             }
 
         finish()
