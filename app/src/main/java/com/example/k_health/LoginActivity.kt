@@ -1,5 +1,6 @@
 package com.example.k_health
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -26,21 +27,19 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLogin.mOAuthLoginHandler
+import com.nhn.android.naverlogin.OAuthLoginHandler
 
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var callbackManager: CallbackManager
-    private lateinit var mOAuthLoginInstance : OAuthLogin
+    private lateinit var mOAuthLoginInstance: OAuthLogin
     private lateinit var mContext: Context
     private val db = FirebaseFirestore.getInstance()
 
     companion object {
         const val TAG = "LoginActivity"
-        const val naver_client_id = (R.string.naver_client_id).toString()
-        const val naver_client_password = (R.string.naver_client_password).toString()
-        const val naver_client_name = "K-Health"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,21 +56,38 @@ class LoginActivity : AppCompatActivity() {
         mContext = this
 
         mOAuthLoginInstance = OAuthLogin.getInstance()
-        mOAuthLoginInstance.init(mContext, naver_client_id, naver_client_password, naver_client_name)
+        mOAuthLoginInstance.init(
+            mContext,
+            getString(R.string.naver_client_id),
+            getString(R.string.naver_client_password),
+            getString(R.string.naver_client_name)
+        )
 
-        binding.naverLoginButton.setOAuthLoginHandler(mOAuthLoginHandler)
-
+        initNaverLoginButton()
         initKakaoLoginButton()
         initFacebookLoginButton()
     }
 
     private fun initNaverLoginButton() {
+        val mOAuthLoginHandler: OAuthLoginHandler = @SuppressLint("HandlerLeak")
+        object : OAuthLoginHandler() {
+            override fun run(success: Boolean) {
+                if (success) {
+                    startMainActivity()
+                } else {
+                    val errorCode: String = mOAuthLoginInstance.getLastErrorCode(mContext).code
+                    val errorDesc = mOAuthLoginInstance.getLastErrorDesc(mContext)
 
+                    Toast.makeText(
+                        baseContext, "errorCode:" + errorCode
+                                + ", errorDesc:" + errorDesc, Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+        binding.naverLoginButton.setOAuthLoginHandler(mOAuthLoginHandler)
     }
 
-    private fun mOAuthLoginHandler() {
-
-    }
 
     private fun initKakaoLoginButton() {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/home"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="홈"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/helper"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_sentiment_satisfied_alt_24"
+        android:title="헬퍼"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/health"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_fitness_center_24"
+        android:title="운동"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/food"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_restaurant_24"
+        android:title="식단"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/report"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_bar_chart_24"
+        android:title="리포트"
+        app:showAsAction="ifRoom" />
+</menu>

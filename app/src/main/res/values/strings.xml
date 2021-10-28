@@ -4,6 +4,7 @@
     <string name="kakao_app_key">1a85779f9a330b70c169a36d76651fb9</string>
     <string name="naver_client_id">VbJRWkNUFQPmLfR95M5J</string>
     <string name="naver_client_password">wkVRZxuSzL</string>
+    <string name="naver_client_name">K-Health</string>
     <string name="fb_login_protocol_scheme">fb4688792001180912</string>
 
 </resources>

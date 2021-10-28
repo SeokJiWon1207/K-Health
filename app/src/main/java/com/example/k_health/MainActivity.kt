@@ -1,9 +1,14 @@
 package com.example.k_health
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.example.k_health.databinding.ActivityMainBinding
+import com.example.k_health.food.FoodFragment
+import com.example.k_health.health.HealthFragment
+import com.example.k_health.helper.HelperFragment
+import com.example.k_health.home.HomeFragment
+import com.example.k_health.report.ReportFragment
 import com.google.firebase.auth.*
 
 class MainActivity : AppCompatActivity() {
@@ -16,21 +21,34 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-    }
+        val homeFragment = HomeFragment()
+        val helperFragment = HelperFragment()
+        val healthFragment = HealthFragment()
+        val foodFragment = FoodFragment()
+        val reportFragment = ReportFragment()
 
-    fun moveMainPage(user: FirebaseUser?) {
+        // 초기화면 설정
+        replaceFragment(homeFragment)
 
-        if (user != null) {
-            startActivity(Intent(this, MainActivity::class.java))
-        } else {
-            startActivity(Intent(this, LoginActivity::class.java))
+        binding.bottomNavigationView.setOnNavigationItemSelectedListener {
+            when(it.itemId) {
+                R.id.home -> replaceFragment(homeFragment)
+                R.id.helper -> replaceFragment(helperFragment)
+                R.id.health -> replaceFragment(healthFragment)
+                R.id.food -> replaceFragment(foodFragment)
+                R.id.report -> replaceFragment(reportFragment)
+            }
+            true
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        // 자동 로그인 설정
-        // moveMainPage(auth.currentUser)
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .apply {
+                replace(R.id.fragmentContainer, fragment)
+                    .commit()
+            }
     }
+
+
 }
