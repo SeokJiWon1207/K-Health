@@ -3,6 +3,7 @@ package com.example.k_health
 import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
 
+// Kakao SDK 초기화 클래스
 class GlobalApplication : Application() {
 
     companion object {

@@ -44,6 +44,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
     implementation 'com.google.firebase:firebase-auth-ktx' // 파이어베이스 계정
     implementation 'com.facebook.android:facebook-login:8.2.0' // 페이스북 로그인
+    implementation 'com.google.android.gms:play-services-auth:17.0.0' // 구글 로그인
     implementation 'com.google.firebase:firebase-firestore-ktx:23.0.4' // 파이어베이스 firestore
     implementation "com.kakao.sdk:v2-user:2.8.2" // 카카오 로그인
     implementation 'com.naver.nid:naveridlogin-android-sdk:4.2.6' // 네이버 로그인

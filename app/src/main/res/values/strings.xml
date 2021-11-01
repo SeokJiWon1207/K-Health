@@ -6,5 +6,6 @@
     <string name="naver_client_password">wkVRZxuSzL</string>
     <string name="naver_client_name">K-Health</string>
     <string name="fb_login_protocol_scheme">fb4688792001180912</string>
+    <string name="google_webclient_id">AIzaSyDUhWMO17OM96WmuOx1-S3lGXTgdbQk7Y4</string>
 
 </resources>
