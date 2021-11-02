@@ -6,6 +6,12 @@
     <string name="naver_client_password">wkVRZxuSzL</string>
     <string name="naver_client_name">K-Health</string>
     <string name="fb_login_protocol_scheme">fb4688792001180912</string>
-    <string name="google_webclient_id">AIzaSyDUhWMO17OM96WmuOx1-S3lGXTgdbQk7Y4</string>
+    <string name="google_webclient_id">216295992635-18ue7bmi2p0hb77368ueou3ns8ls5h98.apps.googleusercontent.com</string>
+    <string name="weight">체중</string>
+    <string name="muscle">골격근량</string>
+    <string name="fat">체지방률</string>
+    <string name="percent">%</string>
+    <string name="kg">kg</string>
+    <string name="default_value">00.0</string>
 
 </resources>

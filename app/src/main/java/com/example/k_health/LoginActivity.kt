@@ -207,6 +207,7 @@ class LoginActivity : AppCompatActivity() {
             ?.addOnCompleteListener(this@LoginActivity) { task ->
                 if (task.isSuccessful) {
                     setUidFirebaseAuth()
+                    startMainActivity()
                 } else {
                     // 틀렸을 때
                     Toast.makeText(this@LoginActivity, "구글 로그인이 실패했습니다", Toast.LENGTH_SHORT).show()
