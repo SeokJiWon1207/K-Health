@@ -250,8 +250,7 @@ class LoginActivity : AppCompatActivity() {
             .document(userId)
             .set(user)
             .addOnCompleteListener {
-                // 성공할 경우
-                Toast.makeText(this, "유저의 정보가 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "유저가 등록되었습니다")
             }
             .addOnFailureListener { errorMessage ->
                 Log.d(TAG, "Error: $errorMessage")

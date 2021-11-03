@@ -6,14 +6,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.example.k_health.DBKey
-import com.example.k_health.LoginActivity
+import com.example.k_health.DBKey.Companion.STORAGE_URL_USERPROFILE
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHomeBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -30,6 +30,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val db = FirebaseFirestore.getInstance()
+    private val userId = auth.currentUser?.uid.orEmpty()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,12 +38,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val fragmentHomeBinding = FragmentHomeBinding.bind(view)
         binding = fragmentHomeBinding
 
+        getProfileImage()
         uploadProfileImage()
 
     }
 
+    // 기존 등록한 유저 프로필 가져오기
+    private fun getProfileImage() {
+        storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE).child("${userId}.png").downloadUrl.addOnCompleteListener {
+            if (it.isSuccessful) {
+                Glide.with(requireContext())
+                    .load(it.result)
+                    .into(binding!!.userProfileImageView)
+            }
+        }
+            .addOnFailureListener { error ->
+                Toast.makeText(requireContext(), "Error: $error ", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     private fun uploadProfileImage() {
         binding?.userProfileImageView?.setOnClickListener {
+            showProgress()
             when {
                 ContextCompat.checkSelfPermission(
                     requireContext(),
@@ -65,8 +82,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    // storage에 업로드
     private fun uploadPhoto(uri: Uri, successHandler: (String) -> Unit, errorHandler: () -> Unit) {
-        val fileName = "${System.currentTimeMillis()}.png"
+        val fileName = "${userId}.png"
         storage.reference.child("userprofile").child(fileName)
             .putFile(uri)
             .addOnCompleteListener {
@@ -75,12 +93,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         .downloadUrl
                         .addOnSuccessListener { uri ->
                             successHandler(uri.toString())
+                            uploadDB(uri)
                         }.addOnFailureListener {
                             errorHandler()
                         }
                 } else {
                     errorHandler()
                 }
+            }
+    }
+
+    private fun uploadDB(photoUri: Uri) {
+        val userProfile = mutableMapOf<String, Any>()
+        userProfile["userProfile"] = photoUri.toString()
+
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(userId)
+            .update(userProfile)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "프로필 사진이 등록됐습니다", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+
             }
     }
 
@@ -114,18 +148,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         if (resultCode != Activity.RESULT_OK) {
             return
         }
-        // TODO firestore에 프로필 연동하기
+
         when (requestCode) {
             2020 -> {
                 val uri = data?.data
                 if (uri != null) {
                     binding?.userProfileImageView?.setImageURI(uri)
                     selectedUri = uri
-                    uploadPhoto(selectedUri!!,successHandler = { uri ->
-                        Toast.makeText(requireContext(), "사진 업로드에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                    uploadPhoto(selectedUri!!, successHandler = { uri ->
+                        Toast.makeText(requireContext(), "사진 업로드에 성공했습니다.", Toast.LENGTH_SHORT)
+                            .show()
                     },
                         errorHandler = {
-                            Toast.makeText(requireContext(), "사진 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "사진 업로드에 실패했습니다.", Toast.LENGTH_SHORT)
+                                .show()
                             hideProgress()
                         })
                 } else {
@@ -139,6 +175,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    // 권한 팝업 창창
     private fun showPermissionContextPopup() {
         AlertDialog.Builder(requireContext())
             .setTitle("권한이 필요합니다.")

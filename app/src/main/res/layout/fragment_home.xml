@@ -6,194 +6,201 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="400dp">
 
-        <FrameLayout
-            android:id="@+id/layout_data"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="400dp">
+            android:layout_height="250dp"
+            android:background="@drawable/home_background"
+            android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userProfileImageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="50dp"
+                android:src="@drawable/ic_baseline_account_circle_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/userNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="25dp"
+                android:text="K-Health님"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                app:layout_constraintBottom_toBottomOf="@id/userProfileImageView"
+                app:layout_constraintLeft_toRightOf="@+id/userProfileImageView"
+                tools:text="K-Health님" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="200dp"
+            android:background="@drawable/profile_background"
+            android:elevation="20dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:background="@drawable/home_background"
-                android:orientation="vertical">
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/userProfileImageView"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginTop="50dp"
-                    android:src="@drawable/ic_baseline_account_circle_24"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent"
+                android:layout_weight="1">
 
                 <TextView
-                    android:id="@+id/userNameTextView"
+                    android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/weight"
+                    android:textColor="@color/yellow"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/userWeightTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView1"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/default_value"
                     android:textColor="@color/white"
-                    android:textSize="30sp"
-                    android:text="석지원님"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginBottom="25dp"
-                    app:layout_constraintBottom_toBottomOf="@id/userProfileImageView"
-                    app:layout_constraintLeft_toRightOf="@+id/userProfileImageView"
-                    tools:text="석지원님" />
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="@string/default_value" />
 
-                <ProgressBar
-                    android:id="@+id/progressBar"
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    tools:visibility="visible" />
+                    android:layout_marginTop="43dp"
+                    android:layout_toRightOf="@id/userWeightTextView"
+                    android:text="@string/kg"
+                    android:textColor="@color/white"
+                    android:textSize="17sp" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </RelativeLayout>
 
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="200dp"
-                android:background="@drawable/profile_background"
-                android:elevation="20dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <View
+                    android:layout_width="2dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_marginVertical="20dp"
+                    android:background="@color/white" />
 
-                    <TextView
-                        android:id="@+id/textView1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="50dp"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/weight"
-                        android:textColor="@color/yellow"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/userWeightTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/textView1"
-                        android:layout_marginLeft="40dp"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/default_value"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        tools:text="@string/default_value" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="43dp"
-                        android:layout_toRightOf="@id/userWeightTextView"
-                        android:text="@string/kg"
-                        android:textColor="@color/white"
-                        android:textSize="17sp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/muscle"
+                    android:textColor="@color/yellow"
+                    android:textSize="15sp" />
 
-                    <View
-                        android:layout_width="2dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginVertical="20dp"
-                        android:background="@color/white" />
+                <TextView
+                    android:id="@+id/userMuscleTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView2"
+                    android:layout_marginLeft="34dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/default_value"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="32dp"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/muscle"
-                        android:textColor="@color/yellow"
-                        android:textSize="15sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="43dp"
+                    android:layout_toRightOf="@id/userMuscleTextView"
+                    android:text="@string/percent"
+                    android:textColor="@color/white"
+                    android:textSize="17sp" />
 
-                    <TextView
-                        android:id="@+id/userMuscleTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/textView2"
-                        android:layout_marginLeft="34dp"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/default_value"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+            </RelativeLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="43dp"
-                        android:layout_toRightOf="@id/userMuscleTextView"
-                        android:text="@string/percent"
-                        android:textColor="@color/white"
-                        android:textSize="17sp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
 
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <View
+                    android:layout_width="2dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_marginVertical="20dp"
+                    android:background="@color/white" />
 
-                    <View
-                        android:layout_width="2dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginVertical="20dp"
-                        android:background="@color/white" />
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/fat"
+                    android:textColor="@color/yellow"
+                    android:textSize="15sp" />
 
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="25dp"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/fat"
-                        android:textColor="@color/yellow"
-                        android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/userFatTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView3"
+                    android:layout_marginLeft="22dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/default_value"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/userFatTextView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/textView3"
-                        android:layout_marginLeft="22dp"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/default_value"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="43dp"
+                    android:layout_toRightOf="@id/userFatTextView"
+                    android:text="@string/percent"
+                    android:textColor="@color/white"
+                    android:textSize="17sp" />
+            </RelativeLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="43dp"
-                        android:layout_toRightOf="@id/userFatTextView"
-                        android:text="@string/percent"
-                        android:textColor="@color/white"
-                        android:textSize="17sp" />
-                </RelativeLayout>
-            </LinearLayout>
-        </FrameLayout>
-    </LinearLayout>
+        </LinearLayout>
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/userInfoFloatingButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|right"
+            android:layout_marginRight="25dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/orange"
+            android:src="@drawable/ic_baseline_call_received_24"
+            app:tint="@color/white" />
+
+    </FrameLayout>
 </LinearLayout>
