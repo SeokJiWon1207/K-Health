@@ -6,7 +6,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -41,11 +43,60 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         getProfileImage()
         uploadProfileImage()
 
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document("userNickname")
+            .get()
+            .addOnSuccessListener { document ->
+                if (document.data != null) {
+                    Log.d("Home", "DocumentSnapshot data: ${document.data}")
+                } else {
+                    showNicknameInputPopup()
+                }
+            }
+            .addOnFailureListener { Error ->
+                Log.d("Error", "Error : $Error")
+            }
+
+    }
+
+    // 팝업창으로 받은 이름을 DB에 저장
+    private fun showNicknameInputPopup() {
+        val editText = EditText(requireContext())
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("닉네임을 입력해주세요 \n 8자 이하로 작성이 가능합니다.")
+            .setView(editText)
+            .setPositiveButton("저장") { _, _ ->
+                if (editText.text.isEmpty() || editText.text.length >= 8) {
+                    Toast.makeText(requireContext(), "다시 입력해주세요", Toast.LENGTH_SHORT).show()
+                    showNicknameInputPopup()
+                } else {
+                    saveUserNickname(editText.text.toString())
+                }
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    // DB에 닉네임을 저장
+    private fun saveUserNickname(nickname: String) {
+        val userNickname = mutableMapOf<String, Any>()
+        userNickname["userNickname"] = nickname
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(userId)
+            .update(userNickname)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "닉네임이 등록되었습니다", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+
+            }
     }
 
     // 기존 등록한 유저 프로필 가져오기
     private fun getProfileImage() {
-        storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE).child("${userId}.png").downloadUrl.addOnCompleteListener {
+        storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE)
+            .child("${userId}.png").downloadUrl.addOnCompleteListener {
             if (it.isSuccessful) {
                 Glide.with(requireContext())
                     .load(it.result)
