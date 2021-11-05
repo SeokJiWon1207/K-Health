@@ -2,12 +2,16 @@ package com.example.k_health.home
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -33,6 +37,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val db = FirebaseFirestore.getInstance()
     private val userId = auth.currentUser?.uid.orEmpty()
+    private val userInfoDialog: Dialog by lazy { Dialog(requireContext()) }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isNicknameNotNull()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,13 +52,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         getProfileImage()
         uploadProfileImage()
+        userInfoSetPopup()
 
+
+    }
+
+    private fun isNicknameNotNull() {
         db.collection(DBKey.COLLECTION_NAME_USERS)
-            .document("userNickname")
+            .document(userId)
             .get()
             .addOnSuccessListener { document ->
-                if (document.data != null) {
-                    Log.d("Home", "DocumentSnapshot data: ${document.data}")
+                if (document["userNickname"] != null) {
+                    Log.d("Home", "DocumentSnapshot data: ${document["userNickname"]}")
                 } else {
                     showNicknameInputPopup()
                 }
@@ -56,18 +71,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .addOnFailureListener { Error ->
                 Log.d("Error", "Error : $Error")
             }
-
     }
+
 
     // 팝업창으로 받은 이름을 DB에 저장
     private fun showNicknameInputPopup() {
         val editText = EditText(requireContext())
 
-        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+             AlertDialog.Builder(requireContext())
             .setTitle("닉네임을 입력해주세요 \n 8자 이하로 작성이 가능합니다.")
             .setView(editText)
             .setPositiveButton("저장") { _, _ ->
-                if (editText.text.isEmpty() || editText.text.length >= 8) {
+                if (editText.text.isEmpty() || editText.text.length > 8) {
                     Toast.makeText(requireContext(), "다시 입력해주세요", Toast.LENGTH_SHORT).show()
                     showNicknameInputPopup()
                 } else {
@@ -76,6 +91,46 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
             .setCancelable(false)
             .show()
+    }
+
+    private fun userInfoSetPopup() {
+        binding?.userInfoFloatingButton?.setOnClickListener {
+            showPopup()
+        }
+    }
+
+    private fun showPopup() {
+        userInfoDialog.apply {
+            this.setContentView(R.layout.userinfo_dialog)
+            this.window!!.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)
+            this.setCanceledOnTouchOutside(true)
+            this.setCancelable(true)
+            this.show()
+        }
+        val userWeightEditText = userInfoDialog.findViewById<EditText>(R.id.user_weightEditText)
+        val userMuscleEditText = userInfoDialog.findViewById<EditText>(R.id.user_muscleEditText)
+        val userFatEditText = userInfoDialog.findViewById<EditText>(R.id.user_fatEditText)
+
+        userInfoDialog.findViewById<Button>(R.id.submitButton).setOnClickListener {
+            val userData = mutableMapOf<String, Any>(
+                "userWeight" to userWeightEditText.text.toString(),
+                "userMuscle" to userMuscleEditText.text.toString(),
+                "userFat" to userFatEditText.text.toString()
+            )
+
+            db.collection(DBKey.COLLECTION_NAME_USERS)
+                .document(userId)
+                .update(userData)
+                .addOnSuccessListener {
+                    userInfoDialog.dismiss()
+                    Toast.makeText(requireContext(), "신체정보가 등록되었습니다", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+
+                }
+
+        }
+
     }
 
     // DB에 닉네임을 저장
@@ -168,6 +223,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             }
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,

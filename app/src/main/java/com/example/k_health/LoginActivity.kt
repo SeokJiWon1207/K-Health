@@ -248,7 +248,7 @@ class LoginActivity : AppCompatActivity() {
         user["userId"] = userId
         db.collection(COLLECTION_NAME_USERS)
             .document(userId)
-            .set(user)
+            .update(user)
             .addOnCompleteListener {
                 Log.d(TAG, "유저가 등록되었습니다")
             }

@@ -23,8 +23,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:text="체중"
-            android:textColor="#ffffff"
+            android:text="@string/weight"
+            android:textColor="@color/orange"
             android:textStyle="bold"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="30dp"
@@ -32,8 +32,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:text="골격근량"
-            android:textColor="#ffffff"
+            android:text="@string/muscle"
+            android:textColor="@color/orange"
             android:textStyle="bold"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="60dp"
@@ -41,8 +41,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="체지방률"
-            android:textColor="#ffffff"
+            android:text="@string/fat"
+            android:textColor="@color/orange"
             android:textStyle="bold"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="60dp"
@@ -55,34 +55,34 @@
             android:orientation="vertical"
             android:layout_weight="1">
         <EditText
-            android:id="@+id/user_weight"
+            android:id="@+id/user_weightEditText"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:hint="kg"
+            android:hint="@string/kg"
             android:maxLength="5"
-            android:textColorHint="#ffffff"
-            android:textColor="#ffffff"
+            android:textColorHint="@color/teal_700"
+            android:textColor="@color/black"
             android:layout_margin="25dp"/>
         <EditText
-            android:id="@+id/user_muscleweight"
+            android:id="@+id/user_muscleEditText"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="right"
-            android:hint="kg"
-            android:maxLength="4"
-            android:textColorHint="#ffffff"
-            android:textColor="#ffffff"
+            android:hint="@string/kg"
+            android:maxLength="5"
+            android:textColorHint="@color/teal_700"
+            android:textColor="@color/black"
             android:layout_margin="25dp"/>
         <EditText
-            android:id="@+id/user_fatweight"
+            android:id="@+id/user_fatEditText"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:hint="%"
-            android:maxLength="4"
-            android:textColorHint="#ffffff"
-            android:textColor="#ffffff"
+            android:maxLength="5"
+            android:textColorHint="@color/teal_700"
+            android:textColor="@color/black"
             android:layout_margin="25dp"/>
         </LinearLayout>
 
@@ -92,6 +92,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:elevation="30dp"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         android:text="제출"
         android:textSize="20sp"/>
 </LinearLayout>
