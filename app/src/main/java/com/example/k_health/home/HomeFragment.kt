@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
@@ -39,17 +38,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val userId = auth.currentUser?.uid.orEmpty()
     private val userInfoDialog: Dialog by lazy { Dialog(requireContext()) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        isNicknameNotNull()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val fragmentHomeBinding = FragmentHomeBinding.bind(view)
         binding = fragmentHomeBinding
 
+        setUserProfile()
+        isNicknameNotNull()
         getProfileImage()
         uploadProfileImage()
         userInfoSetPopup()
@@ -58,6 +54,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun isNicknameNotNull() {
+
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(userId)
             .get()
@@ -73,12 +70,29 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
     }
 
+    private fun setUserProfile() {
+
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                binding?.userNameTextView?.text = (document["userNickname"].toString()).plus("님")
+                binding?.userWeightTextView?.text = document["userWeight"].toString()
+                binding?.userMuscleTextView?.text = document["userMuscle"].toString()
+                binding?.userFatTextView?.text = document["userFat"].toString()
+
+            }
+            .addOnFailureListener {
+
+            }
+    }
+
 
     // 팝업창으로 받은 이름을 DB에 저장
     private fun showNicknameInputPopup() {
         val editText = EditText(requireContext())
 
-             AlertDialog.Builder(requireContext())
+        AlertDialog.Builder(requireContext())
             .setTitle("닉네임을 입력해주세요 \n 8자 이하로 작성이 가능합니다.")
             .setView(editText)
             .setPositiveButton("저장") { _, _ ->
@@ -102,7 +116,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun showPopup() {
         userInfoDialog.apply {
             this.setContentView(R.layout.userinfo_dialog)
-            this.window!!.setLayout(WindowManager.LayoutParams.MATCH_PARENT,WindowManager.LayoutParams.WRAP_CONTENT)
+            this.window!!.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
             this.setCanceledOnTouchOutside(true)
             this.setCancelable(true)
             this.show()
@@ -124,6 +141,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 .addOnSuccessListener {
                     userInfoDialog.dismiss()
                     Toast.makeText(requireContext(), "신체정보가 등록되었습니다", Toast.LENGTH_SHORT).show()
+                    setUserProfile()
                 }
                 .addOnFailureListener {
 
@@ -152,12 +170,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun getProfileImage() {
         storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE)
             .child("${userId}.png").downloadUrl.addOnCompleteListener {
-            if (it.isSuccessful) {
-                Glide.with(requireContext())
-                    .load(it.result)
-                    .into(binding!!.userProfileImageView)
+                if (it.isSuccessful) {
+                    Glide.with(requireContext())
+                        .load(it.result)
+                        .into(binding!!.userProfileImageView)
+                }
             }
-        }
             .addOnFailureListener { error ->
                 Toast.makeText(requireContext(), "Error: $error ", Toast.LENGTH_SHORT).show()
             }
