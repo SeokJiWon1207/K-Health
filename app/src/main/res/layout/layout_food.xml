@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parentView2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="2.5"
+    android:orientation="vertical">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/item_breakfast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="3dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:background="@color/peach"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/time_ImageView"
+                android:src="@drawable/ic_breakfast"
+                android:scaleType="fitXY"
+                android:layout_width="100dp"
+                android:layout_height="80dp"/>
+
+            <TextView
+                android:id="@+id/time_TextView"
+                android:layout_width="230dp"
+                android:layout_height="80dp"
+                android:layout_toRightOf="@+id/time_ImageView"
+                android:gravity="center"
+                android:text="label_breakfast"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/foodAdd_ImageButton"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@+id/time_TextView"
+                android:background="@drawable/ic_baseline_add_24"
+                android:scaleType="fitXY" />
+
+            <ImageButton
+                android:id="@+id/foodOpen_ImageButton"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/foodAdd_ImageButton"
+                android:layout_toRightOf="@+id/time_TextView"
+                android:background="@drawable/ic_baseline_arrow_drop_down_24"
+                android:scaleType="fitXY"
+                tools:ignore="VectorDrawableCompat" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:overScrollMode="never"
+                android:layout_below="@+id/foodOpen_ImageButton"
+                android:visibility="gone"
+                android:id="@+id/list_today"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

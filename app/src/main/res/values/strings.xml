@@ -13,5 +13,10 @@
     <string name="percent">%</string>
     <string name="kg">kg</string>
     <string name="default_value">00.0</string>
+    <string name="today_kcal">오늘의 칼로리 섭취량</string>
+    <string name="goal_kcal">목표 섭취량</string>
+    <string name="recommend_kcal">권장 섭취량</string>
+    <string name="today_total_kcal">오늘의 섭취량</string>
+    <string name="remain_kcal">남은 섭취량</string>
 
 </resources>
