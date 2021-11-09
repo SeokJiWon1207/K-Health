@@ -32,32 +32,26 @@
                 android:textStyle="bold"
                 android:elevation="25dp"/>
 
-            <LinearLayout
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:orientation="horizontal" />
+                android:background="@color/peach"/>
 
-            <TextView
-                android:id="@+id/date_TextView"
+            <CalendarView
+                android:id="@+id/healthCalendarView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="15dp"
-                android:layout_weight="0.7"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:textSize="23sp"
-                tools:text="MMMM/YY/DD" />
+                android:layout_margin="20dp"
+                android:background="@drawable/health_background" />
 
-            <LinearLayout
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:orientation="horizontal" />
+                android:background="@color/peach"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -131,19 +125,19 @@
 
 
                 <include
-                    android:id="@+id/layout_breakfast"
+                    android:id="@+id/layout_Breakfast"
                     layout="@layout/layout_food" />
 
                 <include
-                    android:id="@+id/layout_lunch"
+                    android:id="@+id/layout_Lunch"
                     layout="@layout/layout_food" />
 
                 <include
-                    android:id="@+id/layout_dinner"
+                    android:id="@+id/layout_Dinner"
                     layout="@layout/layout_food" />
 
                 <include
-                    android:id="@+id/layout_snack"
+                    android:id="@+id/layout_Etc"
                     layout="@layout/layout_food" />
 
 

@@ -9,7 +9,10 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray_cc">#cccccc</color>
     <color name="gray_ec">#ececec</color>
+    <color name="red">#F44336</color>
     <color name="yellow">#FFC107</color>
+    <color name="purple">#aa00ff</color>
+    <color name="indigo">#3F51B5</color>
     <color name="orange">#f27f35</color>
     <color name="peach">#fad0c4</color>
     <color name="sae">#fbc8d4</color>
