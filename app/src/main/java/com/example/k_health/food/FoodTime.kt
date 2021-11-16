@@ -1,10 +1,9 @@
 package com.example.k_health.food
 
 import androidx.annotation.ColorRes
-
 import com.example.k_health.R
 
-enum class FoodTime(val timeImage: Int, val time: String, val textColor: Int) {
+enum class FoodTime(val timeImage: Int, val time: String, @ColorRes val textColor: Int) {
 
     BREAKFAST(R.drawable.ic_breakfast, "아침식사", R.color.red),
 

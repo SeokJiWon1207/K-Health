@@ -6,15 +6,14 @@
     android:id="@+id/parentView2"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_weight="2.5"
     android:orientation="vertical">
-    
+
     <androidx.cardview.widget.CardView
         android:id="@+id/item_breakfast"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="1dp"
         android:elevation="50dp"
+        android:padding="20dp"
         app:cardUseCompatPadding="true"
         app:cardCornerRadius="10dp">
 

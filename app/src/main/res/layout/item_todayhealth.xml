@@ -13,6 +13,7 @@
         android:textSize="15sp"
         android:textColor="@color/black"
         tool:text="벤치프레스"/>
+
     <TextView
         android:id="@+id/healthSet_TextView"
         android:layout_width="wrap_content"

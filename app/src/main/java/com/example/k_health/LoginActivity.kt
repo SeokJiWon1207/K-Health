@@ -20,7 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -34,7 +33,6 @@ import com.kakao.sdk.user.UserApiClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause
 import com.nhn.android.naverlogin.OAuthLogin
-import com.nhn.android.naverlogin.OAuthLogin.mOAuthLoginHandler
 import com.nhn.android.naverlogin.OAuthLoginHandler
 
 
@@ -56,6 +54,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Log.d(TAG,"onCreate()")
 
         // Firebase Authentication 관리 클래스
         auth = Firebase.auth
@@ -272,11 +272,4 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
-    override fun onStart() {
-        super.onStart()
-
-        // 자동 로그인 설정
-        // moveMainPage(auth.currentUser)
-    }
 }
