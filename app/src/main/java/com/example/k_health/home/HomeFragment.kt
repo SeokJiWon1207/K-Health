@@ -27,6 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -37,6 +40,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val db = FirebaseFirestore.getInstance()
     private val userId = auth.currentUser?.uid.orEmpty()
     private val userInfoDialog: Dialog by lazy { Dialog(requireContext()) }
+    private var scope = MainScope()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -70,7 +74,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
     }
 
-    private fun setUserProfile() {
+    private fun setUserProfile() = scope.launch {
 
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(userId)
@@ -319,5 +323,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun hideProgress() {
         binding?.progressBar?.isVisible = false
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scope.cancel()
     }
 }
