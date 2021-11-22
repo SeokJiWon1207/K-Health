@@ -10,10 +10,21 @@ import com.example.k_health.health.HealthFragment
 import com.example.k_health.helper.HelperFragment
 import com.example.k_health.home.HomeFragment
 import com.example.k_health.report.ReportFragment
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
+
+    /*init {
+        FirebaseApp.initializeApp(this)
+        val firebaseAppCheck = FirebaseAppCheck.getInstance()
+        firebaseAppCheck.installAppCheckProviderFactory(
+            SafetyNetAppCheckProviderFactory.getInstance()
+        )
+    }*/
 
     private lateinit var binding: ActivityMainBinding
 

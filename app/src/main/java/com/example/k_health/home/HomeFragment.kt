@@ -74,7 +74,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
     }
 
-    private fun setUserProfile() = scope.launch {
+    private fun setUserProfile() {
 
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(userId)
@@ -143,9 +143,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 .document(userId)
                 .update(userData)
                 .addOnSuccessListener {
-                    userInfoDialog.dismiss()
-                    Toast.makeText(requireContext(), "신체정보가 등록되었습니다", Toast.LENGTH_SHORT).show()
-                    setUserProfile()
+                    scope.launch {
+                        userInfoDialog.dismiss()
+                        Toast.makeText(requireContext(), "신체정보가 등록되었습니다", Toast.LENGTH_SHORT).show()
+                        setUserProfile()
+                    }
                 }
                 .addOnFailureListener {
 
@@ -287,6 +289,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     uploadPhoto(selectedUri!!, successHandler = { uri ->
                         Toast.makeText(requireContext(), "사진 업로드에 성공했습니다.", Toast.LENGTH_SHORT)
                             .show()
+                        hideProgress()
                     },
                         errorHandler = {
                             Toast.makeText(requireContext(), "사진 업로드에 실패했습니다.", Toast.LENGTH_SHORT)
