@@ -45,6 +45,7 @@ class LoginActivity : AppCompatActivity() {
     private var googleSignInClient: GoogleSignInClient? = null
     private val db = FirebaseFirestore.getInstance()
 
+
     companion object {
         const val TAG = "LoginActivity"
         const val GOOGLE_LOGIN_CODE = 9001 // Intent Request ID
@@ -55,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Log.d(TAG,"onCreate()")
+        Log.d(TAG, "onCreate()")
 
         // Firebase Authentication 관리 클래스
         auth = Firebase.auth
@@ -168,7 +169,7 @@ class LoginActivity : AppCompatActivity() {
                 // 로그인이 성공됐을때
                 // token 넘겨주기
                 handleFacebookAccessToken(result.accessToken)
-
+                setUidFireStore()
                 startMainActivity()
             }
 
@@ -189,9 +190,12 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this@LoginActivity) { task ->
                 if (task.isSuccessful) {
-                    setUidFirebaseAuth()
+                    val userId = auth.currentUser?.uid.orEmpty()
+                    Log.d(TAG,"userId: $userId")
+
                 } else {
-                    Toast.makeText(this@LoginActivity, "페이스북 로그인이 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "페이스북 로그인이 실패했습니다.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
     }
@@ -206,7 +210,7 @@ class LoginActivity : AppCompatActivity() {
         auth?.signInWithCredential(credential)
             ?.addOnCompleteListener(this@LoginActivity) { task ->
                 if (task.isSuccessful) {
-                    setUidFirebaseAuth()
+                    setUidFireStore()
                     startMainActivity()
                 } else {
                     // 틀렸을 때
@@ -235,7 +239,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun setUidFirebaseAuth() {
+    private fun setUidFireStore() {
         if (auth.currentUser == null) {
             Toast.makeText(this, "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
             return
@@ -244,19 +248,30 @@ class LoginActivity : AppCompatActivity() {
         val userId = auth.currentUser?.uid.orEmpty()
         // 현재 유저의 아이디를 가져온다
         val user = mutableMapOf<String, Any>()
-        user["userId"] = userId
+        user.put("userWeight","00.0")
+        user.put("userMuscle","00.0")
+        user.put("userFat","00.0")
         db.collection(COLLECTION_NAME_USERS)
             .document(userId)
-            .update(user)
-            .addOnCompleteListener {
-                Log.d(TAG, "유저가 등록되었습니다")
+            .get()
+            .addOnSuccessListener { document ->
+                if (document["userId"] == null) {
+                    Log.d(TAG,"document[userId]:${document["userId"]} ")
+                    user["userId"] = userId
+                    db.collection(COLLECTION_NAME_USERS)
+                        .document(userId)
+                        .set(user)
+                        .addOnCompleteListener {
+                            Log.d(TAG, "유저가 등록되었습니다")
+                        }
+                        .addOnFailureListener { errorMessage ->
+                            Log.d(TAG, "Error: $errorMessage")
+                        }
+                }
+                finish()
             }
-            .addOnFailureListener { errorMessage ->
-                Log.d(TAG, "Error: $errorMessage")
-            }
-
-        finish()
     }
+
 
     private fun startMainActivity() {
         startActivity(Intent(this@LoginActivity, MainActivity::class.java))

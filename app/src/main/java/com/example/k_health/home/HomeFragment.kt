@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.k_health.DBKey
 import com.example.k_health.DBKey.Companion.STORAGE_URL_USERPROFILE
+import com.example.k_health.LoginActivity
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHomeBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -48,11 +49,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val fragmentHomeBinding = FragmentHomeBinding.bind(view)
         binding = fragmentHomeBinding
 
-        setUserProfile()
+
+        Log.d("TAG","userId : $userId")
+
+
         isNicknameNotNull()
-        getProfileImage()
+        setUserProfile()
+        // getProfileImage()
         uploadProfileImage()
         userInfoSetPopup()
+        logoutButton()
 
 
     }
@@ -64,7 +70,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .get()
             .addOnSuccessListener { document ->
                 if (document["userNickname"] != null) {
-                    Log.d("Home", "DocumentSnapshot data: ${document["userNickname"]}")
+                    Log.d("Home", "userNickname : ${document["userNickname"]}")
                 } else {
                     showNicknameInputPopup()
                 }
@@ -87,7 +93,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             }
             .addOnFailureListener {
-
+                Log.d("Error","error : $it")
             }
     }
 
@@ -117,6 +123,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    private fun logoutButton() {
+        binding!!.logoutButton.setOnClickListener {
+            auth.signOut()
+            startActivity(Intent(requireContext(), LoginActivity::class.java))
+        }
+    }
+
     private fun showPopup() {
         userInfoDialog.apply {
             this.setContentView(R.layout.userinfo_dialog)
@@ -143,11 +156,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 .document(userId)
                 .update(userData)
                 .addOnSuccessListener {
-                    scope.launch {
                         userInfoDialog.dismiss()
                         Toast.makeText(requireContext(), "신체정보가 등록되었습니다", Toast.LENGTH_SHORT).show()
                         setUserProfile()
-                    }
                 }
                 .addOnFailureListener {
 
@@ -166,9 +177,23 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .update(userNickname)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "닉네임이 등록되었습니다", Toast.LENGTH_SHORT).show()
+                updateUserNickname()
+
             }
             .addOnFailureListener {
 
+            }
+    }
+
+    private fun updateUserNickname() {
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                binding?.userNameTextView?.text = (document["userNickname"].toString()).plus("님")
+
+            }
+            .addOnFailureListener {
             }
     }
 

@@ -29,7 +29,9 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     private var healthListAdapter = HealthListAdapter(healthdata = healthlist)
 
     val tabMainList = listOf("가슴", "등", "어깨", "하체", "복근", "삼두", "이두", "전신", "코어")
-    val tabSubList = listOf("머신", "덤벨", "바벨", "케틀벨", "케이블", "스미스머신")
+    val tabSubList = listOf("바벨", "덤벨", "머신", "케틀벨", "케이블", "스미스머신")
+
+    val tabList = arrayListOf(tabMainList, tabSubList)
 
     /*init {
         db.collection("Health/가슴/바벨")
@@ -58,14 +60,11 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     }*/
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val fragmentHealthListBinding = FragmentHealthlistBinding.bind(view)
         binding = fragmentHealthListBinding
-
-
 
 
         initTab()
@@ -106,7 +105,7 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
             )
         }
 
-        setTabRecyclerView()
+        setDualTabs(binding!!.mainTablayout, binding!!.subTablayout)
 
     }
 
@@ -117,7 +116,7 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
         }
     }
 
-    private fun setTabRecyclerView() {
+    /*private fun setTabRecyclerView() {
 
         binding!!.mainTablayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -177,13 +176,64 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
         })
 
-    }
+    }*/
 
     // TODO 이중탭 클릭 구현하기
-    private fun getTabPositions(mainTab: TabLayout, subTab: TabLayout) {
-        mainTab.isSelected = true
-        subTab.isSelected = false
+    private fun setDualTabs(mainTab: TabLayout, subTab: TabLayout) {
+        var mainTabText: String = "가슴"
+        var subTabText: String = "바벨"
 
+        var list = mutableListOf(mainTabText,subTabText)
+
+        mainTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.text.toString()) {
+                    tab?.text.toString() -> mainTabText = tab?.text.toString()
+                    tab?.text -> Log.d("TAG","tab.text: ${tab?.text.toString()}")
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                Log.d("TAG", "unselect")
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                Log.d("TAG", "Reselect")
+            }
+
+        })
+
+        subTab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.text) {
+                    tab?.text -> subTabText = tab?.text.toString()
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                Log.d("TAG", "unselect")
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                Log.d("TAG", "Reselect")
+            }
+
+        })
+
+        db.collection("Health/${mainTabText}/${subTabText}")
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                healthlist.clear()
+                Log.d("TAG","${mainTabText}/${subTabText}")
+                for (snapshot in querySnapshot!!.documents) {
+                    var healthitem = snapshot.toObject(HealthList::class.java)
+
+                    healthlist.add(healthitem!!)
+                }
+
+                healthListAdapter.notifyDataSetChanged()
+                Log.d("TAG", "${firebaseFirestoreException}")
+
+            }
     }
 
 
