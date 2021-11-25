@@ -18,11 +18,9 @@ class HealthListAdapter(private val healthdata: ArrayList<HealthList>) :
             binding.healthNameTextView.text = healthlist.name
             binding.engHealthNameTextView.text = healthlist.engName
 
-
             Glide.with(binding.healthImageView.context)
                 .load(healthlist.imageUrl)
                 .into(binding.healthImageView)
-
 
         }
     }

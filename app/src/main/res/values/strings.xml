@@ -18,5 +18,8 @@
     <string name="recommend_kcal">권장 섭취량</string>
     <string name="today_total_kcal">오늘의 섭취량</string>
     <string name="remain_kcal">남은 섭취량</string>
+    <string name="record">기록하기</string>
+    <string name="healthname">운동 이름</string>
+    <string name="healthrecord">운동 기록</string>
 
 </resources>
