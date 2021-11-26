@@ -3,10 +3,14 @@ package com.example.k_health.health
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.k_health.MainActivity
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHealthlistBinding
+import com.example.k_health.databinding.ItemHealthlistBinding
 import com.example.k_health.model.HealthList
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,6 +27,8 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
     var mainPosition: Int = 0
     var subPosition: Int = 0
+
+    val recordHealthListFragment = RecordHealthListFragment()
 
     init {
         db.collection("Health/가슴/바벨")
@@ -47,9 +53,9 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
         val fragmentHealthListBinding = FragmentHealthlistBinding.bind(view)
         binding = fragmentHealthListBinding
 
-
         initTab()
         initRecyclerView()
+        moveRecordHealthList(binding?.recyclerView!!)
 
     }
 
@@ -150,7 +156,13 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
         })
 
+    }
 
+    private fun moveRecordHealthList(recyclerView: RecyclerView) {
+        recyclerView!!.setOnClickListener{
+            (activity as MainActivity).replaceFragment(recordHealthListFragment)
+            Toast.makeText(requireContext(),"클릭되었습니다.", Toast.LENGTH_LONG).show()
+        }
     }
 
 }

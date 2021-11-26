@@ -115,15 +115,28 @@
         app:layout_constraintTop_toBottomOf="@id/imageView2" />
 
     <Button
+        android:id="@+id/add_set_Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/set_add_background"
+        android:drawableLeft="@drawable/ic_baseline_add2_24"
+        android:text="세트 추가"
+        android:textColor="@color/white"
+        android:layout_marginHorizontal="120dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
+        app:layout_constraintBottom_toTopOf="@+id/submit_Button"/>
+
+    <Button
         android:id="@+id/submit_Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
         android:textSize="25sp"
-        android:background="@drawable/submit_button_background"
-        android:elevation="20dp"
+        android:background="@drawable/shadow_background"
         android:text="완 료"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+        app:layout_constraintTop_toBottomOf="@+id/add_set_Button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

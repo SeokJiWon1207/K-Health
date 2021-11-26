@@ -251,6 +251,7 @@ class LoginActivity : AppCompatActivity() {
         user.put("userWeight","00.0")
         user.put("userMuscle","00.0")
         user.put("userFat","00.0")
+
         db.collection(COLLECTION_NAME_USERS)
             .document(userId)
             .get()

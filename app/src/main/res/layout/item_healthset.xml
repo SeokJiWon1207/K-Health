@@ -12,16 +12,18 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="10dp"
         android:textColor="@color/lightblue"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="set" />
 
     <EditText
         android:id="@+id/weight_EditText"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
+        android:layout_marginLeft="50dp"
         android:hint="0"
+        android:textAlignment="center"
         android:textColor="@color/lightblue"
         android:textColorHint="@color/lightblue"
         app:layout_constraintLeft_toRightOf="@id/set_TextView"
@@ -33,20 +35,22 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:text="@string/kg"
+        android:textSize="20sp"
         android:textColor="@color/lightblue"
         app:layout_constraintLeft_toRightOf="@id/weight_EditText"
-        app:layout_constraintTop_toTopOf="set_TextView" />
+        app:layout_constraintBottom_toBottomOf="@id/set_TextView" />
 
     <EditText
         android:id="@+id/count_EditText"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:hint="0"
+        android:textAlignment="center"
         android:textColor="@color/lightblue"
         android:textColorHint="@color/lightblue"
         app:layout_constraintLeft_toRightOf="@id/weight_TextView"
-        app:layout_constraintTop_toTopOf="set_TextView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/count_TextView"
@@ -54,16 +58,17 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:text="회"
+        android:textSize="20sp"
         android:textColor="@color/lightblue"
         app:layout_constraintLeft_toRightOf="@id/count_EditText"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/set_TextView" />
 
     <ImageButton
         android:id="@+id/delete_ImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="5dp"
         android:background="@drawable/ic_baseline_delete_forever_24"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
