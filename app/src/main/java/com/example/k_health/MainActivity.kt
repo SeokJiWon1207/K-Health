@@ -2,6 +2,7 @@ package com.example.k_health
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.k_health.databinding.ActivityMainBinding
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        Log.d("Main","is login")
 
         val homeFragment = HomeFragment()
         val helperFragment = HelperFragment()

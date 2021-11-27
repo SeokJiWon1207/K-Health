@@ -50,12 +50,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding = fragmentHomeBinding
 
 
-        Log.d("TAG","userId : $userId")
+        Log.d("TAG","userId : ${userId}")
 
 
         isNicknameNotNull()
         setUserProfile()
-        // getProfileImage()
+        getProfileImage()
         uploadProfileImage()
         userInfoSetPopup()
         logoutButton()

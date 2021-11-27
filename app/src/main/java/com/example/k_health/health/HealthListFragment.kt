@@ -55,7 +55,16 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
         initTab()
         initRecyclerView()
-        moveRecordHealthList(binding?.recyclerView!!)
+
+        healthListAdapter.setOnItemClickListener(object: HealthListAdapter.OnItemClickListener {
+            override fun onItemClick(v: View, data: HealthList, pos: Int) {
+                (activity as MainActivity).replaceFragment(recordHealthListFragment)
+                Log.d("TAG", "data : ${data}, pos : ${pos}")
+            }
+
+        })
+
+
 
     }
 
@@ -159,7 +168,7 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     }
 
     private fun moveRecordHealthList(recyclerView: RecyclerView) {
-        recyclerView!!.setOnClickListener{
+        recyclerView!!.setOnClickListener {
             (activity as MainActivity).replaceFragment(recordHealthListFragment)
             Toast.makeText(requireContext(),"클릭되었습니다.", Toast.LENGTH_LONG).show()
         }
