@@ -4,4 +4,9 @@
         android:bottomLeftRadius="30dp"
         android:bottomRightRadius="30dp" />
     <solid android:color="#330867" />
+    <padding
+        android:bottom="2.5dp"
+        android:left="2.5dp"
+        android:right="2.5dp"
+        android:top="2.5dp" />
 </shape>

@@ -3,14 +3,12 @@ package com.example.k_health.health
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.k_health.MainActivity
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHealthlistBinding
-import com.example.k_health.databinding.ItemHealthlistBinding
 import com.example.k_health.model.HealthList
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,10 +23,9 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     val tabMainList = listOf("가슴", "등", "어깨", "하체", "복근", "삼두", "이두", "전신", "코어")
     val tabSubList = listOf("바벨", "덤벨", "머신", "케틀벨", "케이블", "스미스머신")
 
-    var mainPosition: Int = 0
-    var subPosition: Int = 0
+    var mainPosition: Int = 0 // 메인탭의 포지션
+    var subPosition: Int = 0 // 서브탭의 포지션
 
-    val recordHealthListFragment = RecordHealthListFragment()
 
     init {
         db.collection("Health/가슴/바벨")
@@ -55,15 +52,7 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
         initTab()
         initRecyclerView()
-
-        healthListAdapter.setOnItemClickListener(object: HealthListAdapter.OnItemClickListener {
-            override fun onItemClick(v: View, data: HealthList, pos: Int) {
-                (activity as MainActivity).replaceFragment(recordHealthListFragment)
-                Log.d("TAG", "data : ${data}, pos : ${pos}")
-            }
-
-        })
-
+        clickAdapter()
 
 
     }
@@ -97,6 +86,22 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
         }
     }
 
+    private fun clickAdapter() {
+        healthListAdapter.setOnItemClickListener(object : HealthListAdapter.OnItemClickListener {
+            override fun onItemClick(v: View, data: HealthList, pos: Int) {
+
+                setFragmentResult(
+                    "requestKey",
+                    bundleOf("name" to data.name, "engName" to data.engName)
+                )
+
+                val recordHealthListDialog = RecordHealthListFragment()
+
+                recordHealthListDialog.show(childFragmentManager, "record")
+            }
+
+        })
+    }
 
 
     private fun setDualTabs(
@@ -165,13 +170,6 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
         })
 
-    }
-
-    private fun moveRecordHealthList(recyclerView: RecyclerView) {
-        recyclerView!!.setOnClickListener {
-            (activity as MainActivity).replaceFragment(recordHealthListFragment)
-            Toast.makeText(requireContext(),"클릭되었습니다.", Toast.LENGTH_LONG).show()
-        }
     }
 
 }
