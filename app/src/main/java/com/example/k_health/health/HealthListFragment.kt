@@ -7,6 +7,8 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.k_health.LoginActivity
+import com.example.k_health.LoginActivity.Companion.TAG
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHealthlistBinding
 import com.example.k_health.model.HealthList
@@ -94,10 +96,18 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
                     "requestKey",
                     bundleOf("name" to data.name, "engName" to data.engName)
                 )
+                Log.d("TAG", "data : ${data}")
 
-                val recordHealthListDialog = RecordHealthListFragment()
+                val bundle = Bundle()
+                bundle.putString("name", data.name)
+                bundle.putString("engName", data.engName)
 
-                recordHealthListDialog.show(childFragmentManager, "record")
+
+                val recordHealthListFragment = RecordHealthListFragment()
+
+                recordHealthListFragment.arguments = bundle
+
+                recordHealthListFragment.show(childFragmentManager, "record")
             }
 
         })

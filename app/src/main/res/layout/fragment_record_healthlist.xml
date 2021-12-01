@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/healthlist_bottom_sheet_dialog_background"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="auto"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <TextView
@@ -64,7 +66,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/lightblue"
         android:textSize="17sp"
-        app:layout_constraintLeft_toLeftOf="@id/imageView1"
+        app:layout_constraintLeft_toRightOf="@id/imageView1"
         app:layout_constraintTop_toBottomOf="@id/imageView1"
         tools:text="벤치프레스" />
 
@@ -74,7 +76,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/lightblue"
         android:textSize="17sp"
-        app:layout_constraintLeft_toLeftOf="@id/imageView1"
+        app:layout_constraintLeft_toRightOf="@id/imageView1"
         app:layout_constraintTop_toBottomOf="@id/healthlist_Name_TextView"
         tools:text="Bench Press" />
 
@@ -108,16 +110,16 @@
         app:layout_constraintLeft_toRightOf="@+id/imageView2"
         app:layout_constraintTop_toBottomOf="@+id/view2" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <View
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="gone"
+        android:layout_height="250dp"
+        android:background="@color/black"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/imageView2" />
 
-    <Button
-        android:id="@+id/add_set_Button"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/add_Set_Button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@drawable/set_add_background"
@@ -130,16 +132,15 @@
         app:layout_constraintTop_toBottomOf="@+id/recyclerView"
         app:layout_constraintBottom_toTopOf="@+id/submit_Button"/>
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/submit_Button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginHorizontal="30dp"
         android:textSize="25sp"
         android:background="@drawable/shadow_background"
         android:text="완 료"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/add_set_Button"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/add_Set_Button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

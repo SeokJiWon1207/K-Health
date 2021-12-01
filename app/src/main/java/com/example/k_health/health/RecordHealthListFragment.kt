@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.fragment.app.setFragmentResultListener
+import com.example.k_health.R
 import com.example.k_health.databinding.FragmentRecordHealthlistBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -17,16 +19,23 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class RecordHealthListFragment : BottomSheetDialogFragment() {
 
-    private lateinit var binding: FragmentRecordHealthlistBinding
+    private var binding: FragmentRecordHealthlistBinding? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-
-        return binding.root
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_record_healthlist, container, false)
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val recordHealthlistBinding = FragmentRecordHealthlistBinding.bind(view)
+        binding = recordHealthlistBinding
+
+        initBottomSheetDialogFragment()
+        initViews()
+
+    }
+
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
@@ -36,50 +45,42 @@ class RecordHealthListFragment : BottomSheetDialogFragment() {
             setupRatio(bottomSheetDialog)
         }
 
+
         return dialog
     }
 
+    private fun initBottomSheetDialogFragment() {
+        // 팝업 생성 시 전체화면으로 띄우기
+        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        val behavior = BottomSheetBehavior.from<View>(bottomSheet!!)
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        // 드래그해도 팝업이 종료되지 않도록
+        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_DRAGGING) {
+                    behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+            }
 
-        setFragmentResultListener("requestKey") { requestKey, bundle ->
-            binding.healthlistNameTextView.text = bundle.getString("name")
-            Log.d("TAG", "name :${bundle.getString("name")}")
-            binding.healthlistEngnameTextView.text = bundle.getString("engName")
-        }
-        // initViews()
-
-
-
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+        })
     }
 
     private fun initViews() {
-        // var offsetFromTop =
-        val bottomSheet =
-            dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-        bottomSheet!!.layoutParams.height = getBottomSheetDialogDefaultHeight()
+        binding!!.healthlistNameTextView.text = arguments?.getString("name")
+        binding!!.healthlistEngnameTextView.text = arguments?.getString("engName")
 
-        val behavior = BottomSheetBehavior.from<View>(bottomSheet!!)
-        behavior.isFitToContents = false
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
-
-
-        setFragmentResultListener("requestKey") { requestKey, bundle ->
-            binding.healthlistNameTextView.text = bundle.getString("name")
-            Log.d("TAG", "name :${bundle.getString("name")}")
-            binding.healthlistEngnameTextView.text = bundle.getString("engName")
+        binding!!.submitButton.setOnClickListener {
+            Toast.makeText(requireContext(), "클릭되었습니다.", Toast.LENGTH_LONG).show()
         }
 
-        binding.exitImageButton.setOnClickListener {
+        binding!!.exitImageButton.setOnClickListener {
             dismiss()
         }
     }
 
-
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
-        //id = com.google.android.material.R.id.design_bottom_sheet for Material Components
-        //id = android.support.design.R.id.design_bottom_sheet for support librares
         val bottomSheet = bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
         val behavior = BottomSheetBehavior.from<View>(bottomSheet!!)
         val layoutParams = bottomSheet!!.layoutParams
