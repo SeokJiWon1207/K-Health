@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.k_health.databinding.ItemHealthlistBinding
 import com.example.k_health.model.HealthList
 
-class HealthListAdapter(private val healthdata: ArrayList<HealthList>) :
+class HealthListAdapter(private val healthData: ArrayList<HealthList>) :
     RecyclerView.Adapter<HealthListAdapter.ViewHolder>() {
 
     interface OnItemClickListener{
@@ -29,8 +29,10 @@ class HealthListAdapter(private val healthdata: ArrayList<HealthList>) :
         fun bind(healthlist: HealthList) {
             
             // xml요소 데이터 클래스와 바인딩
-            binding.healthNameTextView.text = healthlist.name
-            binding.engHealthNameTextView.text = healthlist.engName
+            with(binding) {
+                healthNameTextView.text = healthlist.name
+                engHealthNameTextView.text = healthlist.engName
+            }
 
             Glide.with(binding.healthImageView.context)
                 .load(healthlist.imageUrl)
@@ -58,9 +60,9 @@ class HealthListAdapter(private val healthdata: ArrayList<HealthList>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(healthdata[position])
+        holder.bind(healthData[position])
     }
 
-    override fun getItemCount() = healthdata.size
+    override fun getItemCount() = healthData.size
 
 }

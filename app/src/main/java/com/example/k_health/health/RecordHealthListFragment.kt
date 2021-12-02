@@ -2,6 +2,7 @@ package com.example.k_health.health
 
 import android.app.Activity
 import android.app.Dialog
+import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
@@ -10,16 +11,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.fragment.app.setFragmentResultListener
+import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.k_health.DBKey
 import com.example.k_health.R
+import com.example.k_health.Repository
+import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentRecordHealthlistBinding
+import com.example.k_health.model.HealthRecord
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.firestore.FirebaseFirestore
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class RecordHealthListFragment : BottomSheetDialogFragment() {
 
     private var binding: FragmentRecordHealthlistBinding? = null
+    private val db = FirebaseFirestore.getInstance()
+    private var recordHealthList: ArrayList<HealthRecord> = arrayListOf()
+    private var recordHealthListAdapter = RecordHealthListAdapter(healthRecordData = recordHealthList)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_record_healthlist, container, false)
@@ -31,9 +45,12 @@ class RecordHealthListFragment : BottomSheetDialogFragment() {
         val recordHealthlistBinding = FragmentRecordHealthlistBinding.bind(view)
         binding = recordHealthlistBinding
 
+
         initBottomSheetDialogFragment()
         initViews()
-
+        initRecyclerView()
+        addRecordView()
+        uploadHealthRecord()
     }
 
 
@@ -78,6 +95,49 @@ class RecordHealthListFragment : BottomSheetDialogFragment() {
         binding!!.exitImageButton.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun initRecyclerView() {
+        recordHealthList.add(HealthRecord("1set", "0", "0"))
+        binding!!.recyclerView.apply {
+            adapter = recordHealthListAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+    }
+
+    private fun addRecordView() {
+        binding!!.addSetButton.setOnClickListener {
+            recordHealthList.add(HealthRecord("${recordHealthList.size+1}set", "0", "0"))
+            recordHealthListAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun uploadHealthRecord() {
+        val today = timeGenerator()
+        val healthName: String = arguments?.getString("name") ?: "null"
+        val healthRecordData = mutableMapOf<String, Any>()
+        healthRecordData["set"] = recordHealthList[0].set
+        healthRecordData["weight"] = recordHealthList[0].weight
+        healthRecordData["count"] = recordHealthList[0].count
+        healthRecordData["today"] = today
+
+        binding!!.submitButton.setOnClickListener {
+            db.collection("Users/${userId}/healthRecord")
+                .document(healthName)
+                .set(healthRecordData)
+                .addOnSuccessListener {
+                    Log.d("record","success")
+                    dismiss()
+                }
+        }
+    }
+
+
+    private fun timeGenerator(): String {
+        var now = LocalDate.now()
+        var todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+
+        return todayNow
     }
 
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {

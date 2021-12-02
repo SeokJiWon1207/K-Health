@@ -1,39 +1,35 @@
 package com.example.k_health.health
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemHealthsetBinding
-import com.example.k_health.model.HealthList
 import com.example.k_health.model.HealthRecord
 
-class RecordHealthListAdapter() : RecyclerView.Adapter<RecordHealthListAdapter.ViewHolder>() {
-
-    interface OnItemClickListener {
-        fun onItemClick(v: View, data: HealthRecord, pos: Int) // View와 데이터 그리고 데이터의 위치를 가진다.
-    }
-
-    private var listener: OnItemClickListener? = null
-
-    // 외부(액티비티나 프래그먼트)에서 사용할 수 있도록 메서드 정의하기
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.listener = listener
-    }
+class RecordHealthListAdapter(private val healthRecordData: ArrayList<HealthRecord>) : RecyclerView.Adapter<RecordHealthListAdapter.ViewHolder>() {
 
     inner class ViewHolder(private val binding: ItemHealthsetBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(healthRecord: HealthRecord) {
-
-            // xml요소 데이터 클래스와 바인딩
-
             val pos = adapterPosition
 
-            if (pos != RecyclerView.NO_POSITION) {
-                itemView.setOnClickListener {
-                    listener?.onItemClick(itemView, healthrecord, pos)
-                }
+            // xml요소 데이터 클래스와 바인딩
+            with(binding) {
+                setTextView.text = healthRecord.set
+                weightEditText.setText(healthRecord.weight)
+                countEditText.setText(healthRecord.count)
+            }
+
+            // 첫 번째 운동세트는 못지우게 삭제버튼 GONE처리
+            if (pos == 0) binding.deleteImageButton.visibility = View.GONE
+
+            binding.deleteImageButton.setOnClickListener {
+                Log.d("record","${healthRecordData[pos]}, $pos")
+                healthRecordData.removeAt(pos)
+                notifyDataSetChanged()
             }
 
         }
@@ -50,9 +46,9 @@ class RecordHealthListAdapter() : RecyclerView.Adapter<RecordHealthListAdapter.V
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(healthrecord[position])
+        holder.bind(healthRecordData[position])
     }
 
-    override fun getItemCount() = hea
+    override fun getItemCount() = healthRecordData.size
 
 }

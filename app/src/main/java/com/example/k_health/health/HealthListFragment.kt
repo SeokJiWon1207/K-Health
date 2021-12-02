@@ -19,8 +19,8 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
     private var binding: FragmentHealthlistBinding? = null
     private val db = FirebaseFirestore.getInstance()
-    private var healthlist: ArrayList<HealthList> = arrayListOf()
-    private var healthListAdapter = HealthListAdapter(healthdata = healthlist)
+    private var healthList: ArrayList<HealthList> = arrayListOf()
+    private var healthListAdapter = HealthListAdapter(healthData = healthList)
 
     val tabMainList = listOf("가슴", "등", "어깨", "하체", "복근", "삼두", "이두", "전신", "코어")
     val tabSubList = listOf("바벨", "덤벨", "머신", "케틀벨", "케이블", "스미스머신")
@@ -32,11 +32,11 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     init {
         db.collection("Health/가슴/바벨")
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                healthlist.clear()
+                healthList.clear()
                 for (snapshot in querySnapshot!!.documents) {
                     var healthitem = snapshot.toObject(HealthList::class.java)
 
-                    healthlist.add(healthitem!!)
+                    healthList.add(healthitem!!)
                 }
 
                 healthListAdapter.notifyDataSetChanged()
@@ -102,7 +102,6 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
                 bundle.putString("name", data.name)
                 bundle.putString("engName", data.engName)
 
-
                 val recordHealthListFragment = RecordHealthListFragment()
 
                 recordHealthListFragment.arguments = bundle
@@ -124,12 +123,12 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
                     maintab?.position -> db.collection("Health/${mainText[maintab?.position!!]}/${subText[subPosition]}")
                         .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                            healthlist.clear()
+                            healthList.clear()
                             Log.d("TAG", "mainText: ${mainText[maintab?.position!!]}")
                             for (snapshot in querySnapshot!!.documents) {
                                 var healthitem = snapshot.toObject(HealthList::class.java)
 
-                                healthlist.add(healthitem!!)
+                                healthList.add(healthitem!!)
                             }
 
                             mainPosition = maintab?.position!!
@@ -156,11 +155,11 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
                     subtab?.position -> db.collection("Health/${mainText[mainPosition]}/${subText[subtab?.position!!]}")
                         .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                            healthlist.clear()
+                            healthList.clear()
                             for (snapshot in querySnapshot!!.documents) {
                                 var healthitem = snapshot.toObject(HealthList::class.java)
 
-                                healthlist.add(healthitem!!)
+                                healthList.add(healthitem!!)
                             }
                             subPosition = subtab?.position!!
                             healthListAdapter.notifyDataSetChanged()
