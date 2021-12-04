@@ -22,7 +22,6 @@ class HealthListAdapter(private val healthData: ArrayList<HealthList>) :
         this.listener = listener
     }
 
-
     inner class ViewHolder(private val binding: ItemHealthlistBinding) :
         RecyclerView.ViewHolder(binding.root) {
 

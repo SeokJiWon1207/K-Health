@@ -92,11 +92,11 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
         healthListAdapter.setOnItemClickListener(object : HealthListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, data: HealthList, pos: Int) {
 
-                setFragmentResult(
+                /*setFragmentResult(
                     "requestKey",
                     bundleOf("name" to data.name, "engName" to data.engName)
                 )
-                Log.d("TAG", "data : ${data}")
+                Log.d("TAG", "data : ${data}")*/
 
                 val bundle = Bundle()
                 bundle.putString("name", data.name)
