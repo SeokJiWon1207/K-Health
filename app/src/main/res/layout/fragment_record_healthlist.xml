@@ -128,7 +128,6 @@
         android:layout_marginHorizontal="120dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
         app:layout_constraintBottom_toTopOf="@+id/submit_Button"/>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -140,6 +139,6 @@
         android:background="@drawable/shadow_background"
         android:text="완 료"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/add_Set_Button" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

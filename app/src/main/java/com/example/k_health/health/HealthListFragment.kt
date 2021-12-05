@@ -62,22 +62,22 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     private fun initTab() {
 
         for (i in tabMainList.indices) {
-            binding?.mainTablayout!!.addTab(
-                binding?.mainTablayout!!.newTab().setText(
+            binding?.mainTabLayout!!.addTab(
+                binding?.mainTabLayout!!.newTab().setText(
                     tabMainList[i]
                 )
             )
         }
 
         for (i in tabSubList.indices) {
-            binding?.subTablayout!!.addTab(
-                binding?.subTablayout!!.newTab().setText(
+            binding?.subTabLayout!!.addTab(
+                binding?.subTabLayout!!.newTab().setText(
                     tabSubList[i]
                 )
             )
         }
 
-        setDualTabs(binding!!.mainTablayout, binding!!.subTablayout, tabMainList, tabSubList)
+        setDualTabs(binding!!.mainTabLayout, binding!!.subTabLayout, tabMainList, tabSubList)
 
     }
 
