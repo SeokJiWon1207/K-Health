@@ -12,7 +12,7 @@
         app:tabMode="scrollable"
         app:tabIndicatorHeight="0dp"
         app:tabBackground="@drawable/tab_select"
-        app:tabTextColor="@color/black"
+        app:tabTextColor="@color/lightblue"
         app:tabSelectedTextColor="@color/white"
         app:layout_constraintTop_toTopOf="parent"
         tool:background="@color/peach">
@@ -26,7 +26,7 @@
         app:tabMode="scrollable"
         app:tabIndicatorHeight="0dp"
         app:tabBackground="@drawable/tab_select"
-        app:tabTextColor="@color/black"
+        app:tabTextColor="@color/lightblue"
         app:tabSelectedTextColor="@color/white"
         app:layout_constraintTop_toBottomOf="@+id/main_tabLayout"
         app:layout_constraintRight_toRightOf="parent"
