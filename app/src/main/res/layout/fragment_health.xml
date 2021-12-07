@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:elevation="50dp"
-        android:background="@drawable/health_background"
+        android:background="@drawable/calendar_background"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
@@ -27,8 +27,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
             android:text="날짜를 선택해주세요"
-            android:textColor="@color/black"
+            android:textColor="@color/lightblue"
             android:textSize="20sp" />
     </LinearLayout>
 
@@ -46,7 +47,6 @@
             android:layout_marginHorizontal="15dp"
             android:layout_marginTop="15dp"
             android:background="@drawable/health_background"
-            android:elevation="50dp"
             tools:listitem="@layout/item_todayhealth" />
 
     </FrameLayout>
@@ -56,10 +56,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
-        android:backgroundTint="@color/peach"
+        android:backgroundTint="@color/lightblue"
         android:src="@drawable/ic_baseline_double_arrow_24"
         app:elevation="30dp"
-        app:pressedTranslationZ="20dp"
         app:tint="@color/white"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

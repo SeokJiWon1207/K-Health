@@ -35,7 +35,11 @@ class HelperFragment : Fragment() {
 
         return binding.root
 
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mBinding = null
     }
 
 }

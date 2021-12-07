@@ -11,10 +11,6 @@ import com.example.k_health.model.HealthRecord
 
 class RecordHealthListAdapter(private val healthRecordData: ArrayList<HealthRecord>) : RecyclerView.Adapter<RecordHealthListAdapter.ViewHolder>() {
 
-    interface controlData{
-        fun getString(v: View) // View와 데이터 그리고 데이터의 위치를 가진다.
-    }
-
     inner class ViewHolder(private val binding: ItemHealthsetBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(healthRecord: HealthRecord) {
@@ -27,15 +23,9 @@ class RecordHealthListAdapter(private val healthRecordData: ArrayList<HealthReco
                 countEditText.setText(healthRecord.count)
             }
 
-            healthRecord.weight = binding.weightEditText.text.toString()
-            healthRecord.count = binding.countEditText.text.toString()
-
-            healthRecordData[0].weight = healthRecord.weight
-            healthRecordData[0].count = healthRecord.count
-
             val bundle = Bundle()
-            bundle.putString("weight",healthRecordData[0].weight)
-            bundle.putString("count",healthRecordData[0].count)
+            bundle.putString("weight",healthRecordData[pos].weight)
+            bundle.putString("count",healthRecordData[pos].count)
             bundle.putInt("pos", pos)
 
             val recordHealthListFragment = RecordHealthListFragment()
@@ -52,7 +42,6 @@ class RecordHealthListAdapter(private val healthRecordData: ArrayList<HealthReco
 
         }
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(

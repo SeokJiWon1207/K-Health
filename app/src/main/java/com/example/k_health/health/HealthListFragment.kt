@@ -181,4 +181,9 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
 }

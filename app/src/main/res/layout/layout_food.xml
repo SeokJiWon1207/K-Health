@@ -21,7 +21,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:background="@color/peach"
             android:orientation="vertical">
 
             <ImageView
@@ -40,7 +39,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/foodAdd_ImageButton"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
@@ -48,7 +47,7 @@
                 android:background="@drawable/ic_baseline_add_24"
                 android:scaleType="fitXY" />
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/foodOpen_ImageButton"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
@@ -57,6 +56,7 @@
                 android:background="@drawable/ic_baseline_arrow_drop_down_24"
                 android:scaleType="fitXY"
                 tools:ignore="VectorDrawableCompat" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:overScrollMode="never"
                 android:layout_below="@+id/foodOpen_ImageButton"

@@ -208,7 +208,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
             .addOnFailureListener { error ->
-                Toast.makeText(requireContext(), "Error: $error ", Toast.LENGTH_SHORT).show()
+                Glide.with(requireContext())
+                    .load(R.drawable.ic_baseline_account_circle_24)
+                    .into(binding!!.userProfileImageView)
             }
     }
 
@@ -356,5 +358,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onDestroy() {
         super.onDestroy()
         scope.cancel()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 }

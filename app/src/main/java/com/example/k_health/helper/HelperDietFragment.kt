@@ -18,4 +18,9 @@ class HelperDietFragment: Fragment(R.layout.fragment_helper_diet) {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
 }

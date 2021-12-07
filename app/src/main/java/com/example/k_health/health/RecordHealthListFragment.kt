@@ -2,25 +2,19 @@ package com.example.k_health.health
 
 import android.app.Activity
 import android.app.Dialog
-import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.annotation.RequiresApi
-import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.DBKey
 import com.example.k_health.R
-import com.example.k_health.Repository
 import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentRecordHealthlistBinding
-import com.example.k_health.databinding.ItemHealthsetBinding
 import com.example.k_health.model.HealthRecord
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -28,7 +22,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.collections.ArrayList
 
 class RecordHealthListFragment : BottomSheetDialogFragment() {
@@ -41,7 +34,6 @@ class RecordHealthListFragment : BottomSheetDialogFragment() {
     private val db = FirebaseFirestore.getInstance()
     private var recordHealthList: ArrayList<HealthRecord> = arrayListOf()
     private var recordHealthListAdapter = RecordHealthListAdapter(recordHealthList)
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -79,8 +71,7 @@ class RecordHealthListFragment : BottomSheetDialogFragment() {
 
     private fun initBottomSheetDialogFragment() {
         // 팝업 생성 시 전체화면으로 띄우기
-        val bottomSheet =
-            dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
         val behavior = BottomSheetBehavior.from<View>(bottomSheet!!)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
 
@@ -129,10 +120,9 @@ class RecordHealthListFragment : BottomSheetDialogFragment() {
         val healthName: String = arguments?.getString("name") ?: "null"
         val healthRecordData = mutableMapOf<String, Any>()
 
-
-        healthRecordData["weight"] = arguments?.getString("weight").toString()
-        healthRecordData["count"] = arguments?.getString("count").toString()
-        healthRecordData["pos"] = arguments?.getInt("pos").toString()
+        healthRecordData["weight"] = recordHealthList[0].weight ?: "null"
+        healthRecordData["count"] = recordHealthList[0].weight ?: "null"
+        healthRecordData["pos"] = arguments?.getInt("pos")!!.toInt()
 
         binding!!.submitButton.setOnClickListener {
             db.collection(DBKey.COLLECTION_NAME_USERS)
@@ -163,7 +153,7 @@ class RecordHealthListFragment : BottomSheetDialogFragment() {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout?
         val behavior = BottomSheetBehavior.from<View>(bottomSheet!!)
-        val layoutParams = bottomSheet!!.layoutParams
+        val layoutParams = bottomSheet.layoutParams
         layoutParams.height = getBottomSheetDialogDefaultHeight()
         bottomSheet.layoutParams = layoutParams
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
@@ -176,5 +166,10 @@ class RecordHealthListFragment : BottomSheetDialogFragment() {
         val displayMetrics = DisplayMetrics()
         (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 }
