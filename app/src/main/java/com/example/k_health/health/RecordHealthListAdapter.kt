@@ -59,4 +59,5 @@ class RecordHealthListAdapter(private val healthRecordData: ArrayList<HealthReco
 
     override fun getItemCount() = healthRecordData.size
 
+
 }

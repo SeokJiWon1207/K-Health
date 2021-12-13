@@ -26,7 +26,8 @@ class HealthListAdapter(private val healthData: ArrayList<HealthList>) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(healthlist: HealthList) {
-            
+            val pos = adapterPosition
+
             // xml요소 데이터 클래스와 바인딩
             with(binding) {
                 healthNameTextView.text = healthlist.name
@@ -37,7 +38,6 @@ class HealthListAdapter(private val healthData: ArrayList<HealthList>) :
                 .load(healthlist.imageUrl)
                 .into(binding.healthImageView)
 
-            val pos = adapterPosition
 
             if(pos!= RecyclerView.NO_POSITION) {
                 itemView.setOnClickListener {

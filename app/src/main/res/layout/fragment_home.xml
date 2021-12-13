@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/background">
+    android:background="@color/background"
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -216,6 +215,7 @@
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/frameLayout">
@@ -224,10 +224,10 @@
             android:id="@+id/cv_remain"
             android:layout_width="0dp"
             android:layout_height="110dp"
-            android:layout_weight="1"
             android:layout_margin="15dp"
-            android:padding="10dp"
+            android:layout_weight="1"
             android:background="@drawable/cardview_background"
+            android:padding="10dp"
             app:cardCornerRadius="4dp"
             app:cardElevation="8dp">
 
@@ -256,22 +256,22 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:text="5"
                         android:textColor="@color/lightblue"
                         android:textSize="32sp"
                         android:textStyle="bold"
-                        android:text="5"
                         tools:text="5" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
                         android:alpha="0.6"
                         android:text="@string/label_task"
                         android:textColor="@color/lightblue"
-                        android:textSize="19sp"
-                        android:layout_marginLeft="10dp" />
+                        android:textSize="19sp" />
                 </LinearLayout>
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
@@ -280,12 +280,12 @@
             android:id="@+id/cv_complete"
             android:layout_width="0dp"
             android:layout_height="110dp"
-            android:layout_weight="1"
             android:layout_margin="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_weight="1"
             android:background="@drawable/cardview_background"
             app:cardCornerRadius="4dp"
-            app:cardElevation="8dp"
-            android:layout_marginLeft="15dp">
+            app:cardElevation="8dp">
 
             <RelativeLayout
                 android:id="@+id/layout_complete"
@@ -312,25 +312,32 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:text="0"
                         android:textColor="@color/lightblue"
                         android:textSize="32sp"
                         android:textStyle="bold"
-                        android:text="0"
                         tools:text="5" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
                         android:alpha="0.6"
                         android:text="@string/label_task"
                         android:textColor="@color/lightblue"
-                        android:textSize="19sp"
-                        android:layout_marginLeft="10dp" />
+                        android:textSize="19sp" />
                 </LinearLayout>
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/todolist_RecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
