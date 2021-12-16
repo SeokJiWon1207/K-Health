@@ -1,13 +1,17 @@
 package com.example.k_health.food
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.MainActivity
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentFoodBinding
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class FoodFragment: Fragment(R.layout.fragment_food) {
 
@@ -20,6 +24,9 @@ class FoodFragment: Fragment(R.layout.fragment_food) {
         val fragmentFoodBinding = FragmentFoodBinding.bind(view)
 
         binding = fragmentFoodBinding
+
+
+
 
         setFoodTime()
 
@@ -53,6 +60,8 @@ class FoodFragment: Fragment(R.layout.fragment_food) {
             moveSearchFood(foodAddImageButton)
         }
     }
+
+
 
     private fun moveSearchFood(foodAddImageButton: ImageButton) {
         foodAddImageButton.setOnClickListener {

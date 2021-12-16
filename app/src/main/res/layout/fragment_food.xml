@@ -38,7 +38,7 @@
                 android:layout_height="2dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:background="@color/peach"/>
+                android:background="@color/lightblue"/>
 
             <CalendarView
                 android:id="@+id/healthCalendarView"
@@ -52,7 +52,7 @@
                 android:layout_height="2dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:background="@color/peach"/>
+                android:background="@color/lightblue"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

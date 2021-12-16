@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:text="@string/weight"
-            android:textColor="@color/orange"
+            android:textColor="@color/lightblue"
             android:textStyle="bold"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="30dp"
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:text="@string/muscle"
-            android:textColor="@color/orange"
+            android:textColor="@color/lightblue"
             android:textStyle="bold"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="60dp"
@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fat"
-            android:textColor="@color/orange"
+            android:textColor="@color/lightblue"
             android:textStyle="bold"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="60dp"
@@ -61,8 +61,7 @@
             android:gravity="right"
             android:hint="@string/kg"
             android:maxLength="5"
-            android:textColorHint="@color/teal_700"
-            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
             android:layout_margin="25dp"/>
         <EditText
             android:id="@+id/user_muscleEditText"
@@ -71,8 +70,7 @@
             android:gravity="right"
             android:hint="@string/kg"
             android:maxLength="5"
-            android:textColorHint="@color/teal_700"
-            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
             android:layout_margin="25dp"/>
         <EditText
             android:id="@+id/user_fatEditText"
@@ -81,20 +79,20 @@
             android:gravity="right"
             android:hint="%"
             android:maxLength="5"
-            android:textColorHint="@color/teal_700"
-            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
             android:layout_margin="25dp"/>
         </LinearLayout>
-
     </LinearLayout>
-    <Button
+
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/submitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:elevation="30dp"
-        android:backgroundTint="@color/white"
-        android:textColor="@color/black"
+        android:background="@drawable/button_background"
+        android:textColor="@color/white"
         android:text="제출"
+        android:textStyle="bold"
         android:textSize="20sp"/>
 </LinearLayout>

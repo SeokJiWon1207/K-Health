@@ -25,5 +25,6 @@
     <string name="label_completed">임무 완료</string>
     <string name="label_task">Task</string>
     <string name="label_record">기록을 해주세요</string>
+    <string name="logout">로그아웃</string>
 
 </resources>

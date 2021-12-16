@@ -24,7 +24,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.collections.ArrayList
 
-class RecordHealthListFragment : BottomSheetDialogFragment() {
+class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
 
     companion object {
         const val TAG = "Record"
@@ -142,9 +142,9 @@ class RecordHealthListFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun timeGenerator(): String {
-        var now = LocalDate.now()
-        var todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+    override fun timeGenerator(): String {
+        val now = LocalDate.now()
+        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
 
         return todayNow
     }

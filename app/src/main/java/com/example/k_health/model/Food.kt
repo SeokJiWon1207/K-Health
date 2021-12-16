@@ -1,5 +1,15 @@
 package com.example.k_health.model
 
+import com.google.gson.annotations.SerializedName
+
+// Retrofit 1-1) REST API로 받아올 데이터를 받아올 모델 클래스 생성
+// 서버에서 받는 데이터 모델
 data class Food(
-    val string: String
+    // json 데이터의 변수명과 다르게 변수를 짓는 경우
+    // @SerializedName("속성명")으로 설정 가능
+    @SerializedName("resultCode") val resultCode: String,
+    @SerializedName("resultMsg") val resultMsg: String,
+    @SerializedName("DESC_KOR") val foodname: String,
+    @SerializedName("SERVING_WT") val gram: String,
+    @SerializedName("NUTR_CONT1") val kcal: String,
 )

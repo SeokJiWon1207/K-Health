@@ -18,4 +18,9 @@ class HelperPlanningFragment: Fragment(R.layout.fragment_helper_planning) {
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
 }

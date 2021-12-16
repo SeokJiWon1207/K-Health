@@ -5,16 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="15dp"
-    android:foreground="?attr/selectableItemBackground"
-    app:cardCornerRadius="6dp"
-    app:cardElevation="20dp"
-    app:contentPadding="15dp">
+    app:contentPadding="15dp"
+    app:cardElevation="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/cardview_background">
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="wrap_content"

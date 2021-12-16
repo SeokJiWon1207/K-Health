@@ -16,12 +16,14 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.k_health.DBKey
 import com.example.k_health.DBKey.Companion.STORAGE_URL_USERPROFILE
 import com.example.k_health.LoginActivity
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHomeBinding
+import com.example.k_health.model.TodoList
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,7 +32,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
@@ -42,6 +43,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val userId = auth.currentUser?.uid.orEmpty()
     private val userInfoDialog: Dialog by lazy { Dialog(requireContext()) }
     private var scope = MainScope()
+    private var todolist: ArrayList<TodoList> = arrayListOf()
+    private val todoListAdater = TodoListAdapter(todolist)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,9 +52,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val fragmentHomeBinding = FragmentHomeBinding.bind(view)
         binding = fragmentHomeBinding
 
-
         Log.d("TAG","userId : ${userId}")
 
+        todolist.add(TodoList("아침식사", R.drawable.ic_baseline_restaurant_24_2))
+        todolist.add(TodoList("점심식사", R.drawable.ic_baseline_restaurant_24_2))
+        todolist.add(TodoList("저녁식사", R.drawable.ic_baseline_restaurant_24_2))
+        todolist.add(TodoList("운동", R.drawable.ic_baseline_fitness_center_24_2))
 
         isNicknameNotNull()
         setUserProfile()
@@ -59,6 +65,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         uploadProfileImage()
         userInfoSetPopup()
         logoutButton()
+        initRecyclerView()
 
 
     }
@@ -130,20 +137,29 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    private fun initRecyclerView() {
+        binding!!.todolistRecyclerView.apply {
+            adapter = todoListAdater
+            layoutManager = LinearLayoutManager(context)
+        }
+    }
+
     private fun showPopup() {
         userInfoDialog.apply {
-            this.setContentView(R.layout.userinfo_dialog)
-            this.window!!.setLayout(
+            setContentView(R.layout.userinfo_dialog)
+            window!!.setLayout(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT
             )
-            this.setCanceledOnTouchOutside(true)
-            this.setCancelable(true)
-            this.show()
+            setCanceledOnTouchOutside(true)
+            setCancelable(true)
+            show()
         }
         val userWeightEditText = userInfoDialog.findViewById<EditText>(R.id.user_weightEditText)
         val userMuscleEditText = userInfoDialog.findViewById<EditText>(R.id.user_muscleEditText)
         val userFatEditText = userInfoDialog.findViewById<EditText>(R.id.user_fatEditText)
+
+        if (userWeightEditText.isFocused == true) userFatEditText.text.clear()
 
         userInfoDialog.findViewById<Button>(R.id.submitButton).setOnClickListener {
             val userData = mutableMapOf<String, Any>(
