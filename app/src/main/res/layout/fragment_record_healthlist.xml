@@ -115,7 +115,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@id/imageView2"
+        app:layout_constraintBottom_toTopOf="@id/add_Set_Button"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/add_Set_Button"

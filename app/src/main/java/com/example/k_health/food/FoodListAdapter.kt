@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemFoodBinding
-import com.example.k_health.model.Food
+import com.example.k_health.data.Food
 
 class FoodListAdapter() : RecyclerView.Adapter<FoodListAdapter.ViewHolder>() {
 

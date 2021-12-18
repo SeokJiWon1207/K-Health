@@ -17,7 +17,7 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
 
     private var binding: FragmentFoodSearchBinding? = null
     private val foodListAdapter = FoodListAdapter()
-    private lateinit var foodService: FoodService
+    // private lateinit var foodService: FoodService
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,7 +32,7 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
             .build()
 
         // Retrofit 1-4) instance로 interface 객체 구현
-        foodService = retrofit.create(FoodService::class.java)
+        // foodService = retrofit.create(FoodService::class.java)
 
 
         initFoodRecyclerView()

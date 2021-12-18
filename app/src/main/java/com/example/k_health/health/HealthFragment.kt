@@ -43,7 +43,7 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
 
     override fun timeGenerator(): String {
         val now = LocalDate.now()
-        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
 
         return todayNow
     }

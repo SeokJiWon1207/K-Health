@@ -55,6 +55,7 @@ class RecordHealthListAdapter(private val healthRecordData: ArrayList<HealthReco
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(healthRecordData[position])
+        Log.d("tag","position : $position")
     }
 
     override fun getItemCount() = healthRecordData.size
