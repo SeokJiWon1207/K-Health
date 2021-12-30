@@ -4,22 +4,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemFoodBinding
-import com.example.k_health.data.Food
+import com.example.k_health.food.data.models.FoodResponse
 
 class FoodListAdapter() : RecyclerView.Adapter<FoodListAdapter.ViewHolder>() {
 
-    var foods: List<Food> = emptyList()
+    var foods: List<FoodResponse> = emptyList()
 
     inner class ViewHolder(private val binding: ItemFoodBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(food: Food) {
-            with(binding) {
-                foodNameTextView.text = food.foodname
-                gramTextView.text = food.gram
-                kcalTextView.text = food.kcal
+        fun bind(foodResponse: FoodResponse) = with(binding) {
+                foodNameTextView.text = foodResponse.foodName
+                gramTextView.text = foodResponse.gram
+                kcalTextView.text = foodResponse.kcal
             }
-        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

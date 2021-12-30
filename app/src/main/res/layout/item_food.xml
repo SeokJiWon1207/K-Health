@@ -39,7 +39,7 @@
         android:layout_marginLeft="10dp"
         android:textColor="@color/black"
         android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/gram_TextView"
         app:layout_constraintLeft_toRightOf="@id/gram_TextView"
         app:layout_constraintTop_toTopOf="@id/gram_TextView"
         tool:text="350kcal" />
