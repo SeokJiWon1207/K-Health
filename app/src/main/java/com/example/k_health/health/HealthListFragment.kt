@@ -62,16 +62,16 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     private fun initTab() {
 
         for (i in tabMainList.indices) {
-            binding?.mainTabLayout!!.addTab(
-                binding?.mainTabLayout!!.newTab().setText(
+            binding!!.mainTabLayout.addTab(
+                binding!!.mainTabLayout.newTab().setText(
                     tabMainList[i]
                 )
             )
         }
 
         for (i in tabSubList.indices) {
-            binding?.subTabLayout!!.addTab(
-                binding?.subTabLayout!!.newTab().setText(
+            binding!!.subTabLayout.addTab(
+                binding!!.subTabLayout.newTab().setText(
                     tabSubList[i]
                 )
             )
@@ -91,14 +91,8 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     private fun clickAdapter() {
         healthListAdapter.setOnItemClickListener(object : HealthListAdapter.OnItemClickListener {
             override fun onItemClick(v: View, data: HealthList, pos: Int) {
-
-                /*setFragmentResult(
-                    "requestKey",
-                    bundleOf("name" to data.name, "engName" to data.engName)
-                )
-                Log.d("TAG", "data : ${data}")*/
-
                 val bundle = Bundle()
+
                 bundle.putString("name", data.name)
                 bundle.putString("engName", data.engName)
 

@@ -22,17 +22,20 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
         binding = fragmentHealthBinding
 
         moveHealthList()
+        setDateToday()
 
-        binding!!.todayDateTextView.text = timeGenerator()
 
+    }
+
+    private fun setDateToday() {
         binding!!.healthCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            val monthString: String = if (month > 10) "${month+1}" else String.format("%02d", month+1)
             val dayOfMonthString: String = if (dayOfMonth >= 10) "$dayOfMonth" else String.format("%02d", dayOfMonth)
 
             Log.d("health", "${year}/${month}/${dayOfMonthString}")
 
-            binding!!.todayDateTextView.text = "${year}/${month+1}/${dayOfMonthString}"
+            binding!!.todayDateTextView.text = "${year}/${monthString}/${dayOfMonthString}"
         }
-
     }
 
     private fun moveHealthList() {

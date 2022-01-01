@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
 
     companion object {
-        const val TAG = "retrofit"
+        const val TAG = "network"
     }
 
     private var binding: FragmentFoodSearchBinding? = null
@@ -43,16 +43,15 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
     // API 데이터 맵핑
     private fun fetchFoodItems() = scope.launch {
         try {
-            Repository.getFoodItems()?.let { foods ->
+            Repository.getFoodItems()?.let {
                 (binding!!.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
-                    this.foods = foods
-                    notifyDataSetChanged()
+                    Log.d(TAG,"items : ${it}")
+                    // TODO Json 배열 형식 맞춰보기
+                    submitList(it.items)
                 }
             }
         } catch (exception: Exception) {
             Log.d(TAG,"exception : $exception")
-        } finally {
-            // TODO WHAT
         }
     }
 
