@@ -6,12 +6,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemFoodBinding
-import com.example.k_health.food.data.models.Body
 import com.example.k_health.food.data.models.FoodResponse
 
 class FoodListAdapter() : ListAdapter<FoodResponse, FoodListAdapter.ViewHolder>(diffUtil) {
-
-    // var foods: List<Body> = emptyList()
 
     inner class ViewHolder(private val binding: ItemFoodBinding) :
         RecyclerView.ViewHolder(binding.root) {

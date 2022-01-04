@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Food(
     @SerializedName("body")
-    val body: Body?,
+    val body: FoodSearchDTO?,
     @SerializedName("header")
     val header: Header?
 )
