@@ -3,9 +3,9 @@ package com.example.k_health.food.data.models
 
 import com.google.gson.annotations.SerializedName
 
-data class FoodSearchDTO(
+data class Body(
     @SerializedName("items")
-    val items: List<FoodResponse>?,
+    val items: List<Item>?,
     @SerializedName("numOfRows")
     val numOfRows: Int?,
     @SerializedName("pageNo")

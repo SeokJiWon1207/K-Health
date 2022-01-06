@@ -25,9 +25,6 @@ class FoodFragment: Fragment(R.layout.fragment_food) {
 
         binding = fragmentFoodBinding
 
-
-
-
         setFoodTime()
 
 

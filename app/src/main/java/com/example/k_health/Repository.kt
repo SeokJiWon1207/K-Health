@@ -1,8 +1,6 @@
 package com.example.k_health
 
-import com.example.k_health.food.data.models.Food
 import com.example.k_health.food.data.models.FoodResponse
-import com.example.k_health.food.data.models.FoodSearchDTO
 import com.example.k_health.food.data.service.FoodApiService
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -27,8 +25,8 @@ object Repository {
     }
 
     // 호출부
-    suspend fun getFoodItems(query: String?): Food? =
-        foodApiService.getFoodItems(query).body()
+    suspend fun getFoodItems(): FoodResponse? =
+        foodApiService.getFoodItems().body()
 
     // 로깅 체크
     private fun buildHttpClient(): OkHttpClient =
