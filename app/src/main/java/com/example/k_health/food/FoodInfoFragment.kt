@@ -28,20 +28,23 @@ class FoodInfoFragment : Fragment(R.layout.fragment_food_info) {
 
     private fun fetchFoodNutrientInfo() {
         val items = arguments?.getParcelable<Item>("item")
+        val time = arguments?.getString("time")
         Log.d(TAG, "items: $items")
+        Log.d(TAG, "time: $time")
 
         with(binding!!) {
-            foodNameInfoTextView.text = items?.foodName
-            foodGramInfoTextView.text = items?.gram
-            foodKcalInfoTextView.text = items?.kcal
-            foodCarbonInfoTextView.text = items?.carbon
-            foodProteinInfoTextView.text = items?.protein
-            foodFatInfoTextView.text = items?.fat
-            foodSugarInfoTextView.text = items?.sugar
-            foodSodiumInfoTextView.text = items?.sodium
-            foodCholesterolInfoTextView.text = items?.cholesterol
-            foodSaturatedFattyAcidsInfoTextView.text = items?.saturatedFattyAcids
-            foodUnsaturatedFattyAcidsInfoTextView.text = items?.unsaturatedFattyAcids
+            foodNameInfoTextView.text = items!!.foodName
+            foodGramInfoTextView.text = items.gram.plus("g")
+            foodKcalInfoTextView.text = items.kcal
+            foodCarbonInfoTextView.text = items.carbon
+            foodProteinInfoTextView.text = items.protein
+            foodFatInfoTextView.text = items.fat
+            foodSugarInfoTextView.text = items.sugar
+            foodSodiumInfoTextView.text = items.sodium
+            foodCholesterolInfoTextView.text = items.cholesterol
+            foodSaturatedFattyAcidsInfoTextView.text = items.saturatedFattyAcids
+            foodUnsaturatedFattyAcidsInfoTextView.text = items.unsaturatedFattyAcids
+            foodTimeInfoTextView.text = time.toString()
         }
     }
 }

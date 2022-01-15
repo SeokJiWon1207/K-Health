@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.k_health.DBKey.Companion.COLLECTION_NAME_USERS
+import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.ActivityLoginBinding
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
@@ -190,7 +191,6 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this@LoginActivity) { task ->
                 if (task.isSuccessful) {
-                    val userId = auth.currentUser?.uid.orEmpty()
                     Log.d(TAG,"userId: $userId")
 
                 } else {
@@ -245,9 +245,8 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        val userId = auth.currentUser?.uid.orEmpty()
-        // 현재 유저의 아이디를 가져온다
         val user = mutableMapOf<String, Any>()
+
         user.put("userWeight","00.0")
         user.put("userMuscle","00.0")
         user.put("userFat","00.0")

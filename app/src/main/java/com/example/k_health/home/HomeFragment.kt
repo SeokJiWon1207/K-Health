@@ -22,6 +22,7 @@ import com.example.k_health.DBKey
 import com.example.k_health.DBKey.Companion.STORAGE_URL_USERPROFILE
 import com.example.k_health.LoginActivity
 import com.example.k_health.R
+import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentHomeBinding
 import com.example.k_health.model.TodoList
 import com.google.firebase.auth.FirebaseAuth
@@ -40,11 +41,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val db = FirebaseFirestore.getInstance()
-    private val userId = auth.currentUser?.uid.orEmpty()
     private val userInfoDialog: Dialog by lazy { Dialog(requireContext()) }
     private var scope = MainScope()
     private var todolist: ArrayList<TodoList> = arrayListOf()
     private val todoListAdater = TodoListAdapter(todolist)
+
+    init {
+        setUserProfile()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,9 +63,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         todolist.add(TodoList("저녁식사", R.drawable.ic_baseline_restaurant_24_2))
         todolist.add(TodoList("운동", R.drawable.ic_baseline_fitness_center_24_2))
 
-        isNicknameNotNull()
         setUserProfile()
-        getProfileImage()
+        isNicknameNotNull()
+        // getProfileImage()
         uploadProfileImage()
         userInfoSetPopup()
         logoutButton()
@@ -101,6 +105,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
             .addOnFailureListener {
                 Log.d("Error","error : $it")
+            }
+
+        storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE)
+            .child("${userId}.png").downloadUrl.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    Glide.with(this)
+                        .load(it.result)
+                        .into(binding!!.userProfileImageView)
+                }
+            }
+            .addOnFailureListener { error ->
+                Glide.with(this)
+                    .load(R.drawable.ic_baseline_account_circle_24)
+                    .into(binding!!.userProfileImageView)
             }
     }
 
@@ -213,7 +231,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
     }
 
-    // 기존 등록한 유저 프로필 가져오기
+    /*// 기존 등록한 유저 프로필 가져오기
     private fun getProfileImage() {
         storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE)
             .child("${userId}.png").downloadUrl.addOnCompleteListener {
@@ -228,7 +246,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     .load(R.drawable.ic_baseline_account_circle_24)
                     .into(binding!!.userProfileImageView)
             }
-    }
+    }*/
 
     private fun uploadProfileImage() {
         binding?.userProfileImageView?.setOnClickListener {

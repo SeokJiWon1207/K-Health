@@ -41,18 +41,6 @@
     <item>
         <shape>
             <corners
-                android:radius="10dp"/>
-            <padding
-                android:bottom="5dp"
-                android:left="5dp"
-                android:right="5dp"
-                android:top="5dp" />
-            <solid android:color="#1ACCCCCC" />
-        </shape>
-    </item> <!-- Background -->
-    <item>
-        <shape>
-            <corners
                 android:radius="20dp" />
             <solid android:color="@color/white" />
         </shape>
