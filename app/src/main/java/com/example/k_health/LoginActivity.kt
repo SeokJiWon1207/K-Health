@@ -207,11 +207,11 @@ class LoginActivity : AppCompatActivity() {
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
         var credential = GoogleAuthProvider.getCredential(account?.idToken, null)
-        auth?.signInWithCredential(credential)
-            ?.addOnCompleteListener(this@LoginActivity) { task ->
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this@LoginActivity) { task ->
                 if (task.isSuccessful) {
                     setUidFireStore()
-                    startMainActivity()
+                    moveMainPage(auth.currentUser)
                 } else {
                     // 틀렸을 때
                     Toast.makeText(this@LoginActivity, "구글 로그인이 실패했습니다", Toast.LENGTH_SHORT).show()
@@ -277,12 +277,16 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
     }
 
+    private fun startLoginActivity() {
+        startActivity(Intent(this@LoginActivity, LoginActivity::class.java))
+    }
+
     fun moveMainPage(user: FirebaseUser?) {
 
         if (user != null) {
-            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            startMainActivity()
         } else {
-            startActivity(Intent(this@LoginActivity, LoginActivity::class.java))
+            startLoginActivity()
         }
     }
 

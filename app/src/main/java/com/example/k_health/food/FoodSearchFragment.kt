@@ -3,6 +3,8 @@ package com.example.k_health.food
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.MainActivity
@@ -16,31 +18,54 @@ import kotlinx.coroutines.launch
 class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
 
     companion object {
-        const val TAG = "network"
+        const val TAG = "FoodSearchFragment"
     }
 
-    private var binding: FragmentFoodSearchBinding? = null
-    private lateinit var foodListAdapter: FoodListAdapter
+    private var _binding: FragmentFoodSearchBinding? = null
+    private val binding get() = _binding!!
     private val scope = MainScope()
+    private val foodInfoFragment = FoodInfoFragment()
+    private lateinit var foodListAdapter: FoodListAdapter
+    private val bundle = Bundle()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentFoodSearchBinding.bind(view)
 
-        val fragmentFoodSearchBinding = FragmentFoodSearchBinding.bind(view)
-        binding = fragmentFoodSearchBinding
+        Log.d(TAG,"onViewCreated")
 
+        setupSpinnerMealtime()
+        setupSpinnerHandler()
         initFoodRecyclerView()
         fetchFoodItems()
 
+    }
 
+    private fun setupSpinnerMealtime() {
+        val mealtime = resources.getStringArray(R.array.spinner_mealtime)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mealtime)
+        binding.spinner.adapter = adapter
+    }
+
+    private fun setupSpinnerHandler() {
+        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            // 아이템이 선택되었을때
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                bundle.putString("mealtime", binding.spinner.selectedItem.toString())
+                Log.d(TAG,binding.spinner.selectedItem.toString())
+
+                foodInfoFragment.arguments = bundle
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+        }
     }
 
     private fun initFoodRecyclerView() {
         foodListAdapter = FoodListAdapter(itemClickListener = {
-            val bundle = Bundle()
             bundle.putParcelable("item", it)
-
-            val foodInfoFragment = FoodInfoFragment()
 
             foodInfoFragment.arguments = bundle
 
@@ -48,7 +73,7 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
 
 
         })
-        binding!!.foodRecyclerView.apply {
+        binding.foodRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = foodListAdapter
         }
@@ -58,7 +83,7 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
     private fun fetchFoodItems(query: String? = null) = scope.launch {
         try {
             Repository.getFoodItems()?.let {
-                (binding!!.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
+                (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
                     Log.d(TAG,"items : ${it.body!!.items}")
 
                     submitList(it.body.items!!)
@@ -69,11 +94,36 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG,"onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG,"onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG,"onStop")
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
+        Log.d(TAG,"onDestroyView")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         scope.cancel()
+        Log.d(TAG,"onDestroy")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.d(TAG,"onDetach")
     }
 
 }

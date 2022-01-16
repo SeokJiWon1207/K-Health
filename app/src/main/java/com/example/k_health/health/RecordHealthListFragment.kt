@@ -30,7 +30,8 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
         const val TAG = "Record"
     }
 
-    private var binding: FragmentRecordHealthlistBinding? = null
+    private var _binding: FragmentRecordHealthlistBinding? = null
+    private val binding get() = _binding!!
     private val db = FirebaseFirestore.getInstance()
     private var recordHealthList: ArrayList<HealthRecord> = arrayListOf()
     private var recordHealthListAdapter = RecordHealthListAdapter(recordHealthList)
@@ -46,8 +47,7 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recordHealthlistBinding = FragmentRecordHealthlistBinding.bind(view)
-        binding = recordHealthlistBinding
+        _binding = FragmentRecordHealthlistBinding.bind(view)
 
         initBottomSheetDialogFragment()
         initViews()
@@ -64,7 +64,6 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
             setupRatio(bottomSheetDialog)
         }
-
 
         return dialog
     }
@@ -87,29 +86,29 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
         })
     }
 
-    private fun initViews() {
-        binding!!.healthlistNameTextView.text = arguments?.getString("name")
-        binding!!.healthlistEngnameTextView.text = arguments?.getString("engName")
+    private fun initViews() = with(binding) {
+        healthlistNameTextView.text = arguments?.getString("name")
+        healthlistEngnameTextView.text = arguments?.getString("engName")
 
-        binding!!.submitButton.setOnClickListener {
+        submitButton.setOnClickListener {
             Toast.makeText(requireContext(), "클릭되었습니다.", Toast.LENGTH_LONG).show()
         }
 
-        binding!!.exitImageButton.setOnClickListener {
+        exitImageButton.setOnClickListener {
             dismiss()
         }
     }
 
     private fun initRecyclerView() {
         recordHealthList.add(HealthRecord("1set","0","0"))
-        binding!!.recyclerView.apply {
+        binding.recyclerView.apply {
             adapter = recordHealthListAdapter
             layoutManager = LinearLayoutManager(context)
         }
     }
 
     private fun addRecordView() {
-        binding!!.addSetButton.setOnClickListener {
+        binding.addSetButton.setOnClickListener {
             recordHealthList.add(HealthRecord("${recordHealthList.size + 1}set","0","0"))
             recordHealthListAdapter.notifyDataSetChanged()
         }
@@ -124,7 +123,7 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
         healthRecordData["count"] = recordHealthList[0].weight ?: "null"
         healthRecordData["pos"] = arguments?.getInt("pos")!!.toInt()
 
-        binding!!.submitButton.setOnClickListener {
+        binding.submitButton.setOnClickListener {
             db.collection(DBKey.COLLECTION_NAME_USERS)
                 .document(userId)
                 .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 헬스기록보관
@@ -170,6 +169,6 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 }

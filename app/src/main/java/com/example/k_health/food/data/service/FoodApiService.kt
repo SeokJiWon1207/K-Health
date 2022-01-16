@@ -12,7 +12,7 @@ interface FoodApiService {
 
     @GET(
         "getFoodNtrItdntList1?serviceKey=${BuildConfig.FOOD_SERVICE_KEY}" +
-                "&numOfRows=10" +
+                "&numOfRows=30" +
                 "&pageNo=3" +
                 "&type=json"
     )
@@ -21,11 +21,11 @@ interface FoodApiService {
     // 사용자의 검색 키워드로 api 요청
     @GET(
         "getFoodNtrItdntList1?serviceKey=${BuildConfig.FOOD_SERVICE_KEY}" +
-                "&numOfRows=10+" +
-                "&pageNo=3" +
+                "&numOfRows=20+" +
+                "&pageNo=10" +
                 "&type=json"
     )
-    suspend fun getFoodsByName(
+    suspend fun getFoodByName(
         @Query("desc_kor") keyWord: String
     ): Response<FoodResponse>
 }

@@ -11,16 +11,16 @@ import com.example.k_health.food.data.models.Item
 class FoodInfoFragment : Fragment(R.layout.fragment_food_info) {
 
     companion object {
-        const val TAG = "nutrient"
+        const val TAG = "FoodinfoFragment"
     }
 
-    private var binding: FragmentFoodInfoBinding? = null
+    private var _binding: FragmentFoodInfoBinding? = null
+    private val binding get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragmentFoodInfoBinding = FragmentFoodInfoBinding.bind(view)
-        binding = fragmentFoodInfoBinding
+        _binding = FragmentFoodInfoBinding.bind(view)
 
         fetchFoodNutrientInfo()
 
@@ -28,11 +28,11 @@ class FoodInfoFragment : Fragment(R.layout.fragment_food_info) {
 
     private fun fetchFoodNutrientInfo() {
         val items = arguments?.getParcelable<Item>("item")
-        val time = arguments?.getString("time")
+        val mealtime = arguments?.getString("mealtime")
         Log.d(TAG, "items: $items")
-        Log.d(TAG, "time: $time")
+        Log.d(TAG, "mealtime: $mealtime")
 
-        with(binding!!) {
+        with(binding) {
             foodNameInfoTextView.text = items!!.foodName
             foodGramInfoTextView.text = items.gram.plus("g")
             foodKcalInfoTextView.text = items.kcal
@@ -44,7 +44,12 @@ class FoodInfoFragment : Fragment(R.layout.fragment_food_info) {
             foodCholesterolInfoTextView.text = items.cholesterol
             foodSaturatedFattyAcidsInfoTextView.text = items.saturatedFattyAcids
             foodUnsaturatedFattyAcidsInfoTextView.text = items.unsaturatedFattyAcids
-            foodTimeInfoTextView.text = time.toString()
+            foodTimeInfoTextView.text = mealtime
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -3,6 +3,7 @@ package com.example.k_health.food
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -16,15 +17,19 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class FoodFragment : Fragment(R.layout.fragment_food) {
 
-    private var binding: FragmentFoodBinding? = null
+    private var _binding: FragmentFoodBinding? = null
+    private val binding get() = _binding!!
     private val foodSearchFragment = FoodSearchFragment()
+
+    companion object {
+        const val TAG = "FoodFragment"
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragmentFoodBinding = FragmentFoodBinding.bind(view)
+        _binding = FragmentFoodBinding.bind(view)
 
-        binding = fragmentFoodBinding
 
         setFoodTime()
 
@@ -32,26 +37,26 @@ class FoodFragment : Fragment(R.layout.fragment_food) {
     }
 
     @SuppressLint("ResourceAsColor")
-    private fun setFoodTime() {
-        with(binding!!.layoutBreakfast) {
+    private fun setFoodTime() = with(binding){
+        with(layoutBreakfast) {
             timeImageView.setImageResource(FoodTime.BREAKFAST.timeImage)
             timeTextView.text = FoodTime.BREAKFAST.time
             timeTextView.setTextColor(FoodTime.BREAKFAST.textColor)
             moveSearchFood(foodAddImageButton, FoodTime.BREAKFAST.time)
         }
-        with(binding!!.layoutLunch) {
+        with(layoutLunch) {
             timeImageView.setImageResource(FoodTime.LUNCH.timeImage)
             timeTextView.text = FoodTime.LUNCH.time
             timeTextView.setTextColor(FoodTime.LUNCH.textColor)
             moveSearchFood(foodAddImageButton, FoodTime.LUNCH.time)
         }
-        with(binding!!.layoutDinner) {
+        with(layoutDinner) {
             timeImageView.setImageResource(FoodTime.DINNER.timeImage)
             timeTextView.text = FoodTime.DINNER.time
             timeTextView.setTextColor(FoodTime.DINNER.textColor)
             moveSearchFood(foodAddImageButton, FoodTime.DINNER.time)
         }
-        with(binding!!.layoutEtc) {
+        with(layoutEtc) {
             timeImageView.setImageResource(FoodTime.ETC.timeImage)
             timeTextView.text = FoodTime.ETC.time
             timeTextView.setTextColor(FoodTime.ETC.textColor)
@@ -64,6 +69,7 @@ class FoodFragment : Fragment(R.layout.fragment_food) {
         foodAddImageButton.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("time", time.toString())
+            Log.d(TAG, "time : $time")
 
             val foodInfoFragment = FoodInfoFragment()
 
@@ -71,5 +77,10 @@ class FoodFragment : Fragment(R.layout.fragment_food) {
 
             (activity as MainActivity).replaceFragment(foodSearchFragment)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

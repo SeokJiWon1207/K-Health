@@ -12,14 +12,14 @@ import java.time.format.DateTimeFormatter
 
 class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
 
-    private var binding: FragmentHealthBinding? = null
+    private var _binding: FragmentHealthBinding? = null
+    private val binding get() = _binding!!
     private val healthListFragment = HealthListFragment()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragmentHealthBinding = FragmentHealthBinding.bind(view)
-        binding = fragmentHealthBinding
+        _binding = FragmentHealthBinding.bind(view)
 
         moveHealthList()
         setDateToday()
@@ -28,18 +28,18 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
     }
 
     private fun setDateToday() {
-        binding!!.healthCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+        binding.healthCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             val monthString: String = if (month > 10) "${month+1}" else String.format("%02d", month+1)
             val dayOfMonthString: String = if (dayOfMonth >= 10) "$dayOfMonth" else String.format("%02d", dayOfMonth)
 
             Log.d("health", "${year}/${month}/${dayOfMonthString}")
 
-            binding!!.todayDateTextView.text = "${year}/${monthString}/${dayOfMonthString}"
+            binding.todayDateTextView.text = "${year}/${monthString}/${dayOfMonthString}"
         }
     }
 
     private fun moveHealthList() {
-        binding!!.healthListFloatingButton.setOnClickListener {
+        binding.healthListFloatingButton.setOnClickListener {
             (activity as MainActivity).replaceFragment(healthListFragment)
         }
     }
@@ -53,6 +53,6 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 }

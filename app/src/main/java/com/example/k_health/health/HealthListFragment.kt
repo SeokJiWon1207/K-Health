@@ -17,7 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
-    private var binding: FragmentHealthlistBinding? = null
+    private var _binding: FragmentHealthlistBinding? = null
+    private val binding get() = _binding!!
     private val db = FirebaseFirestore.getInstance()
     private var healthList: ArrayList<HealthList> = arrayListOf()
     private var healthListAdapter = HealthListAdapter(healthData = healthList)
@@ -49,8 +50,7 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragmentHealthListBinding = FragmentHealthlistBinding.bind(view)
-        binding = fragmentHealthListBinding
+        _binding = FragmentHealthlistBinding.bind(view)
 
         initTab()
         initRecyclerView()
@@ -62,27 +62,27 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     private fun initTab() {
 
         for (i in tabMainList.indices) {
-            binding!!.mainTabLayout.addTab(
-                binding!!.mainTabLayout.newTab().setText(
+            binding.mainTabLayout.addTab(
+                binding.mainTabLayout.newTab().setText(
                     tabMainList[i]
                 )
             )
         }
 
         for (i in tabSubList.indices) {
-            binding!!.subTabLayout.addTab(
-                binding!!.subTabLayout.newTab().setText(
+            binding.subTabLayout.addTab(
+                binding.subTabLayout.newTab().setText(
                     tabSubList[i]
                 )
             )
         }
 
-        setDualTabs(binding!!.mainTabLayout, binding!!.subTabLayout, tabMainList, tabSubList)
+        setDualTabs(binding.mainTabLayout, binding.subTabLayout, tabMainList, tabSubList)
 
     }
 
     private fun initRecyclerView() {
-        binding!!.recyclerView.apply {
+        binding.recyclerView.apply {
             adapter = healthListAdapter
             layoutManager = LinearLayoutManager(context)
         }
@@ -118,14 +118,14 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
                     maintab?.position -> db.collection("Health/${mainText[maintab?.position!!]}/${subText[subPosition]}")
                         .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                             healthList.clear()
-                            Log.d("TAG", "mainText: ${mainText[maintab?.position!!]}")
+                            Log.d("TAG", "mainText: ${mainText[maintab.position]}")
                             for (snapshot in querySnapshot!!.documents) {
                                 var healthitem = snapshot.toObject(HealthList::class.java)
 
                                 healthList.add(healthitem!!)
                             }
 
-                            mainPosition = maintab?.position!!
+                            mainPosition = maintab.position
                             healthListAdapter.notifyDataSetChanged()
                             Log.d("TAG", "${firebaseFirestoreException}")
 
@@ -155,7 +155,7 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
                                 healthList.add(healthitem!!)
                             }
-                            subPosition = subtab?.position!!
+                            subPosition = subtab.position
                             healthListAdapter.notifyDataSetChanged()
                             Log.d("TAG", "${firebaseFirestoreException}")
 
@@ -177,7 +177,7 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
     }
 
 }

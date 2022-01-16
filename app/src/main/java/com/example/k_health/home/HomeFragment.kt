@@ -36,7 +36,8 @@ import kotlinx.coroutines.cancel
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    private var binding: FragmentHomeBinding? = null
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     private var selectedUri: Uri? = null
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val storage: FirebaseStorage by lazy { Firebase.storage }
@@ -46,6 +47,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private var todolist: ArrayList<TodoList> = arrayListOf()
     private val todoListAdater = TodoListAdapter(todolist)
 
+    companion object {
+        const val TAG = "HomeFragment"
+    }
+
     init {
         setUserProfile()
     }
@@ -53,10 +58,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val fragmentHomeBinding = FragmentHomeBinding.bind(view)
-        binding = fragmentHomeBinding
+        _binding = FragmentHomeBinding.bind(view)
 
-        Log.d("TAG","userId : ${userId}")
+        Log.d(TAG, "userId : ${userId}")
 
         todolist.add(TodoList("아침식사", R.drawable.ic_baseline_restaurant_24_2))
         todolist.add(TodoList("점심식사", R.drawable.ic_baseline_restaurant_24_2))
@@ -97,14 +101,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .document(userId)
             .get()
             .addOnSuccessListener { document ->
-                binding?.userNameTextView?.text = (document["userNickname"].toString()).plus("님")
-                binding?.userWeightTextView?.text = document["userWeight"].toString()
-                binding?.userMuscleTextView?.text = document["userMuscle"].toString()
-                binding?.userFatTextView?.text = document["userFat"].toString()
+                binding.userNameTextView.text = (document["userNickname"].toString()).plus("님")
+                binding.userWeightTextView.text = document["userWeight"].toString()
+                binding.userMuscleTextView.text = document["userMuscle"].toString()
+                binding.userFatTextView.text = document["userFat"].toString()
 
             }
             .addOnFailureListener {
-                Log.d("Error","error : $it")
+                Log.d("Error", "error : $it")
             }
 
         storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE)
@@ -112,13 +116,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 if (it.isSuccessful) {
                     Glide.with(this)
                         .load(it.result)
-                        .into(binding!!.userProfileImageView)
+                        .into(binding.userProfileImageView)
                 }
             }
             .addOnFailureListener { error ->
                 Glide.with(this)
                     .load(R.drawable.ic_baseline_account_circle_24)
-                    .into(binding!!.userProfileImageView)
+                    .into(binding.userProfileImageView)
             }
     }
 
@@ -143,20 +147,20 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun userInfoSetPopup() {
-        binding?.userInfoFloatingButton?.setOnClickListener {
+        binding.userInfoFloatingButton.setOnClickListener {
             showPopup()
         }
     }
 
     private fun logoutButton() {
-        binding!!.logoutButton.setOnClickListener {
+        binding.logoutButton.setOnClickListener {
             auth.signOut()
             startActivity(Intent(requireContext(), LoginActivity::class.java))
         }
     }
 
     private fun initRecyclerView() {
-        binding!!.todolistRecyclerView.apply {
+        binding.todolistRecyclerView.apply {
             adapter = todoListAdater
             layoutManager = LinearLayoutManager(context)
         }
@@ -190,9 +194,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 .document(userId)
                 .update(userData)
                 .addOnSuccessListener {
-                        userInfoDialog.dismiss()
-                        Toast.makeText(requireContext(), "신체정보가 등록되었습니다", Toast.LENGTH_SHORT).show()
-                        setUserProfile()
+                    userInfoDialog.dismiss()
+                    Toast.makeText(requireContext(), "신체정보가 등록되었습니다", Toast.LENGTH_SHORT).show()
+                    setUserProfile()
                 }
                 .addOnFailureListener {
 
@@ -382,20 +386,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun showProgress() {
-        binding?.progressBar?.isVisible = true
+        binding.progressBar.isVisible = true
     }
 
     private fun hideProgress() {
-        binding?.progressBar?.isVisible = false
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        scope.cancel()
+        binding.progressBar.isVisible = false
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
+        _binding = null
+        scope.cancel()
     }
 }

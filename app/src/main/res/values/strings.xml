@@ -38,4 +38,11 @@
     <string name="label_unsaturatedFattyAcids">불포화지방산(g)</string>
     <string name="logout">로그아웃</string>
 
+    <string-array name="spinner_mealtime">
+        <item>아침식사</item>
+        <item>점심식사</item>
+        <item>저녁식사</item>
+        <item>간식/기타</item>
+    </string-array>
+
 </resources>
