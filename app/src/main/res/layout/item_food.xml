@@ -44,12 +44,11 @@
         app:layout_constraintTop_toTopOf="@id/gram_TextView"
         tool:text="350kcal" />
 
-    <ImageButton
-        android:id="@+id/historyKeywordDeleteButton"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:layout_marginEnd="12dp"
-        android:src="@drawable/ic_baseline_north_west_24"
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

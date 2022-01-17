@@ -2,6 +2,8 @@ package com.example.k_health.food
 
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -38,6 +40,7 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
         setupSpinnerHandler()
         initFoodRecyclerView()
         fetchFoodItems()
+        initSearchEditText()
 
     }
 
@@ -65,7 +68,7 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
 
     private fun initFoodRecyclerView() {
         foodListAdapter = FoodListAdapter(itemClickListener = {
-            bundle.putParcelable("item", it)
+            bundle.putParcelable("item", it) // 아이템을 클릭했을 때 직렬화한 아이템을 하나로 보냄
 
             foodInfoFragment.arguments = bundle
 
@@ -94,8 +97,33 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
         }
     }
 
+    private fun initSearchEditText() {
+        binding.searchEditText.setOnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
+                search(binding.searchEditText.text.toString())
+                return@setOnKeyListener true
+            }
+            return@setOnKeyListener false
+        }
+    }
+
+    private fun search(keyword: String) = scope.launch {
+        try {
+            Repository.getFoodByName(keyword)?.let {
+                (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
+                    Log.d(TAG,"items : ${it.body!!.items}")
+
+                    submitList(it.body.items!!)
+                }
+            }
+        } catch (exception: Exception) {
+            Log.d(TAG,"exception : $exception")
+        }
+    }
+
     override fun onResume() {
         super.onResume()
+        fetchFoodItems()
         Log.d(TAG,"onResume")
     }
 

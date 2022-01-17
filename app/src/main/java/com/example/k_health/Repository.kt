@@ -28,6 +28,10 @@ object Repository {
     suspend fun getFoodItems(): FoodResponse? =
         foodApiService.getFoodItems().body()
 
+    // 호출부
+    suspend fun getFoodByName(keyword: String): FoodResponse? =
+        foodApiService.getFoodByName(keyword).body()
+
     // 로깅 체크
     private fun buildHttpClient(): OkHttpClient =
         OkHttpClient.Builder()

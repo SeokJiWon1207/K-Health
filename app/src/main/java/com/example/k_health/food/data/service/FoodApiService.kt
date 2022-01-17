@@ -1,7 +1,6 @@
 package com.example.k_health.food.data.service
 
 import com.example.k_health.BuildConfig
-import com.example.k_health.food.data.models.Body
 import com.example.k_health.food.data.models.FoodResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -21,11 +20,12 @@ interface FoodApiService {
     // 사용자의 검색 키워드로 api 요청
     @GET(
         "getFoodNtrItdntList1?serviceKey=${BuildConfig.FOOD_SERVICE_KEY}" +
-                "&numOfRows=20+" +
-                "&pageNo=10" +
-                "&type=json"
+                "&numOfRows=10+" +
+                "&pageNo=1" +
+                "&type=json" +
+                "&desc_kor=바나나"
     )
     suspend fun getFoodByName(
-        @Query("desc_kor") keyWord: String
+        @Query("desc_kor") keyword: String
     ): Response<FoodResponse>
 }

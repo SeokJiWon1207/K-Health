@@ -1,6 +1,5 @@
 package com.example.k_health.food.data.models
 
-
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
@@ -38,5 +37,12 @@ data class Item(
     @SerializedName("NUTR_CONT9")
     val unsaturatedFattyAcids: String?, // 불포화지방산
     @SerializedName("SERVING_WT")
-    val gram: String?
-): Parcelable
+    val gram: String?,
+    var isSelected: Boolean
+
+): Parcelable {
+    @JvmName("setSelected1")
+    fun setSelected(selected: Boolean) {
+        isSelected = selected
+    }
+}
