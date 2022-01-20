@@ -30,7 +30,6 @@ class FoodFragment : Fragment(R.layout.fragment_food) {
 
         _binding = FragmentFoodBinding.bind(view)
 
-
         setFoodTime()
 
 

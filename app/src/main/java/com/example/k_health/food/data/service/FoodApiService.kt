@@ -22,8 +22,7 @@ interface FoodApiService {
         "getFoodNtrItdntList1?serviceKey=${BuildConfig.FOOD_SERVICE_KEY}" +
                 "&numOfRows=10+" +
                 "&pageNo=1" +
-                "&type=json" +
-                "&desc_kor=바나나"
+                "&type=json"
     )
     suspend fun getFoodByName(
         @Query("desc_kor") keyword: String

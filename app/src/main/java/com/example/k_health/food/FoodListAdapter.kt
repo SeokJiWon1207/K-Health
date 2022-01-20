@@ -2,6 +2,7 @@ package com.example.k_health.food
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.recyclerview.widget.DiffUtil
@@ -9,9 +10,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemFoodBinding
 import com.example.k_health.food.data.models.Item
+import com.example.k_health.model.HealthList
 
 class FoodListAdapter(private val itemClickListener: (Item) -> Unit) :
     ListAdapter<Item, FoodListAdapter.ViewHolder>(diffUtil) {
+
+    var checkedList = hashMapOf<Item, Boolean>()
 
     inner class ViewHolder(private val binding: ItemFoodBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -27,11 +31,13 @@ class FoodListAdapter(private val itemClickListener: (Item) -> Unit) :
 
             checkBox.apply {
                 setOnCheckedChangeListener(null) // 체크박스 리스너 초기화
-                isChecked = item.isSelected // 체크박스의 체크 여부를
+                isChecked = item.isSelected // 체크박스의 체크 여부를 데이터 클래스의 flag값으로 판단
                 setOnCheckedChangeListener(object : CompoundButton.OnCheckedChangeListener { // 체크박스의 상태값을 알기 위해 리스너 등록
                     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
-                        Log.d(TAG, "checkbox : ${adapterPosition}${isChecked}")
+                        Log.d(TAG, "position : ${adapterPosition} / isCheckd : ${isChecked}")
                         item.setSelected(isChecked) // 데이터 클래스의 객체와 동일
+                        checkedList[item] = item.isSelected
+                        Log.d(TAG,"${checkedList[item]}")
                     }
                 })
             }

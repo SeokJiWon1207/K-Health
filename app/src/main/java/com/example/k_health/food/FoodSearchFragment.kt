@@ -1,6 +1,8 @@
 package com.example.k_health.food
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -17,7 +19,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
+class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
 
     companion object {
         const val TAG = "FoodSearchFragment"
@@ -34,13 +36,20 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentFoodSearchBinding.bind(view)
 
-        Log.d(TAG,"onViewCreated")
+        Log.d(TAG, "onViewCreated")
 
         setupSpinnerMealtime()
         setupSpinnerHandler()
         initFoodRecyclerView()
         fetchFoodItems()
         initSearchEditText()
+
+        binding.enrollButton.setOnClickListener {
+            var checkedListSize = foodListAdapter.checkedList.size
+            binding.enrollButton.text = "등록하기".plus("(${checkedListSize})")
+            Log.d(TAG, "${foodListAdapter.checkedList}")
+
+        }
 
     }
 
@@ -53,9 +62,14 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
     private fun setupSpinnerHandler() {
         binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             // 아이템이 선택되었을때
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 bundle.putString("mealtime", binding.spinner.selectedItem.toString())
-                Log.d(TAG,binding.spinner.selectedItem.toString())
+                Log.d(TAG, binding.spinner.selectedItem.toString())
 
                 foodInfoFragment.arguments = bundle
             }
@@ -87,23 +101,45 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
         try {
             Repository.getFoodItems()?.let {
                 (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
-                    Log.d(TAG,"items : ${it.body!!.items}")
+                    Log.d(TAG, "items : ${it.body!!.items}")
 
                     submitList(it.body.items!!)
                 }
             }
         } catch (exception: Exception) {
-            Log.d(TAG,"exception : $exception")
+            Log.d(TAG, "exception : $exception")
         }
     }
 
-    private fun initSearchEditText() {
-        binding.searchEditText.setOnKeyListener { v, keyCode, event ->
+    private fun initSearchEditText() = with(binding) {
+        searchEditText.setOnKeyListener { v, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
                 search(binding.searchEditText.text.toString())
                 return@setOnKeyListener true
             }
             return@setOnKeyListener false
+        }
+
+        searchEditText.addTextChangedListener(object: TextWatcher {
+            // 텍스트 변경 중 호출
+            override fun afterTextChanged(s: Editable?) {
+                if (searchEditText.text.length > 0) {
+                    editTextClearButton.visibility = View.VISIBLE
+                } else {
+                    editTextClearButton.visibility = View.GONE
+                }
+            }
+
+            // 텍스트 변경 전 호출
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            // 텍스트 변경 후 호출
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+        })
+
+        editTextClearButton.setOnClickListener {
+            searchEditTextClear()
         }
     }
 
@@ -111,47 +147,52 @@ class FoodSearchFragment: Fragment(R.layout.fragment_food_search) {
         try {
             Repository.getFoodByName(keyword)?.let {
                 (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
-                    Log.d(TAG,"items : ${it.body!!.items}")
+                    Log.d(TAG, "keyword items : ${it.body!!.items}")
 
                     submitList(it.body.items!!)
                 }
             }
         } catch (exception: Exception) {
-            Log.d(TAG,"exception : $exception")
+            Log.d(TAG, "exception : $exception")
         }
+    }
+
+    private fun searchEditTextClear() {
+        binding.searchEditText.text.clear()
     }
 
     override fun onResume() {
         super.onResume()
         fetchFoodItems()
-        Log.d(TAG,"onResume")
+        Log.d(TAG, "onResume")
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d(TAG,"onPause")
+        Log.d(TAG, "onPause")
     }
 
     override fun onStop() {
         super.onStop()
-        Log.d(TAG,"onStop")
+        Log.d(TAG, "onStop")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        searchEditTextClear()
         _binding = null
-        Log.d(TAG,"onDestroyView")
+        Log.d(TAG, "onDestroyView")
     }
 
     override fun onDestroy() {
         super.onDestroy()
         scope.cancel()
-        Log.d(TAG,"onDestroy")
+        Log.d(TAG, "onDestroy")
     }
 
     override fun onDetach() {
         super.onDetach()
-        Log.d(TAG,"onDetach")
+        Log.d(TAG, "onDetach")
     }
 
 }

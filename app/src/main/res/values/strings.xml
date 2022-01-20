@@ -22,6 +22,7 @@
     <string name="healthname">운동 이름</string>
     <string name="healthrecord">운동 기록</string>
     <string name="label_todo">오늘 할 일</string>
+    <string name="label_enroll">등록하기</string>
     <string name="label_completed">임무 완료</string>
     <string name="label_task">Task</string>
     <string name="label_record">기록을 해주세요</string>
