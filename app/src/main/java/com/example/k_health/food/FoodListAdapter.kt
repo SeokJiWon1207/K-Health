@@ -15,7 +15,7 @@ import com.example.k_health.model.HealthList
 class FoodListAdapter(private val itemClickListener: (Item) -> Unit) :
     ListAdapter<Item, FoodListAdapter.ViewHolder>(diffUtil) {
 
-    var checkedList = hashMapOf<Item, Boolean>()
+    var checkedList = mutableListOf<Item>()
 
     inner class ViewHolder(private val binding: ItemFoodBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -36,8 +36,8 @@ class FoodListAdapter(private val itemClickListener: (Item) -> Unit) :
                     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
                         Log.d(TAG, "position : ${adapterPosition} / isCheckd : ${isChecked}")
                         item.setSelected(isChecked) // 데이터 클래스의 객체와 동일
-                        checkedList[item] = item.isSelected
-                        Log.d(TAG,"${checkedList[item]}")
+                        // checkedList.add(item)
+                        Log.d(TAG,"${checkedList}")
                     }
                 })
             }

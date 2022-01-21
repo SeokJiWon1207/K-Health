@@ -15,6 +15,7 @@ import com.example.k_health.MainActivity
 import com.example.k_health.R
 import com.example.k_health.Repository
 import com.example.k_health.databinding.FragmentFoodSearchBinding
+import com.example.k_health.food.data.models.Item
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -45,13 +46,13 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
         initSearchEditText()
 
         binding.enrollButton.setOnClickListener {
-            var checkedListSize = foodListAdapter.checkedList.size
+            var checkedListSize = foodListAdapter.checkedList.count { it.isSelected == true }
             binding.enrollButton.text = "등록하기".plus("(${checkedListSize})")
-            Log.d(TAG, "${foodListAdapter.checkedList}")
-
+            Log.d(TAG, "${foodListAdapter.checkedList.filter { it.isSelected == true }}")
         }
 
     }
+
 
     private fun setupSpinnerMealtime() {
         val mealtime = resources.getStringArray(R.array.spinner_mealtime)
@@ -120,7 +121,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
             return@setOnKeyListener false
         }
 
-        searchEditText.addTextChangedListener(object: TextWatcher {
+        searchEditText.addTextChangedListener(object : TextWatcher {
             // 텍스트 변경 중 호출
             override fun afterTextChanged(s: Editable?) {
                 if (searchEditText.text.length > 0) {
