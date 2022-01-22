@@ -11,16 +11,21 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.k_health.DBKey
 import com.example.k_health.MainActivity
 import com.example.k_health.R
 import com.example.k_health.Repository
 import com.example.k_health.databinding.FragmentFoodSearchBinding
-import com.example.k_health.food.data.models.Item
+import com.example.k_health.health.TimeInterface
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
+class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterface {
 
     companion object {
         const val TAG = "FoodSearchFragment"
@@ -28,6 +33,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
 
     private var _binding: FragmentFoodSearchBinding? = null
     private val binding get() = _binding!!
+    private val db = FirebaseFirestore.getInstance()
     private val scope = MainScope()
     private val foodInfoFragment = FoodInfoFragment()
     private lateinit var foodListAdapter: FoodListAdapter
@@ -39,18 +45,59 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
 
         Log.d(TAG, "onViewCreated")
 
+        recordFoods()
         setupSpinnerMealtime()
         setupSpinnerHandler()
         initFoodRecyclerView()
         fetchFoodItems()
         initSearchEditText()
+        initView()
 
+
+    }
+
+    private fun recordFoods() {
         binding.enrollButton.setOnClickListener {
-            var checkedListSize = foodListAdapter.checkedList.count { it.isSelected == true }
-            binding.enrollButton.text = "등록하기".plus("(${checkedListSize})")
+            val today = timeGenerator()
+            val mealtime = binding.spinner.selectedItem.toString()
             Log.d(TAG, "${foodListAdapter.checkedList.filter { it.isSelected == true }}")
-        }
+            Log.d(TAG, "식사시간 : $mealtime")
+            var foodSelectedList = foodListAdapter.checkedList.filter { it.isSelected == true }
+            var foodRecordData = mutableMapOf<String, Any>()
 
+            for (i in foodSelectedList.indices) {
+
+                foodRecordData["foodName"] = foodSelectedList[i].foodName.toString()
+                foodRecordData["kcal"] = foodSelectedList[i].kcal.toString()
+                foodRecordData["carbon"] = foodSelectedList[i].carbon.toString()
+                foodRecordData["protein"] = foodSelectedList[i].protein.toString()
+                foodRecordData["fat"] = foodSelectedList[i].fat.toString()
+
+                db.collection(DBKey.COLLECTION_NAME_USERS)
+                    .document(Repository.userId)
+                    .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
+                    .document(today) // 당일 날짜
+                    .collection(mealtime) // 현재 선택한 식사 시간
+                    .document(foodSelectedList[i].foodName!!)
+                    .set(foodRecordData) // 식사 데이터
+                    .addOnSuccessListener {
+                        Log.d(TAG, "success")
+                        if (i.equals(foodSelectedList.size - 1)) { // 마지막 데이터를 넣을 때 스낵바 호출
+                            Snackbar.make(requireView(), "${mealtime}가 등록되었습니다.", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("확인", object: View.OnClickListener {
+                                    override fun onClick(v: View?) {
+                                        val foodFragment = FoodFragment()
+                                        (activity as MainActivity).replaceFragment(foodFragment)
+                                    }
+                                })
+                                .show()
+                        }
+                    }
+                    .addOnFailureListener { error ->
+                        Log.d(TAG, "error : $error")
+                    }
+            }
+        }
     }
 
 
@@ -79,6 +126,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
 
             }
         }
+
     }
 
     private fun initFoodRecyclerView() {
@@ -103,7 +151,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
             Repository.getFoodItems()?.let {
                 (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
                     Log.d(TAG, "items : ${it.body!!.items}")
-
                     submitList(it.body.items!!)
                 }
             }
@@ -113,35 +160,41 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
     }
 
     private fun initSearchEditText() = with(binding) {
-        searchEditText.setOnKeyListener { v, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
-                search(binding.searchEditText.text.toString())
-                return@setOnKeyListener true
-            }
-            return@setOnKeyListener false
-        }
-
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            // 텍스트 변경 중 호출
-            override fun afterTextChanged(s: Editable?) {
-                if (searchEditText.text.length > 0) {
-                    editTextClearButton.visibility = View.VISIBLE
-                } else {
-                    editTextClearButton.visibility = View.GONE
+        searchEditText.apply {
+            setOnKeyListener { v, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
+                    search(binding.searchEditText.text.toString())
+                    return@setOnKeyListener true
                 }
+                return@setOnKeyListener false
             }
 
-            // 텍스트 변경 전 호출
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            addTextChangedListener(object : TextWatcher {
+                // 텍스트 변경 중 호출
+                override fun afterTextChanged(s: Editable?) {
+                    if (text!!.length > 0) {
+                        editTextClearButton.visibility = View.VISIBLE
+                    } else {
+                        editTextClearButton.visibility = View.GONE
+                    }
+                }
 
-            // 텍스트 변경 후 호출
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                // 텍스트 변경 전 호출
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
 
-        })
+                // 텍스트 변경 후 호출
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
-        editTextClearButton.setOnClickListener {
-            searchEditTextClear()
+            })
         }
+
+        searchEditTextClear()
     }
 
     private fun search(keyword: String) = scope.launch {
@@ -158,8 +211,23 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search) {
         }
     }
 
-    private fun searchEditTextClear() {
-        binding.searchEditText.text.clear()
+    private fun searchEditTextClear() = with(binding) {
+        editTextClearButton.setOnClickListener {
+            Log.d(TAG,"clear")
+            searchEditText.text!!.clear()
+        }
+    }
+
+    private fun initView() {
+        Log.d(TAG,"todayDate: ${arguments?.getString("todayDate")}")
+        binding.foodDateTextView.text = arguments?.getString("todayDate")
+    }
+
+    override fun timeGenerator(): String {
+        val now = LocalDate.now()
+        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+
+        return todayNow
     }
 
     override fun onResume() {

@@ -11,7 +11,7 @@ interface FoodApiService {
 
     @GET(
         "getFoodNtrItdntList1?serviceKey=${BuildConfig.FOOD_SERVICE_KEY}" +
-                "&numOfRows=30" +
+                "&numOfRows=100" +
                 "&pageNo=3" +
                 "&type=json"
     )

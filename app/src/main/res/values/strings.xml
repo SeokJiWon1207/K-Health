@@ -45,7 +45,7 @@
         <item>아침식사</item>
         <item>점심식사</item>
         <item>저녁식사</item>
-        <item>간식/기타</item>
+        <item>간식,기타</item>
     </string-array>
 
 </resources>

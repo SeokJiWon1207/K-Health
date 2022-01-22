@@ -20,6 +20,8 @@ class FoodFragment : Fragment(R.layout.fragment_food) {
     private var _binding: FragmentFoodBinding? = null
     private val binding get() = _binding!!
     private val foodSearchFragment = FoodSearchFragment()
+    private val foodInfoFragment = FoodInfoFragment()
+    private val bundle = Bundle()
 
     companion object {
         const val TAG = "FoodFragment"
@@ -31,6 +33,7 @@ class FoodFragment : Fragment(R.layout.fragment_food) {
         _binding = FragmentFoodBinding.bind(view)
 
         setFoodTime()
+        setDateToday()
 
 
     }
@@ -63,14 +66,25 @@ class FoodFragment : Fragment(R.layout.fragment_food) {
         }
     }
 
+    private fun setDateToday() {
+        binding.foodCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            val monthString: String = if (month > 10) "${month+1}" else String.format("%02d", month+1)
+            val dayOfMonthString: String = if (dayOfMonth >= 10) "$dayOfMonth" else String.format("%02d", dayOfMonth)
+            val todayDate = "${year}/${monthString}/${dayOfMonthString}"
+            Log.d(TAG, "${year}/${monthString}/${dayOfMonthString}")
+
+            bundle.putString("todayDate", todayDate)
+
+            foodSearchFragment.arguments = bundle
+        }
+    }
+
 
     private fun moveSearchFood(foodAddImageButton: ImageButton, time: Any) {
         foodAddImageButton.setOnClickListener {
-            val bundle = Bundle()
+
             bundle.putString("time", time.toString())
             Log.d(TAG, "time : $time")
-
-            val foodInfoFragment = FoodInfoFragment()
 
             foodInfoFragment.arguments = bundle
 
