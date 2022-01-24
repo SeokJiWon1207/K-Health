@@ -35,9 +35,9 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 healthList.clear()
                 for (snapshot in querySnapshot!!.documents) {
-                    var healthitem = snapshot.toObject(HealthList::class.java)
+                    var healthItem = snapshot.toObject(HealthList::class.java)
 
-                    healthList.add(healthitem!!)
+                    healthList.add(healthItem!!)
                 }
 
                 healthListAdapter.notifyDataSetChanged()

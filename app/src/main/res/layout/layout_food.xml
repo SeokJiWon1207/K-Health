@@ -48,7 +48,7 @@
                 android:scaleType="fitXY" />
 
             <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/foodOpen_ImageButton"
+                android:id="@+id/foodRecordOpen_ImageButton"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_below="@+id/foodAdd_ImageButton"
@@ -58,10 +58,10 @@
                 tools:ignore="VectorDrawableCompat" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/foodRecord_RecyclerView"
                 android:overScrollMode="never"
-                android:layout_below="@+id/foodOpen_ImageButton"
+                android:layout_below="@+id/foodRecordOpen_ImageButton"
                 android:visibility="gone"
-                android:id="@+id/list_today"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </RelativeLayout>

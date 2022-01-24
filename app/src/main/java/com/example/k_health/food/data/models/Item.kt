@@ -13,32 +13,32 @@ data class Item(
     // json 데이터의 변수명과 다르게 변수를 짓는 경우
     // @SerializedName("속성명")으로 설정 가능
     @SerializedName("ANIMAL_PLANT")
-    val aNIMALPLANT: String?,
+    val aNIMALPLANT: String? = "",
     @SerializedName("BGN_YEAR")
-    val bGNYEAR: String?,
+    val bGNYEAR: String? = "",
     @SerializedName("DESC_KOR")
-    val foodName: String?,
+    val foodName: String? = "",
     @SerializedName("NUTR_CONT1")
-    val kcal: String?,
+    val kcal: String? = "",
     @SerializedName("NUTR_CONT2")
-    val carbon: String?,
+    val carbon: String? = "",
     @SerializedName("NUTR_CONT3")
-    val protein: String?,
+    val protein: String? = "",
     @SerializedName("NUTR_CONT4")
-    val fat: String?,
+    val fat: String? = "",
     @SerializedName("NUTR_CONT5")
-    val sugar: String?, // 당
+    val sugar: String? = "", // 당
     @SerializedName("NUTR_CONT6")
-    val sodium: String?, // 나트륨
+    val sodium: String? = "", // 나트륨
     @SerializedName("NUTR_CONT7")
-    val cholesterol: String?, // 콜레스테롤
+    val cholesterol: String? = "", // 콜레스테롤
     @SerializedName("NUTR_CONT8")
-    val saturatedFattyAcids: String?, // 포화지방산
+    val saturatedFattyAcids: String? = "", // 포화지방산
     @SerializedName("NUTR_CONT9")
-    val unsaturatedFattyAcids: String?, // 불포화지방산
+    val unsaturatedFattyAcids: String? = "", // 불포화지방산
     @SerializedName("SERVING_WT")
-    val gram: String?,
-    var isSelected: Boolean
+    val gram: String? = "",
+    var isSelected: Boolean = false
 
 ): Parcelable {
     @JvmName("setSelected1")
