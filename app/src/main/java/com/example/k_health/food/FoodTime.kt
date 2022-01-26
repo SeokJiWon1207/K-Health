@@ -11,5 +11,5 @@ enum class FoodTime(val timeImage: Int, val time: String, @ColorRes val textColo
 
     DINNER(R.drawable.ic_dinner, "저녁식사", R.color.purple),
 
-    ETC(R.drawable.ic_etc, "간식/기타", R.color.indigo)
+    ETC(R.drawable.ic_etc, "간식,기타", R.color.indigo)
 }

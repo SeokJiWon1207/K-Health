@@ -18,8 +18,8 @@ class HealthListAdapter(private val healthData: ArrayList<HealthList>) :
     private var listener : OnItemClickListener? = null
 
     // 외부(액티비티나 프래그먼트)에서 사용할 수 있도록 메서드 정의하기
-    fun setOnItemClickListener(listener : OnItemClickListener) {
-        this.listener = listener
+    fun setOnItemClickListener(Listener : OnItemClickListener) {
+        this.listener = Listener
     }
 
     inner class ViewHolder(private val binding: ItemHealthlistBinding) :

@@ -57,8 +57,11 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     private fun recordFoods() = with(binding) {
         val today = timeGenerator()
+        val selectedDate = arguments?.getString("selectedDate") ?: today
         foodDateTextView.text = arguments?.getString("todayDate") ?: today
-        val selectedDate = foodDateTextView.text.toString()
+
+        Log.d(TAG, "selectedDate: $selectedDate")
+
         enrollButton.setOnClickListener {
             val mealtime = spinner.selectedItem.toString()
             var foodSelectedList = foodListAdapter.checkedList.filter { it.isSelected == true }
@@ -236,7 +239,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     override fun timeGenerator(): String {
         val now = LocalDate.now()
-        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
 
         return todayNow
     }
