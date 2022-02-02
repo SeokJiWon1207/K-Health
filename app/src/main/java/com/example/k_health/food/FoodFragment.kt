@@ -15,8 +15,9 @@ import com.example.k_health.databinding.FragmentFoodBinding
 import com.example.k_health.databinding.LayoutFoodBinding
 import com.example.k_health.food.data.models.Item
 import com.example.k_health.health.TimeInterface
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -27,40 +28,138 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private val db = FirebaseFirestore.getInstance()
     private val foodSearchFragment = FoodSearchFragment()
     private val foodInfoFragment = FoodInfoFragment()
+    private val recordedFoodList: ArrayList<Item> = arrayListOf()
+    private var breakfastFoodmap = mutableMapOf<String, ArrayList<Item>>()
+    private var lunchFoodmap = mutableMapOf<String, ArrayList<Item>>()
+    private var dinnerFoodmap = mutableMapOf<String, ArrayList<Item>>()
+    private var etcFoodmap = mutableMapOf<String, ArrayList<Item>>()
     private lateinit var foodRecordListAdapter: FoodRecordListAdapter
+    private lateinit var foodRecordListAdapter2: FoodRecordListAdapter
+    private lateinit var foodRecordListAdapter3: FoodRecordListAdapter
+    private val scope = MainScope()
     private val bundle = Bundle()
-    private var SelectedDate = "20220119"
 
     companion object {
         const val TAG = "FoodFragment"
     }
+
+
+    init {
+        breakfastFoodmap.put(
+            "아침식사",
+            arrayListOf(
+                Item(
+                    aNIMALPLANT = "",
+                    bGNYEAR = "",
+                    foodName = "아침",
+                    kcal = "444.00",
+                    carbon = "42.75",
+                    protein = "16.80",
+                    fat = "22.80",
+                    sugar = "N/A",
+                    sodium = "927.00",
+                    cholesterol = "N/A",
+                    saturatedFattyAcids = "N/A",
+                    unsaturatedFattyAcids = "N/A",
+                    gram = "150",
+                    isSelected = false
+                )
+            )
+        )
+        lunchFoodmap.put(
+            "점심식사",
+            arrayListOf(
+                Item(
+                    aNIMALPLANT = "",
+                    bGNYEAR = "",
+                    foodName = "점심",
+                    kcal = "444.00",
+                    carbon = "42.75",
+                    protein = "16.80",
+                    fat = "22.80",
+                    sugar = "N/A",
+                    sodium = "927.00",
+                    cholesterol = "N/A",
+                    saturatedFattyAcids = "N/A",
+                    unsaturatedFattyAcids = "N/A",
+                    gram = "150",
+                    isSelected = false
+                )
+            )
+        )
+        dinnerFoodmap.put(
+            "저녁식사",
+            arrayListOf(
+                Item(
+                    aNIMALPLANT = "",
+                    bGNYEAR = "",
+                    foodName = "저녁",
+                    kcal = "444.00",
+                    carbon = "42.75",
+                    protein = "16.80",
+                    fat = "22.80",
+                    sugar = "N/A",
+                    sodium = "927.00",
+                    cholesterol = "N/A",
+                    saturatedFattyAcids = "N/A",
+                    unsaturatedFattyAcids = "N/A",
+                    gram = "150",
+                    isSelected = false
+                )
+            )
+        )
+        etcFoodmap.put(
+            "간식,기타",
+            arrayListOf(
+                Item(
+                    aNIMALPLANT = "",
+                    bGNYEAR = "",
+                    foodName = "간식,기타",
+                    kcal = "444.00",
+                    carbon = "42.75",
+                    protein = "16.80",
+                    fat = "22.80",
+                    sugar = "N/A",
+                    sodium = "927.00",
+                    cholesterol = "N/A",
+                    saturatedFattyAcids = "N/A",
+                    unsaturatedFattyAcids = "N/A",
+                    gram = "150",
+                    isSelected = false
+                )
+            )
+        )
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentFoodBinding.bind(view)
 
-        setDateToday()
-        setFoodTime()
+        initViews()
+        getFoodRecordWithBreakfast()
 
 
     }
 
     @SuppressLint("ResourceAsColor")
-    private fun setFoodTime() = with(binding){
+    private fun initViews() = with(binding) {
         with(layoutBreakfast) {
             timeImageView.setImageResource(FoodTime.BREAKFAST.timeImage)
             timeTextView.text = FoodTime.BREAKFAST.time
             timeTextView.setTextColor(FoodTime.BREAKFAST.textColor)
+            foodRecordListAdapter = FoodRecordListAdapter(breakfastFoodmap[FoodTime.BREAKFAST.time]!!)
+            initRecyclerView(this, foodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
-            getFoodRecordWithMealtime(setDateToday(), FoodTime.BREAKFAST.time, this)
             moveSearchFood(foodAddImageButton, FoodTime.BREAKFAST.time)
         }
         with(layoutLunch) {
             timeImageView.setImageResource(FoodTime.LUNCH.timeImage)
             timeTextView.text = FoodTime.LUNCH.time
             timeTextView.setTextColor(FoodTime.LUNCH.textColor)
-            getFoodRecordWithMealtime(setDateToday(), FoodTime.LUNCH.time, this)
+            foodRecordListAdapter2 = FoodRecordListAdapter(lunchFoodmap[FoodTime.LUNCH.time]!!)
+            initRecyclerView(this, foodRecordListAdapter2)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.LUNCH.time)
         }
@@ -68,7 +167,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.DINNER.timeImage)
             timeTextView.text = FoodTime.DINNER.time
             timeTextView.setTextColor(FoodTime.DINNER.textColor)
-            getFoodRecordWithMealtime(setDateToday(), FoodTime.DINNER.time, this)
+            foodRecordListAdapter3 = FoodRecordListAdapter(dinnerFoodmap[FoodTime.DINNER.time]!!)
+            initRecyclerView(this, foodRecordListAdapter3)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.DINNER.time)
         }
@@ -76,60 +176,127 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.ETC.timeImage)
             timeTextView.text = FoodTime.ETC.time
             timeTextView.setTextColor(FoodTime.ETC.textColor)
-            getFoodRecordWithMealtime(setDateToday(), FoodTime.ETC.time, this)
+            foodRecordListAdapter = FoodRecordListAdapter(etcFoodmap[FoodTime.ETC.time]!!)
+            initRecyclerView(this, foodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.ETC.time)
         }
     }
 
-    // TODO 날짜 반환하기
-    private fun setDateToday(): String {
+    private fun getFoodRecordWithBreakfast() {
         binding.foodCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            val monthString: String = if (month > 10) "${month+1}" else String.format("%02d", month+1)
-            val dayOfMonthString: String = if (dayOfMonth >= 10) "$dayOfMonth" else String.format("%02d", dayOfMonth)
+            val monthString: String =
+                if (month > 10) "${month + 1}" else String.format("%02d", month + 1)
+            val dayOfMonthString: String =
+                if (dayOfMonth >= 10) "$dayOfMonth" else String.format("%02d", dayOfMonth)
             val todayDate = "${year}/${monthString}/${dayOfMonthString}" //
-            val selectedDate = "${year}${monthString}${dayOfMonthString}" // firestore의 path로 '/'사용불가
+            val selectedDate =
+                "${year}${monthString}${dayOfMonthString}" // firestore의 path로 '/'사용불가
             Log.d(TAG, "selectedDate: $selectedDate")
-            SelectedDate = selectedDate
+
             bundle.putString("todayDate", todayDate)
             bundle.putString("selectedDate", selectedDate)
 
             foodSearchFragment.arguments = bundle
-        }
 
-        return SelectedDate
+            // 아침
+            db.collection(DBKey.COLLECTION_NAME_USERS)
+                .document(Repository.userId)
+                .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
+                .document(selectedDate) // 캘린더 선택 날짜
+                .collection(FoodTime.BREAKFAST.time) // 식사 구분
+                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                    recordedFoodList.clear()
+                    breakfastFoodmap.clear()
+                    for (snapshot in querySnapshot!!.documents) {
+                        val foodRecordItem = snapshot.toObject(Item::class.java)
+                        recordedFoodList.add(foodRecordItem!!)
+                    }
+                    breakfastFoodmap.put(FoodTime.BREAKFAST.time, recordedFoodList)
+                    //foodRecordListAdapter.notifyDataSetChanged()
+                    Log.d(TAG,"breakfastMap: $breakfastFoodmap")
+                    // TODO foodmap 데이터 정렬하기
+                    binding.layoutBreakfast.foodRecordRecyclerView.apply {
+                        foodRecordListAdapter =
+                            FoodRecordListAdapter(breakfastFoodmap[FoodTime.BREAKFAST.time]!!)
+                        layoutManager = LinearLayoutManager(context)
+                        adapter = foodRecordListAdapter
+                    }
+
+                }
+
+            // 점심
+            db.collection(DBKey.COLLECTION_NAME_USERS)
+                .document(Repository.userId)
+                .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
+                .document(selectedDate) // 캘린더 선택 날짜
+                .collection(FoodTime.LUNCH.time) // 식사 구분
+                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                    recordedFoodList.clear()
+                    lunchFoodmap.clear()
+                    for (snapshot in querySnapshot!!.documents) {
+                        val foodRecordItem = snapshot.toObject(Item::class.java)
+                        recordedFoodList.add(foodRecordItem!!)
+                    }
+                    lunchFoodmap.put(FoodTime.LUNCH.time, recordedFoodList)
+                    //foodRecordListAdapter2.notifyDataSetChanged()
+                    Log.d(TAG,"lunchMap: $lunchFoodmap")
+                    // TODO foodmap 데이터 정렬하기
+                    binding.layoutLunch.foodRecordRecyclerView.apply {
+                        foodRecordListAdapter2 =
+                            FoodRecordListAdapter(lunchFoodmap[FoodTime.LUNCH.time]!!)
+                        layoutManager = LinearLayoutManager(context)
+                        adapter = foodRecordListAdapter2
+                    }
+                }
+
+            // 저녁
+            db.collection(DBKey.COLLECTION_NAME_USERS)
+                .document(Repository.userId)
+                .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
+                .document(selectedDate) // 캘린더 선택 날짜
+                .collection(FoodTime.DINNER.time) // 식사 구분
+                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                    recordedFoodList.clear()
+                    dinnerFoodmap.clear()
+                    for (snapshot in querySnapshot!!.documents) {
+                        val foodRecordItem = snapshot.toObject(Item::class.java)
+                        recordedFoodList.add(foodRecordItem!!)
+                    }
+                    dinnerFoodmap.put(FoodTime.DINNER.time, recordedFoodList)
+                    // foodRecordListAdapter3.notifyDataSetChanged()
+                    Log.d(TAG,"dinnerMap: $dinnerFoodmap")
+                    // TODO foodmap 데이터 정렬하기
+                    binding.layoutDinner.foodRecordRecyclerView.apply {
+                        foodRecordListAdapter3 =
+                            FoodRecordListAdapter(dinnerFoodmap[FoodTime.DINNER.time]!!)
+                        layoutManager = LinearLayoutManager(context)
+                        adapter = foodRecordListAdapter3
+                    }
+                }
+
+        }
     }
 
-    private fun getFoodRecordWithMealtime(selectedDate: String, mealtime: String, layoutFoodBinding: LayoutFoodBinding) {
-        val recordedFoodList: ArrayList<Item> = arrayListOf()
 
-        db.collection(DBKey.COLLECTION_NAME_USERS)
-            .document(Repository.userId)
-            .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
-            .document(selectedDate) // 캘린더 선택 날짜
-            .collection(mealtime) // 식사 구분
-            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-            recordedFoodList.clear()
-                for (snapshot in querySnapshot!!.documents) {
-                    var foodRecordItem = snapshot.toObject(Item::class.java)
-                    recordedFoodList.add(foodRecordItem!!)
-                }
-                foodRecordListAdapter.notifyDataSetChanged()
-            }
-
-        Log.d(TAG,"recordedFoodList: $recordedFoodList")
-
-        foodRecordListAdapter = FoodRecordListAdapter(recordedFoodList)
-
+    private fun initRecyclerView(
+        layoutFoodBinding: LayoutFoodBinding,
+        foodRecordListAdapter: FoodRecordListAdapter
+    ) {
         layoutFoodBinding.foodRecordRecyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = foodRecordListAdapter
         }
     }
 
-    private fun showFoodRecordRecyclerView(showButton: ImageButton, layoutFoodBinding: LayoutFoodBinding) {
+
+    private fun showFoodRecordRecyclerView(
+        showButton: ImageButton,
+        layoutFoodBinding: LayoutFoodBinding
+    ) {
         showButton.setOnClickListener {
             layoutFoodBinding.foodRecordRecyclerView.visibility = View.VISIBLE
+            Log.d(TAG, "clicked")
         }
     }
 
@@ -156,5 +323,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        scope.cancel()
     }
 }

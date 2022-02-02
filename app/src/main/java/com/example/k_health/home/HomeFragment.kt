@@ -111,6 +111,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 Log.d("Error", "error : $it")
             }
 
+
         storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE)
             .child("${userId}.png").downloadUrl.addOnCompleteListener {
                 if (it.isSuccessful) {
@@ -253,7 +254,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }*/
 
     private fun uploadProfileImage() {
-        binding?.userProfileImageView?.setOnClickListener {
+        binding.userProfileImageView.setOnClickListener {
             showProgress()
             when {
                 ContextCompat.checkSelfPermission(
