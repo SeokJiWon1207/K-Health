@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageButton
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.DBKey
@@ -16,8 +17,7 @@ import com.example.k_health.databinding.LayoutFoodBinding
 import com.example.k_health.food.data.models.Item
 import com.example.k_health.health.TimeInterface
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -33,9 +33,10 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private var lunchFoodmap = mutableMapOf<String, ArrayList<Item>>()
     private var dinnerFoodmap = mutableMapOf<String, ArrayList<Item>>()
     private var etcFoodmap = mutableMapOf<String, ArrayList<Item>>()
-    private lateinit var foodRecordListAdapter: FoodRecordListAdapter
+    private lateinit var foodRecordListAdapter1: FoodRecordListAdapter
     private lateinit var foodRecordListAdapter2: FoodRecordListAdapter
     private lateinit var foodRecordListAdapter3: FoodRecordListAdapter
+    private lateinit var foodRecordListAdapter4: FoodRecordListAdapter
     private val scope = MainScope()
     private val bundle = Bundle()
 
@@ -149,8 +150,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.BREAKFAST.timeImage)
             timeTextView.text = FoodTime.BREAKFAST.time
             timeTextView.setTextColor(FoodTime.BREAKFAST.textColor)
-            foodRecordListAdapter = FoodRecordListAdapter(breakfastFoodmap[FoodTime.BREAKFAST.time]!!)
-            initRecyclerView(this, foodRecordListAdapter)
+            foodRecordListAdapter1 = FoodRecordListAdapter(breakfastFoodmap[FoodTime.BREAKFAST.time]!!)
+            initRecyclerView(this, foodRecordListAdapter1)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.BREAKFAST.time)
         }
@@ -176,13 +177,14 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.ETC.timeImage)
             timeTextView.text = FoodTime.ETC.time
             timeTextView.setTextColor(FoodTime.ETC.textColor)
-            foodRecordListAdapter = FoodRecordListAdapter(etcFoodmap[FoodTime.ETC.time]!!)
-            initRecyclerView(this, foodRecordListAdapter)
+            foodRecordListAdapter4 = FoodRecordListAdapter(etcFoodmap[FoodTime.ETC.time]!!)
+            initRecyclerView(this, foodRecordListAdapter4)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.ETC.time)
         }
     }
 
+    // TODO 동기처리해보기
     private fun getFoodRecordWithBreakfast() {
         binding.foodCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             val monthString: String =
@@ -194,12 +196,13 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                 "${year}${monthString}${dayOfMonthString}" // firestore의 path로 '/'사용불가
             Log.d(TAG, "selectedDate: $selectedDate")
 
+
             bundle.putString("todayDate", todayDate)
             bundle.putString("selectedDate", selectedDate)
 
             foodSearchFragment.arguments = bundle
 
-            // 아침
+
             db.collection(DBKey.COLLECTION_NAME_USERS)
                 .document(Repository.userId)
                 .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
@@ -213,19 +216,12 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                         recordedFoodList.add(foodRecordItem!!)
                     }
                     breakfastFoodmap.put(FoodTime.BREAKFAST.time, recordedFoodList)
-                    //foodRecordListAdapter.notifyDataSetChanged()
-                    Log.d(TAG,"breakfastMap: $breakfastFoodmap")
-                    // TODO foodmap 데이터 정렬하기
-                    binding.layoutBreakfast.foodRecordRecyclerView.apply {
-                        foodRecordListAdapter =
-                            FoodRecordListAdapter(breakfastFoodmap[FoodTime.BREAKFAST.time]!!)
-                        layoutManager = LinearLayoutManager(context)
-                        adapter = foodRecordListAdapter
-                    }
+                    Log.d(TAG, "breakfastMap: $breakfastFoodmap")
+                    foodRecordListAdapter1.notifyDataSetChanged()
 
                 }
 
-            // 점심
+
             db.collection(DBKey.COLLECTION_NAME_USERS)
                 .document(Repository.userId)
                 .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
@@ -239,18 +235,14 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                         recordedFoodList.add(foodRecordItem!!)
                     }
                     lunchFoodmap.put(FoodTime.LUNCH.time, recordedFoodList)
-                    //foodRecordListAdapter2.notifyDataSetChanged()
-                    Log.d(TAG,"lunchMap: $lunchFoodmap")
-                    // TODO foodmap 데이터 정렬하기
-                    binding.layoutLunch.foodRecordRecyclerView.apply {
-                        foodRecordListAdapter2 =
-                            FoodRecordListAdapter(lunchFoodmap[FoodTime.LUNCH.time]!!)
-                        layoutManager = LinearLayoutManager(context)
-                        adapter = foodRecordListAdapter2
-                    }
+
+                    Log.d(TAG, "lunchMap: $lunchFoodmap")
+                    foodRecordListAdapter2.notifyDataSetChanged()
+
                 }
 
-            // 저녁
+
+
             db.collection(DBKey.COLLECTION_NAME_USERS)
                 .document(Repository.userId)
                 .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
@@ -264,17 +256,27 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                         recordedFoodList.add(foodRecordItem!!)
                     }
                     dinnerFoodmap.put(FoodTime.DINNER.time, recordedFoodList)
-                    // foodRecordListAdapter3.notifyDataSetChanged()
-                    Log.d(TAG,"dinnerMap: $dinnerFoodmap")
-                    // TODO foodmap 데이터 정렬하기
-                    binding.layoutDinner.foodRecordRecyclerView.apply {
-                        foodRecordListAdapter3 =
-                            FoodRecordListAdapter(dinnerFoodmap[FoodTime.DINNER.time]!!)
-                        layoutManager = LinearLayoutManager(context)
-                        adapter = foodRecordListAdapter3
-                    }
+                    Log.d(TAG, "dinnerMap: $dinnerFoodmap")
+                    foodRecordListAdapter3.notifyDataSetChanged()
+
                 }
 
+            db.collection(DBKey.COLLECTION_NAME_USERS)
+                .document(Repository.userId)
+                .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
+                .document(selectedDate) // 캘린더 선택 날짜
+                .collection(FoodTime.ETC.time) // 식사 구분
+                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                    recordedFoodList.clear()
+                    etcFoodmap.clear()
+                    for (snapshot in querySnapshot!!.documents) {
+                        val foodRecordItem = snapshot.toObject(Item::class.java)
+                        recordedFoodList.add(foodRecordItem!!)
+                    }
+                    etcFoodmap.put(FoodTime.ETC.time, recordedFoodList)
+                    Log.d(TAG, "etcMap: $etcFoodmap")
+                    foodRecordListAdapter4.notifyDataSetChanged()
+                }
         }
     }
 
@@ -313,12 +315,21 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         }
     }
 
+    private fun showProgress() {
+        binding.progressBar.isVisible = true
+    }
+
+    private fun hideProgress() {
+        binding.progressBar.isVisible = false
+    }
+
     override fun timeGenerator(): String {
         val now = LocalDate.now()
         val todayNow = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
 
         return todayNow
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -1,6 +1,7 @@
 package com.example.k_health
 
 import com.example.k_health.food.data.models.FoodResponse
+import com.example.k_health.food.data.models.Item
 import com.example.k_health.food.data.service.FoodApiService
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,7 +14,6 @@ import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 object Repository {
-
     val userId = Firebase.auth.currentUser?.uid.orEmpty()
 
     // Retrofit 1-3) Retrofit 인스턴스 생성, 싱글톤의 instance interface 객체 구현
@@ -34,22 +34,47 @@ object Repository {
     suspend fun getFoodByName(keyword: String): FoodResponse? =
         foodApiService.getFoodByName(keyword).body()
 
+    suspend fun getUserFoodRecord(
+        selectedDate: String,
+        mealtime: String,
+        foodlist: ArrayList<Item>,
+        foodmap: MutableMap<String, ArrayList<Item>>
+    ) {
+        val db = FirebaseFirestore.getInstance()
 
-    // 로깅 체크
-    private fun buildHttpClient(): OkHttpClient =
-        OkHttpClient.Builder()
-            .connectTimeout(20, TimeUnit.SECONDS) // 요청을 시작한 후 서버와의 TCP handshake가 완료되기까지 지속되는 시간이다.
-            .readTimeout(30, TimeUnit.SECONDS) // 읽기 시간 초과는 연결이 설정되면 모든 바이트가 전송되는 속도를 감시한다.
-            .writeTimeout(30, TimeUnit.SECONDS) // 얼마나 빨리 서버에 바이트를 보낼 수 있는지 확인한다..
-            .addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level = if (BuildConfig.DEBUG) {
-                        HttpLoggingInterceptor.Level.BODY
-                    } else {
-                        HttpLoggingInterceptor.Level.NONE
-                    }
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(userId)
+            .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
+            .document(selectedDate) // 캘린더 선택 날짜
+            .collection(mealtime) // 식사 구분
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                foodlist.clear()
+                foodmap.clear()
+                for (snapshot in querySnapshot!!.documents) {
+                    val foodRecordItem = snapshot.toObject(Item::class.java)
+                    foodlist.add(foodRecordItem!!)
                 }
-            ).build()
+                foodmap.put(mealtime, foodlist)
+            }
+    }
+        // 로깅 체크
+        private fun buildHttpClient(): OkHttpClient =
+            OkHttpClient.Builder()
+                .connectTimeout(
+                    20,
+                    TimeUnit.SECONDS
+                ) // 요청을 시작한 후 서버와의 TCP handshake가 완료되기까지 지속되는 시간이다.
+                .readTimeout(30, TimeUnit.SECONDS) // 읽기 시간 초과는 연결이 설정되면 모든 바이트가 전송되는 속도를 감시한다.
+                .writeTimeout(30, TimeUnit.SECONDS) // 얼마나 빨리 서버에 바이트를 보낼 수 있는지 확인한다..
+                .addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = if (BuildConfig.DEBUG) {
+                            HttpLoggingInterceptor.Level.BODY
+                        } else {
+                            HttpLoggingInterceptor.Level.NONE
+                        }
+                    }
+                ).build()
 
 
-}
+    }
