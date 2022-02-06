@@ -60,6 +60,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/foodRecord_RecyclerView"
                 android:overScrollMode="never"
+                android:visibility="gone"
                 android:layout_below="@+id/foodRecordOpen_ImageButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

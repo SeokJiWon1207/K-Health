@@ -28,15 +28,14 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private val db = FirebaseFirestore.getInstance()
     private val foodSearchFragment = FoodSearchFragment()
     private val foodInfoFragment = FoodInfoFragment()
-    private val recordedFoodList: ArrayList<Item> = arrayListOf()
-    private var breakfastFoodmap = mutableMapOf<String, ArrayList<Item>>()
-    private var lunchFoodmap = mutableMapOf<String, ArrayList<Item>>()
-    private var dinnerFoodmap = mutableMapOf<String, ArrayList<Item>>()
-    private var etcFoodmap = mutableMapOf<String, ArrayList<Item>>()
-    private lateinit var foodRecordListAdapter1: FoodRecordListAdapter
-    private lateinit var foodRecordListAdapter2: FoodRecordListAdapter
-    private lateinit var foodRecordListAdapter3: FoodRecordListAdapter
-    private lateinit var foodRecordListAdapter4: FoodRecordListAdapter
+    private var breakfastFoodList: ArrayList<Item> = arrayListOf()
+    private var lunchFoodList: ArrayList<Item> = arrayListOf()
+    private var dinnerFoodList: ArrayList<Item> = arrayListOf()
+    private var etcFoodList: ArrayList<Item> = arrayListOf()
+    private lateinit var breakfastFoodRecordListAdapter: FoodRecordListAdapter
+    private lateinit var lunchFoodRecordListAdapter: FoodRecordListAdapter
+    private lateinit var dinnerFoodRecordListAdapter: FoodRecordListAdapter
+    private lateinit var etcFoodRecordListAdapter: FoodRecordListAdapter
     private val scope = MainScope()
     private val bundle = Bundle()
 
@@ -46,90 +45,84 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
 
     init {
-        breakfastFoodmap.put(
-            "아침식사",
-            arrayListOf(
-                Item(
-                    aNIMALPLANT = "",
-                    bGNYEAR = "",
-                    foodName = "아침",
-                    kcal = "444.00",
-                    carbon = "42.75",
-                    protein = "16.80",
-                    fat = "22.80",
-                    sugar = "N/A",
-                    sodium = "927.00",
-                    cholesterol = "N/A",
-                    saturatedFattyAcids = "N/A",
-                    unsaturatedFattyAcids = "N/A",
-                    gram = "150",
-                    isSelected = false
-                )
+        /*breakfastFoodList.add(
+            Item(
+                aNIMALPLANT = "",
+                bGNYEAR = "",
+                foodName = "아침",
+                kcal = "444.00",
+                carbon = "42.75",
+                protein = "16.80",
+                fat = "22.80",
+                sugar = "N/A",
+                sodium = "927.00",
+                cholesterol = "N/A",
+                saturatedFattyAcids = "N/A",
+                unsaturatedFattyAcids = "N/A",
+                gram = "150",
+                isSelected = false
             )
+
         )
-        lunchFoodmap.put(
-            "점심식사",
-            arrayListOf(
-                Item(
-                    aNIMALPLANT = "",
-                    bGNYEAR = "",
-                    foodName = "점심",
-                    kcal = "444.00",
-                    carbon = "42.75",
-                    protein = "16.80",
-                    fat = "22.80",
-                    sugar = "N/A",
-                    sodium = "927.00",
-                    cholesterol = "N/A",
-                    saturatedFattyAcids = "N/A",
-                    unsaturatedFattyAcids = "N/A",
-                    gram = "150",
-                    isSelected = false
-                )
+        lunchFoodList.add(
+            Item(
+                aNIMALPLANT = "",
+                bGNYEAR = "",
+                foodName = "점심",
+                kcal = "444.00",
+                carbon = "42.75",
+                protein = "16.80",
+                fat = "22.80",
+                sugar = "N/A",
+                sodium = "927.00",
+                cholesterol = "N/A",
+                saturatedFattyAcids = "N/A",
+                unsaturatedFattyAcids = "N/A",
+                gram = "150",
+                isSelected = false
             )
+
         )
-        dinnerFoodmap.put(
-            "저녁식사",
-            arrayListOf(
-                Item(
-                    aNIMALPLANT = "",
-                    bGNYEAR = "",
-                    foodName = "저녁",
-                    kcal = "444.00",
-                    carbon = "42.75",
-                    protein = "16.80",
-                    fat = "22.80",
-                    sugar = "N/A",
-                    sodium = "927.00",
-                    cholesterol = "N/A",
-                    saturatedFattyAcids = "N/A",
-                    unsaturatedFattyAcids = "N/A",
-                    gram = "150",
-                    isSelected = false
-                )
+        dinnerFoodList.add(
+
+            Item(
+                aNIMALPLANT = "",
+                bGNYEAR = "",
+                foodName = "저녁",
+                kcal = "444.00",
+                carbon = "42.75",
+                protein = "16.80",
+                fat = "22.80",
+                sugar = "N/A",
+                sodium = "927.00",
+                cholesterol = "N/A",
+                saturatedFattyAcids = "N/A",
+                unsaturatedFattyAcids = "N/A",
+                gram = "150",
+                isSelected = false
             )
+
         )
-        etcFoodmap.put(
-            "간식,기타",
-            arrayListOf(
-                Item(
-                    aNIMALPLANT = "",
-                    bGNYEAR = "",
-                    foodName = "간식,기타",
-                    kcal = "444.00",
-                    carbon = "42.75",
-                    protein = "16.80",
-                    fat = "22.80",
-                    sugar = "N/A",
-                    sodium = "927.00",
-                    cholesterol = "N/A",
-                    saturatedFattyAcids = "N/A",
-                    unsaturatedFattyAcids = "N/A",
-                    gram = "150",
-                    isSelected = false
-                )
+        etcFoodList.add(
+            Item(
+                aNIMALPLANT = "",
+                bGNYEAR = "",
+                foodName = "간식,기타",
+                kcal = "444.00",
+                carbon = "42.75",
+                protein = "16.80",
+                fat = "22.80",
+                sugar = "N/A",
+                sodium = "927.00",
+                cholesterol = "N/A",
+                saturatedFattyAcids = "N/A",
+                unsaturatedFattyAcids = "N/A",
+                gram = "150",
+                isSelected = false
             )
-        )
+
+        )*/
+
     }
 
 
@@ -139,7 +132,34 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         _binding = FragmentFoodBinding.bind(view)
 
         initViews()
-        getFoodRecordWithBreakfast()
+        getFoodRecordWithCalendar()
+
+        val now = LocalDate.now()
+        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+        getUserFoodRecord(
+            todayNow,
+            FoodTime.BREAKFAST.time,
+            breakfastFoodList,
+            breakfastFoodRecordListAdapter
+        )
+        getUserFoodRecord(
+            todayNow,
+            FoodTime.LUNCH.time,
+            lunchFoodList,
+            lunchFoodRecordListAdapter
+        )
+        getUserFoodRecord(
+            todayNow,
+            FoodTime.DINNER.time,
+            dinnerFoodList,
+            dinnerFoodRecordListAdapter
+        )
+        getUserFoodRecord(
+            todayNow,
+            FoodTime.ETC.time,
+            etcFoodList,
+            etcFoodRecordListAdapter
+        )
 
 
     }
@@ -150,8 +170,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.BREAKFAST.timeImage)
             timeTextView.text = FoodTime.BREAKFAST.time
             timeTextView.setTextColor(FoodTime.BREAKFAST.textColor)
-            foodRecordListAdapter1 = FoodRecordListAdapter(breakfastFoodmap[FoodTime.BREAKFAST.time]!!)
-            initRecyclerView(this, foodRecordListAdapter1)
+            breakfastFoodRecordListAdapter = FoodRecordListAdapter(breakfastFoodList!!)
+            initRecyclerView(this, breakfastFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.BREAKFAST.time)
         }
@@ -159,8 +179,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.LUNCH.timeImage)
             timeTextView.text = FoodTime.LUNCH.time
             timeTextView.setTextColor(FoodTime.LUNCH.textColor)
-            foodRecordListAdapter2 = FoodRecordListAdapter(lunchFoodmap[FoodTime.LUNCH.time]!!)
-            initRecyclerView(this, foodRecordListAdapter2)
+            lunchFoodRecordListAdapter = FoodRecordListAdapter(lunchFoodList!!)
+            initRecyclerView(this, lunchFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.LUNCH.time)
         }
@@ -168,8 +188,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.DINNER.timeImage)
             timeTextView.text = FoodTime.DINNER.time
             timeTextView.setTextColor(FoodTime.DINNER.textColor)
-            foodRecordListAdapter3 = FoodRecordListAdapter(dinnerFoodmap[FoodTime.DINNER.time]!!)
-            initRecyclerView(this, foodRecordListAdapter3)
+            dinnerFoodRecordListAdapter = FoodRecordListAdapter(dinnerFoodList!!)
+            initRecyclerView(this, dinnerFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.DINNER.time)
         }
@@ -177,15 +197,15 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.ETC.timeImage)
             timeTextView.text = FoodTime.ETC.time
             timeTextView.setTextColor(FoodTime.ETC.textColor)
-            foodRecordListAdapter4 = FoodRecordListAdapter(etcFoodmap[FoodTime.ETC.time]!!)
-            initRecyclerView(this, foodRecordListAdapter4)
+            etcFoodRecordListAdapter = FoodRecordListAdapter(etcFoodList!!)
+            initRecyclerView(this, etcFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.ETC.time)
         }
     }
 
     // TODO 동기처리해보기
-    private fun getFoodRecordWithBreakfast() {
+    private fun getFoodRecordWithCalendar() {
         binding.foodCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             val monthString: String =
                 if (month > 10) "${month + 1}" else String.format("%02d", month + 1)
@@ -202,81 +222,31 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
             foodSearchFragment.arguments = bundle
 
+            getUserFoodRecord(
+                selectedDate,
+                FoodTime.BREAKFAST.time,
+                breakfastFoodList,
+                breakfastFoodRecordListAdapter
+            )
+            getUserFoodRecord(
+                selectedDate,
+                FoodTime.LUNCH.time,
+                lunchFoodList,
+                lunchFoodRecordListAdapter
+            )
+            getUserFoodRecord(
+                selectedDate,
+                FoodTime.DINNER.time,
+                dinnerFoodList,
+                dinnerFoodRecordListAdapter
+            )
+            getUserFoodRecord(
+                selectedDate,
+                FoodTime.ETC.time,
+                etcFoodList,
+                etcFoodRecordListAdapter
+            )
 
-            db.collection(DBKey.COLLECTION_NAME_USERS)
-                .document(Repository.userId)
-                .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
-                .document(selectedDate) // 캘린더 선택 날짜
-                .collection(FoodTime.BREAKFAST.time) // 식사 구분
-                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                    recordedFoodList.clear()
-                    breakfastFoodmap.clear()
-                    for (snapshot in querySnapshot!!.documents) {
-                        val foodRecordItem = snapshot.toObject(Item::class.java)
-                        recordedFoodList.add(foodRecordItem!!)
-                    }
-                    breakfastFoodmap.put(FoodTime.BREAKFAST.time, recordedFoodList)
-                    Log.d(TAG, "breakfastMap: $breakfastFoodmap")
-                    foodRecordListAdapter1.notifyDataSetChanged()
-
-                }
-
-
-            db.collection(DBKey.COLLECTION_NAME_USERS)
-                .document(Repository.userId)
-                .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
-                .document(selectedDate) // 캘린더 선택 날짜
-                .collection(FoodTime.LUNCH.time) // 식사 구분
-                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                    recordedFoodList.clear()
-                    lunchFoodmap.clear()
-                    for (snapshot in querySnapshot!!.documents) {
-                        val foodRecordItem = snapshot.toObject(Item::class.java)
-                        recordedFoodList.add(foodRecordItem!!)
-                    }
-                    lunchFoodmap.put(FoodTime.LUNCH.time, recordedFoodList)
-
-                    Log.d(TAG, "lunchMap: $lunchFoodmap")
-                    foodRecordListAdapter2.notifyDataSetChanged()
-
-                }
-
-
-
-            db.collection(DBKey.COLLECTION_NAME_USERS)
-                .document(Repository.userId)
-                .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
-                .document(selectedDate) // 캘린더 선택 날짜
-                .collection(FoodTime.DINNER.time) // 식사 구분
-                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                    recordedFoodList.clear()
-                    dinnerFoodmap.clear()
-                    for (snapshot in querySnapshot!!.documents) {
-                        val foodRecordItem = snapshot.toObject(Item::class.java)
-                        recordedFoodList.add(foodRecordItem!!)
-                    }
-                    dinnerFoodmap.put(FoodTime.DINNER.time, recordedFoodList)
-                    Log.d(TAG, "dinnerMap: $dinnerFoodmap")
-                    foodRecordListAdapter3.notifyDataSetChanged()
-
-                }
-
-            db.collection(DBKey.COLLECTION_NAME_USERS)
-                .document(Repository.userId)
-                .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
-                .document(selectedDate) // 캘린더 선택 날짜
-                .collection(FoodTime.ETC.time) // 식사 구분
-                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                    recordedFoodList.clear()
-                    etcFoodmap.clear()
-                    for (snapshot in querySnapshot!!.documents) {
-                        val foodRecordItem = snapshot.toObject(Item::class.java)
-                        recordedFoodList.add(foodRecordItem!!)
-                    }
-                    etcFoodmap.put(FoodTime.ETC.time, recordedFoodList)
-                    Log.d(TAG, "etcMap: $etcFoodmap")
-                    foodRecordListAdapter4.notifyDataSetChanged()
-                }
         }
     }
 
@@ -297,8 +267,11 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         layoutFoodBinding: LayoutFoodBinding
     ) {
         showButton.setOnClickListener {
-            layoutFoodBinding.foodRecordRecyclerView.visibility = View.VISIBLE
-            Log.d(TAG, "clicked")
+            if (layoutFoodBinding.foodRecordRecyclerView.visibility == View.VISIBLE)
+                layoutFoodBinding.foodRecordRecyclerView.visibility = View.GONE
+            else if (layoutFoodBinding.foodRecordRecyclerView.visibility == View.GONE)
+                layoutFoodBinding.foodRecordRecyclerView.visibility = View.VISIBLE
+
         }
     }
 
@@ -315,12 +288,26 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         }
     }
 
-    private fun showProgress() {
-        binding.progressBar.isVisible = true
-    }
+    private fun getUserFoodRecord(
+        selectedDate: String,
+        mealtime: String,
+        foodlist: ArrayList<Item>,
+        foodRecordListAdapter: FoodRecordListAdapter
+    ) {
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(Repository.userId)
+            .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
+            .document(selectedDate) // 캘린더 선택 날짜
+            .collection(mealtime) // 식사 구분
+            .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                foodlist.clear()
+                for (snapshot in querySnapshot!!.documents) {
+                    val foodRecordItem = snapshot.toObject(Item::class.java)
+                    foodlist.add(foodRecordItem!!)
+                }
+                foodRecordListAdapter.notifyDataSetChanged()
 
-    private fun hideProgress() {
-        binding.progressBar.isVisible = false
+            }
     }
 
     override fun timeGenerator(): String {
