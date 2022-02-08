@@ -15,30 +15,34 @@
         android:layout_height="300dp"
         android:layout_weight="5"
         android:orientation="horizontal">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1.8">
-        <TextView
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:text="@string/weight"
             android:textColor="@color/lightblue"
             android:textStyle="bold"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="30dp"
             android:textSize="25sp"/>
-        <TextView
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:text="@string/muscle"
             android:textColor="@color/lightblue"
             android:textStyle="bold"
             android:layout_marginLeft="25dp"
             android:layout_marginTop="60dp"
             android:textSize="25sp"/>
-        <TextView
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fat"
@@ -49,13 +53,14 @@
             android:textSize="25sp"/>
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="1">
         <EditText
-            android:id="@+id/user_weightEditText"
+            android:id="@+id/user_weight_EditText"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="right"
@@ -64,7 +69,7 @@
             android:textColorHint="@color/gray"
             android:layout_margin="25dp"/>
         <EditText
-            android:id="@+id/user_muscleEditText"
+            android:id="@+id/user_muscle_EditText"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="right"
@@ -73,7 +78,7 @@
             android:textColorHint="@color/gray"
             android:layout_margin="25dp"/>
         <EditText
-            android:id="@+id/user_fatEditText"
+            android:id="@+id/user_fat_EditText"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:gravity="right"

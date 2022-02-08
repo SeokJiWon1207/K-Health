@@ -25,13 +25,14 @@
 
             <ImageView
                 android:id="@+id/time_ImageView"
-                android:layout_width="100dp"
-                android:layout_height="80dp"
+                android:layout_width="80dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
                 android:scaleType="fitXY" />
 
             <TextView
                 android:id="@+id/time_TextView"
-                android:layout_width="230dp"
+                android:layout_width="200dp"
                 android:layout_height="80dp"
                 android:layout_toRightOf="@+id/time_ImageView"
                 android:gravity="center"
@@ -54,7 +55,6 @@
                 android:layout_below="@+id/foodAdd_ImageButton"
                 android:layout_toRightOf="@+id/time_TextView"
                 android:background="@drawable/ic_baseline_arrow_drop_down_24"
-                android:scaleType="fitXY"
                 tools:ignore="VectorDrawableCompat" />
 
             <androidx.recyclerview.widget.RecyclerView

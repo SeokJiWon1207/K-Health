@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ImageButton
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.DBKey
@@ -32,10 +32,10 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private var lunchFoodList: ArrayList<Item> = arrayListOf()
     private var dinnerFoodList: ArrayList<Item> = arrayListOf()
     private var etcFoodList: ArrayList<Item> = arrayListOf()
-    private lateinit var breakfastFoodRecordListAdapter: FoodRecordListAdapter
-    private lateinit var lunchFoodRecordListAdapter: FoodRecordListAdapter
-    private lateinit var dinnerFoodRecordListAdapter: FoodRecordListAdapter
-    private lateinit var etcFoodRecordListAdapter: FoodRecordListAdapter
+    private val breakfastFoodRecordListAdapter = FoodRecordListAdapter(breakfastFoodList)
+    private val lunchFoodRecordListAdapter = FoodRecordListAdapter(lunchFoodList)
+    private val dinnerFoodRecordListAdapter = FoodRecordListAdapter(dinnerFoodList)
+    private val etcFoodRecordListAdapter = FoodRecordListAdapter(etcFoodList)
     private val scope = MainScope()
     private val bundle = Bundle()
 
@@ -43,123 +43,20 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         const val TAG = "FoodFragment"
     }
 
-
-    init {
-        /*breakfastFoodList.add(
-            Item(
-                aNIMALPLANT = "",
-                bGNYEAR = "",
-                foodName = "아침",
-                kcal = "444.00",
-                carbon = "42.75",
-                protein = "16.80",
-                fat = "22.80",
-                sugar = "N/A",
-                sodium = "927.00",
-                cholesterol = "N/A",
-                saturatedFattyAcids = "N/A",
-                unsaturatedFattyAcids = "N/A",
-                gram = "150",
-                isSelected = false
-            )
-
-        )
-        lunchFoodList.add(
-            Item(
-                aNIMALPLANT = "",
-                bGNYEAR = "",
-                foodName = "점심",
-                kcal = "444.00",
-                carbon = "42.75",
-                protein = "16.80",
-                fat = "22.80",
-                sugar = "N/A",
-                sodium = "927.00",
-                cholesterol = "N/A",
-                saturatedFattyAcids = "N/A",
-                unsaturatedFattyAcids = "N/A",
-                gram = "150",
-                isSelected = false
-            )
-
-        )
-        dinnerFoodList.add(
-
-            Item(
-                aNIMALPLANT = "",
-                bGNYEAR = "",
-                foodName = "저녁",
-                kcal = "444.00",
-                carbon = "42.75",
-                protein = "16.80",
-                fat = "22.80",
-                sugar = "N/A",
-                sodium = "927.00",
-                cholesterol = "N/A",
-                saturatedFattyAcids = "N/A",
-                unsaturatedFattyAcids = "N/A",
-                gram = "150",
-                isSelected = false
-            )
-
-        )
-        etcFoodList.add(
-            Item(
-                aNIMALPLANT = "",
-                bGNYEAR = "",
-                foodName = "간식,기타",
-                kcal = "444.00",
-                carbon = "42.75",
-                protein = "16.80",
-                fat = "22.80",
-                sugar = "N/A",
-                sodium = "927.00",
-                cholesterol = "N/A",
-                saturatedFattyAcids = "N/A",
-                unsaturatedFattyAcids = "N/A",
-                gram = "150",
-                isSelected = false
-            )
-
-        )*/
-
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentFoodBinding.bind(view)
-
-        initViews()
-        getFoodRecordWithCalendar()
-
         val now = LocalDate.now()
         val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-        getUserFoodRecord(
-            todayNow,
-            FoodTime.BREAKFAST.time,
-            breakfastFoodList,
-            breakfastFoodRecordListAdapter
-        )
-        getUserFoodRecord(
-            todayNow,
-            FoodTime.LUNCH.time,
-            lunchFoodList,
-            lunchFoodRecordListAdapter
-        )
-        getUserFoodRecord(
-            todayNow,
-            FoodTime.DINNER.time,
-            dinnerFoodList,
-            dinnerFoodRecordListAdapter
-        )
-        getUserFoodRecord(
-            todayNow,
-            FoodTime.ETC.time,
-            etcFoodList,
-            etcFoodRecordListAdapter
-        )
+        getUserFoodRecord(todayNow, FoodTime.BREAKFAST.time, breakfastFoodList, breakfastFoodRecordListAdapter)
+        getUserFoodRecord(todayNow, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
+        getUserFoodRecord(todayNow, FoodTime.DINNER.time, dinnerFoodList, dinnerFoodRecordListAdapter)
+        getUserFoodRecord(todayNow, FoodTime.ETC.time, etcFoodList, etcFoodRecordListAdapter)
+
+        initViews()
+        getTodayKcal()
+        getFoodRecordWithCalendar()
 
 
     }
@@ -170,7 +67,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.BREAKFAST.timeImage)
             timeTextView.text = FoodTime.BREAKFAST.time
             timeTextView.setTextColor(FoodTime.BREAKFAST.textColor)
-            breakfastFoodRecordListAdapter = FoodRecordListAdapter(breakfastFoodList!!)
             initRecyclerView(this, breakfastFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.BREAKFAST.time)
@@ -179,7 +75,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.LUNCH.timeImage)
             timeTextView.text = FoodTime.LUNCH.time
             timeTextView.setTextColor(FoodTime.LUNCH.textColor)
-            lunchFoodRecordListAdapter = FoodRecordListAdapter(lunchFoodList!!)
             initRecyclerView(this, lunchFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.LUNCH.time)
@@ -188,7 +83,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.DINNER.timeImage)
             timeTextView.text = FoodTime.DINNER.time
             timeTextView.setTextColor(FoodTime.DINNER.textColor)
-            dinnerFoodRecordListAdapter = FoodRecordListAdapter(dinnerFoodList!!)
             initRecyclerView(this, dinnerFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.DINNER.time)
@@ -197,14 +91,12 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.ETC.timeImage)
             timeTextView.text = FoodTime.ETC.time
             timeTextView.setTextColor(FoodTime.ETC.textColor)
-            etcFoodRecordListAdapter = FoodRecordListAdapter(etcFoodList!!)
             initRecyclerView(this, etcFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.ETC.time)
         }
     }
 
-    // TODO 동기처리해보기
     private fun getFoodRecordWithCalendar() {
         binding.foodCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             val monthString: String =
@@ -222,31 +114,12 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
             foodSearchFragment.arguments = bundle
 
-            getUserFoodRecord(
-                selectedDate,
-                FoodTime.BREAKFAST.time,
-                breakfastFoodList,
-                breakfastFoodRecordListAdapter
-            )
-            getUserFoodRecord(
-                selectedDate,
-                FoodTime.LUNCH.time,
-                lunchFoodList,
-                lunchFoodRecordListAdapter
-            )
-            getUserFoodRecord(
-                selectedDate,
-                FoodTime.DINNER.time,
-                dinnerFoodList,
-                dinnerFoodRecordListAdapter
-            )
-            getUserFoodRecord(
-                selectedDate,
-                FoodTime.ETC.time,
-                etcFoodList,
-                etcFoodRecordListAdapter
-            )
+            getUserFoodRecord(selectedDate, FoodTime.BREAKFAST.time, breakfastFoodList, breakfastFoodRecordListAdapter)
+            getUserFoodRecord(selectedDate, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
+            getUserFoodRecord(selectedDate, FoodTime.DINNER.time, dinnerFoodList, dinnerFoodRecordListAdapter)
+            getUserFoodRecord(selectedDate, FoodTime.ETC.time, etcFoodList, etcFoodRecordListAdapter)
 
+            getTodayKcal()
         }
     }
 
@@ -266,12 +139,24 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         showButton: ImageButton,
         layoutFoodBinding: LayoutFoodBinding
     ) {
+        val todown_Rotate_Anim =
+            AnimationUtils.loadAnimation(requireContext(), R.anim.todown_half_rotate)
+        val toup_Rotate_Anim =
+            AnimationUtils.loadAnimation(requireContext(), R.anim.toup_half_rotate)
         showButton.setOnClickListener {
-            if (layoutFoodBinding.foodRecordRecyclerView.visibility == View.VISIBLE)
-                layoutFoodBinding.foodRecordRecyclerView.visibility = View.GONE
-            else if (layoutFoodBinding.foodRecordRecyclerView.visibility == View.GONE)
+            if (layoutFoodBinding.foodRecordRecyclerView.visibility == View.GONE) {
                 layoutFoodBinding.foodRecordRecyclerView.visibility = View.VISIBLE
-
+                it.apply {
+                    this.startAnimation(todown_Rotate_Anim)
+                    this.setBackgroundResource(R.drawable.ic_baseline_arrow_drop_up_24)
+                }
+            } else if (layoutFoodBinding.foodRecordRecyclerView.visibility == View.VISIBLE) {
+                layoutFoodBinding.foodRecordRecyclerView.visibility = View.GONE
+                it.apply {
+                    this.startAnimation(toup_Rotate_Anim)
+                    this.setBackgroundResource(R.drawable.ic_baseline_arrow_drop_down_24)
+                }
+            }
         }
     }
 
@@ -308,6 +193,16 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                 foodRecordListAdapter.notifyDataSetChanged()
 
             }
+    }
+
+    private fun getTodayKcal() {
+        val breakfastKcal = breakfastFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
+        val lunchKcal = lunchFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
+        val dinnerKcal = dinnerFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
+        val etcKcal = etcFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
+
+        val todayTotalKcal = breakfastKcal + lunchKcal + dinnerKcal + etcKcal
+        binding.todayTotalKcalTextView.text = todayTotalKcal.toString().plus("kcal")
     }
 
     override fun timeGenerator(): String {

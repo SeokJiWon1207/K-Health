@@ -178,9 +178,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             setCancelable(true)
             show()
         }
-        val userWeightEditText = userInfoDialog.findViewById<EditText>(R.id.user_weightEditText)
-        val userMuscleEditText = userInfoDialog.findViewById<EditText>(R.id.user_muscleEditText)
-        val userFatEditText = userInfoDialog.findViewById<EditText>(R.id.user_fatEditText)
+        val userWeightEditText = userInfoDialog.findViewById<EditText>(R.id.user_weight_EditText)
+        val userMuscleEditText = userInfoDialog.findViewById<EditText>(R.id.user_muscle_EditText)
+        val userFatEditText = userInfoDialog.findViewById<EditText>(R.id.user_fat_EditText)
 
         if (userWeightEditText.isFocused == true) userFatEditText.text.clear()
 
