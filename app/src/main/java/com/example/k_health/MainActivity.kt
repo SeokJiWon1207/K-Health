@@ -1,9 +1,10 @@
 package com.example.k_health
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.k_health.databinding.ActivityMainBinding
 import com.example.k_health.food.FoodFragment
@@ -11,20 +12,16 @@ import com.example.k_health.health.HealthFragment
 import com.example.k_health.helper.HelperFragment
 import com.example.k_health.home.HomeFragment
 import com.example.k_health.report.ReportFragment
-import com.google.firebase.FirebaseApp
-import com.google.firebase.appcheck.FirebaseAppCheck
-import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
-import com.google.firebase.auth.*
-import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    // val sharedPreferences = this.getSharedPreferences("selectedDate", Context.MODE_PRIVATE)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         Log.d("Main","is login")
 

@@ -57,15 +57,17 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     private fun recordFoods() = with(binding) {
         val today = timeGenerator()
-        val selectedDate = arguments?.getString("selectedDate") ?: today
+        val now = LocalDate.now()
+        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
+        val selectedDate = arguments?.getString("selectedDate") ?: todayNow
         foodDateTextView.text = arguments?.getString("todayDate") ?: today
 
         Log.d(TAG, "selectedDate: $selectedDate")
 
         enrollButton.setOnClickListener {
             val mealtime = spinner.selectedItem.toString()
-            var foodSelectedList = foodListAdapter.checkedList.filter { it.isSelected == true }
-            var foodRecordData = mutableMapOf<String, Any>()
+            val foodSelectedList = foodListAdapter.checkedList.filter { it.isSelected == true }
+            val foodRecordData = mutableMapOf<String, Any>()
 
             if (foodSelectedList.isEmpty()) {
                 Snackbar.make(requireView(), "선택된 식사가 없습니다. \n식사를 선택해주세요", Snackbar.LENGTH_INDEFINITE)
@@ -99,7 +101,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                     .document(foodSelectedList[i].foodName!!)
                     .set(foodRecordData) // 식사 데이터
                     .addOnSuccessListener {
-                        Log.d(TAG, "success")
                         if (i.equals(foodSelectedList.size - 1)) { // 마지막 데이터를 넣을 때 스낵바 호출
                             Snackbar.make(requireView(), "${mealtime}가 등록되었습니다.", Snackbar.LENGTH_INDEFINITE)
                                 .setAction("확인", object: View.OnClickListener {

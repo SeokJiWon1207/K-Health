@@ -162,9 +162,11 @@
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_modify_food"
+            android:id="@+id/remove_ImageButton"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:background="@drawable/ic_baseline_info_24" />
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/ic_baseline_white_clear_24" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

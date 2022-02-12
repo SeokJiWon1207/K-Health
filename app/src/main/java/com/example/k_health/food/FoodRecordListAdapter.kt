@@ -6,9 +6,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemFoodrecordBinding
 import com.example.k_health.food.data.models.Item
 
-class FoodRecordListAdapter(private val foodRecordData: ArrayList<Item>) : RecyclerView.Adapter<FoodRecordListAdapter.ViewHolder>() {
+//2. delete button이 눌렸을때 onclickDeleteIcon을 실행하라는뜻, 0->Unit이기때문에 함수자체에 return없다는뜻
+class FoodRecordListAdapter(private val foodRecordData: ArrayList<Item>, val onClickDeleteButton: (item: Item) -> Unit) :
+    RecyclerView.Adapter<FoodRecordListAdapter.ViewHolder>() {
 
-    inner class ViewHolder(private val binding: ItemFoodrecordBinding) :
+    companion object {
+        const val TAG = "FoodRecordListAdapter"
+    }
+
+    inner class ViewHolder(val binding: ItemFoodrecordBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Item) = with(binding) {
@@ -19,8 +25,15 @@ class FoodRecordListAdapter(private val foodRecordData: ArrayList<Item>) : Recyc
             fatTextView.text = item.fat.plus("g")
             kcalTextView.text = item.kcal.plus("kcal")
 
-        }
+            /*removeImageButton.setOnClickListener {
+                val pos = adapterPosition
+                Log.d(TAG,"removed foodName: ${foodRecordData[pos].foodName}")
+                foodRecordData.removeAt(pos)
+                Log.d(TAG,"pos: $pos")
 
+                notifyDataSetChanged()
+            }*/
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -35,6 +48,10 @@ class FoodRecordListAdapter(private val foodRecordData: ArrayList<Item>) : Recyc
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(foodRecordData[position])
+        // 1. deleteimage가 눌렸을때 listposition를 전달하면서 onClickDeleteIcon함수를 실행한다.
+        holder.binding.removeImageButton.setOnClickListener {
+            onClickDeleteButton.invoke(foodRecordData[position])
+        }
     }
 
     override fun getItemCount(): Int = foodRecordData.size
