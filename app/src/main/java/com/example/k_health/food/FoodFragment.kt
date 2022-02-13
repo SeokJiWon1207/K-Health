@@ -1,12 +1,14 @@
 package com.example.k_health.food
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.AnimationUtils
-import android.widget.ImageButton
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +16,7 @@ import com.example.k_health.DBKey
 import com.example.k_health.MainActivity
 import com.example.k_health.R
 import com.example.k_health.Repository
+import com.example.k_health.databinding.ActivitylevelinfoDialogBinding
 import com.example.k_health.databinding.FragmentFoodBinding
 import com.example.k_health.databinding.LayoutFoodBinding
 import com.example.k_health.food.data.models.Item
@@ -27,6 +30,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
     private var _binding: FragmentFoodBinding? = null
     private val binding get() = _binding!!
+    private var _activitylevelinfoDialogBinding: ActivitylevelinfoDialogBinding? = null
     private val db = FirebaseFirestore.getInstance()
     private val foodSearchFragment = FoodSearchFragment()
     private val foodInfoFragment = FoodInfoFragment()
@@ -38,6 +42,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private lateinit var lunchFoodRecordListAdapter: FoodRecordListAdapter
     private lateinit var dinnerFoodRecordListAdapter: FoodRecordListAdapter
     private lateinit var etcFoodRecordListAdapter: FoodRecordListAdapter
+    private val activityLevelInfoDialog: Dialog by lazy { Dialog(requireContext()) }
     private val scope = MainScope()
     private val bundle = Bundle()
 
@@ -53,18 +58,18 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         val now = LocalDate.now()
         val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
         initViews()
-        //getUserFoodRecord(todayNow, FoodTime.BREAKFAST.time, breakfastFoodList, breakfastFoodRecordListAdapter)
-        //getUserFoodRecord(todayNow, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
-        //getUserFoodRecord(todayNow, FoodTime.DINNER.time, dinnerFoodList, dinnerFoodRecordListAdapter)
-        //getUserFoodRecord(todayNow, FoodTime.ETC.time, etcFoodList, etcFoodRecordListAdapter)
+        getUserFoodRecord(todayNow, FoodTime.BREAKFAST.time, breakfastFoodList, breakfastFoodRecordListAdapter)
+        getUserFoodRecord(todayNow, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
+        getUserFoodRecord(todayNow, FoodTime.DINNER.time, dinnerFoodList, dinnerFoodRecordListAdapter)
+        getUserFoodRecord(todayNow, FoodTime.ETC.time, etcFoodList, etcFoodRecordListAdapter)
 
         /*Log.d(TAG,"breakfast: $breakfastFoodList")
         Log.d(TAG,"lunch: $lunchFoodList")
         Log.d(TAG,"dinner: $dinnerFoodList")
         Log.d(TAG,"etc: $etcFoodList")*/
-
+        isActivityLevelNotNull()
         getFoodRecordWithCalendar()
-        // getTodayKcal()
+        getTodayKcal()
 
 
 
@@ -119,7 +124,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             moveSearchFood(foodAddImageButton, FoodTime.ETC.time)
         }
     }
-    // TODO DB삭제 로직으로 바꾸기
+
     private fun deleteRecord(item: Item, foodlist: ArrayList<Item>, recyclerView: RecyclerView, mealtime: String) {
         foodlist.remove(item)
         val pref = activity?.getSharedPreferences("pref", 0)
@@ -193,6 +198,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                     val foodRecordItem = snapshot.toObject(Item::class.java)
                     foodlist.add(foodRecordItem!!)
                 }
+                Log.d(TAG,"foodlist: $foodlist")
                 foodRecordListAdapter.notifyDataSetChanged()
             }
     }
@@ -209,27 +215,67 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
 
     // 활동지수 유무확인
-    private fun isActivityLevelNotNull(): Boolean {
-        var isNull: Boolean = true
-        try {
+    private fun isActivityLevelNotNull() {
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(Repository.userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document["activityLevel"] != null) {
+                    Log.d(TAG, "activityLevel : ${document["activityLevel"]}")
+                } else {
+                    showActivityLevelInputPopup()
+                }
+            }
+            .addOnFailureListener { Error ->
+                Log.d("Error", "Error : $Error")
+            }
+    }
+
+    private fun showActivityLevelInputPopup()  {
+        activityLevelInfoDialog.apply {
+            setContentView(R.layout.activitylevelinfo_dialog)
+            window!!.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            setCanceledOnTouchOutside(true)
+            setCancelable(true)
+            show()
+        }
+
+        val userAgeEditText = activityLevelInfoDialog.findViewById<EditText>(R.id.user_age_EditText)
+        val userWeightEditText = activityLevelInfoDialog.findViewById<EditText>(R.id.user_weight_EditText)
+        val radioGroup = activityLevelInfoDialog.findViewById<RadioGroup>(R.id.sex_RadioGroup)
+        val man = activityLevelInfoDialog.findViewById<RadioButton>(R.id.sex_man)
+        val woman = activityLevelInfoDialog.findViewById<RadioButton>(R.id.sex_woman)
+        var userSex: String = ""
+        val submitButton = activityLevelInfoDialog.findViewById<Button>(R.id.submitButton)
+        
+        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+            when(checkedId) {
+                R.id.sex_man -> userSex = man.text.toString()
+                else -> userSex = woman.text.toString()
+            }
+        }
+
+        submitButton.setOnClickListener {
+            val userData = mutableMapOf<String, Any>(
+                "userAge" to userAgeEditText.text.toString(),
+                "userWeight" to userWeightEditText.text.toString(),
+                "userSex" to userSex
+            )
+
             db.collection(DBKey.COLLECTION_NAME_USERS)
                 .document(Repository.userId)
-                .get()
-                .addOnSuccessListener { document ->
-                    if (document["activityLevel"] != null) {
-                        Log.d(TAG, "activityLevel : ${document["activityLevel"]}")
-                        isNull = false
-                    } else {
-                        isNull = true
-                    }
+                .update(userData)
+                .addOnSuccessListener {
+                    activityLevelInfoDialog.dismiss()
                 }
-                .addOnFailureListener { Error ->
-                    Log.d("Error", "Error : $Error")
+                .addOnFailureListener {
+
                 }
-        } catch (e: Exception) {
-            Log.d(TAG, "exception: $e")
+
         }
-        return isNull
     }
 
 
@@ -262,11 +308,18 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
     private fun moveSearchFood(foodAddImageButton: ImageButton, time: Any) {
         foodAddImageButton.setOnClickListener {
-
-            bundle.putString("time", time.toString())
-            Log.d(TAG, "time : $time")
+            val mealtime = time.toString()
+            val mealTimePosition = when(mealtime) {
+                "아침식사" -> 0
+                "점심식사" -> 1
+                "저녁식사" -> 2
+                else -> 3
+            }
+            bundle.putInt("selectedMealtime", mealTimePosition)
+            Log.d(TAG, "selectedMealtime : $mealTimePosition")
 
             foodInfoFragment.arguments = bundle
+            foodSearchFragment.arguments = bundle
 
             (activity as MainActivity).replaceFragment(foodSearchFragment)
         }

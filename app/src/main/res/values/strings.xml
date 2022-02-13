@@ -37,9 +37,15 @@
     <string name="label_cholesterol">콜레스테롤(mg)</string>
     <string name="label_saturatedFattyAcids">포화지방산(g)</string>
     <string name="label_unsaturatedFattyAcids">불포화지방산(g)</string>
+    <string name="label_age">나이</string>
+    <string name="label_sex">성별</string>
+    <string name="label_sex_man">남자</string>
+    <string name="label_sex_woman">여자</string>
+    <string name="label_description">*일일권장 계산은 사용자의 연령, 체중, 신장, 성별 및 활동 수준 등 \n고유한 요인에 따른 기준입니다.</string>
     <string name="logout">로그아웃</string>
 
     <string name="foodservicekey">인증키 입력</string>
+    <string name="label_recommend_kcal">일일 권장량 계산</string>
 
     <string-array name="spinner_mealtime">
         <item>아침식사</item>

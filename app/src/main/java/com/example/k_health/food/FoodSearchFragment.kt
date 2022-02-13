@@ -123,7 +123,10 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     private fun setupSpinnerMealtime() {
         val mealtime = resources.getStringArray(R.array.spinner_mealtime)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mealtime)
+        val selectedMealtime = arguments?.getInt("selectedMealtime")
+        Log.d(TAG,"selectedMealtime: ${arguments?.getInt("selectedMealtime")}")
         binding.spinner.adapter = adapter
+        binding.spinner.setSelection(selectedMealtime!!)
     }
 
     // 스피너 이벤트 관련 핸들러
@@ -137,7 +140,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                 id: Long
             ) {
                 bundle.putString("mealtime", binding.spinner.selectedItem.toString())
-                Log.d(TAG, binding.spinner.selectedItem.toString())
+                Log.d(TAG, "mealtime: ${binding.spinner.selectedItem.toString()}")
 
                 foodInfoFragment.arguments = bundle
             }
@@ -247,6 +250,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     override fun onResume() {
         super.onResume()
+        setupSpinnerMealtime()
         fetchFoodItems()
         Log.d(TAG, "onResume")
     }
@@ -264,7 +268,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     override fun onDestroyView() {
         super.onDestroyView()
         searchEditTextClear()
-        _binding = null
+         _binding = null
         Log.d(TAG, "onDestroyView")
     }
 
