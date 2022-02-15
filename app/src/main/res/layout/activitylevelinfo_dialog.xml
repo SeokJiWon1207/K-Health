@@ -34,22 +34,23 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- userInfo -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="2">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/age_TextView"
+            android:id="@+id/user_age_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:textSize="30sp"
             android:text="@string/label_age"
-            android:textStyle="bold"
             android:textColor="@color/lightblue"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/user_age_EditText"
@@ -58,20 +59,20 @@
             android:layout_marginRight="50dp"
             android:maxLength="3"
             android:textColorHint="@color/gray"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/weight_TextView"
+            android:id="@+id/user_weight_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:textSize="30sp"
             android:text="@string/weight"
-            android:textStyle="bold"
             android:textColor="@color/lightblue"
-            app:layout_constraintTop_toTopOf="@+id/user_weight_EditText"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/user_weight_EditText" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/user_weight_EditText"
@@ -79,12 +80,38 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginRight="50dp"
-            android:hint="@string/kg"
             android:gravity="right"
+            android:hint="@string/kg"
             android:maxLength="5"
             android:textColorHint="@color/gray"
-            app:layout_constraintTop_toBottomOf="@+id/user_age_EditText"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_age_EditText" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/user_height_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/height"
+            android:textColor="@color/lightblue"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_weight_TextView" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/user_height_EditText"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="50dp"
+            android:gravity="right"
+            android:hint="@string/cm"
+            android:maxLength="5"
+            android:textColorHint="@color/gray"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_weight_EditText" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/sex_TextView"
@@ -92,20 +119,20 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="30dp"
-            android:textSize="30sp"
             android:text="@string/label_sex"
-            android:textStyle="bold"
             android:textColor="@color/lightblue"
-            app:layout_constraintTop_toBottomOf="@id/weight_TextView"
-            app:layout_constraintLeft_toLeftOf="parent" />
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_height_TextView" />
 
         <RadioGroup
             android:id="@+id/sex_RadioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintTop_toTopOf="@id/sex_TextView"
-            app:layout_constraintLeft_toLeftOf="@id/user_weight_EditText">
+            app:layout_constraintLeft_toLeftOf="@id/user_weight_EditText"
+            app:layout_constraintTop_toTopOf="@id/sex_TextView">
 
             <RadioButton
                 android:id="@+id/sex_man"
@@ -122,6 +149,70 @@
 
         </RadioGroup>
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/user_activity_level_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:text="@string/label_activity_level"
+            android:textColor="@color/lightblue"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sex_TextView" />
+
+        <RadioGroup
+            android:id="@+id/activity_Level_RadioGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:orientation="vertical"
+            app:layout_constraintLeft_toRightOf="@id/user_activity_level_TextView"
+            app:layout_constraintTop_toTopOf="@id/user_activity_level_TextView">
+
+            <RadioButton
+                android:id="@+id/activity_Level_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_activity_level_1" />
+
+            <RadioButton
+                android:id="@+id/activity_Level_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_activity_level_2" />
+
+            <RadioButton
+                android:id="@+id/activity_Level_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_activity_level_3" />
+
+            <RadioButton
+                android:id="@+id/activity_Level_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_activity_level_4" />
+
+        </RadioGroup>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/description1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_description1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/activity_Level_RadioGroup" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/decription2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_description2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/description1" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -135,4 +226,5 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
+
 </LinearLayout>

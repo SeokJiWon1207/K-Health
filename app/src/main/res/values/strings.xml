@@ -8,10 +8,12 @@
     <string name="fb_login_protocol_scheme">fb4688792001180912</string>
     <string name="google_webclient_id">216295992635-18ue7bmi2p0hb77368ueou3ns8ls5h98.apps.googleusercontent.com</string>
     <string name="weight">체중</string>
+    <string name="height">신장</string>
     <string name="muscle">골격근량</string>
     <string name="fat">체지방률</string>
     <string name="percent">%</string>
     <string name="kg">kg</string>
+    <string name="cm">cm</string>
     <string name="default_value">00.0</string>
     <string name="today_kcal">오늘의 칼로리 섭취량</string>
     <string name="goal_kcal">목표 섭취량</string>
@@ -41,7 +43,17 @@
     <string name="label_sex">성별</string>
     <string name="label_sex_man">남자</string>
     <string name="label_sex_woman">여자</string>
-    <string name="label_description">*일일권장 계산은 사용자의 연령, 체중, 신장, 성별 및 활동 수준 등 \n고유한 요인에 따른 기준입니다.</string>
+    <string name="label_activity_level">활동지수</string>
+    <string name="label_activity_level_1">비활동적</string>
+    <string name="label_activity_level_2">낮은활동적</string>
+    <string name="label_activity_level_3">보통활동적</string>
+    <string name="label_activity_level_4">높은활동적</string>
+    <string name="label_description">*일일권장 계산은 사용자의 연령, 체중, 신장, 성별 및 활동 수준 등 \n 고유한 요인에 따른 기준입니다.</string>
+    <string name="label_description1">*어떤 활동 레벨을 선택해야하나요?</string>
+    <string name="label_description2">휴식, 책상작업 또는 운전등은 일상생활 활동입니다. 가벼운 가사 및 서있기도 포함가능하지만 가벼운 운동은 포함되지 않습니다.</string>
+    <string name="label_description3">일상생활 활동이외에, 장시간의 서있기 또는 가사일과 같이 격렬한 활동을 더하세요. 가벼운 운동의 형태로 천천히 걷기, 천천히 자전거타기 또는 정원관리등이 있습니다.</string>
+    <string name="label_description4">최소한 앉기와/또는 휴식및 작업환경은 서있기와 또는 신체적으로 움직임을 요구할 수도 있습니다. 정기적으로 댄스, 상쾌한 산책 또는 수영과 같은 적당한 운동을 수행하세요.</string>
+    <string name="label_description5">건설일과 같이 신체적 격한 활동 및/또는 조깅, 체육관 장비 이용또는 스포츠같은것을 대부분의 날에 합니다.</string>
     <string name="logout">로그아웃</string>
 
     <string name="foodservicekey">인증키 입력</string>

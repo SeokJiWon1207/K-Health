@@ -5,7 +5,9 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.*
@@ -34,10 +36,11 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private val db = FirebaseFirestore.getInstance()
     private val foodSearchFragment = FoodSearchFragment()
     private val foodInfoFragment = FoodInfoFragment()
-    val breakfastFoodList: ArrayList<Item> = arrayListOf()
-    val lunchFoodList: ArrayList<Item> = arrayListOf()
-    val dinnerFoodList: ArrayList<Item> = arrayListOf()
-    val etcFoodList: ArrayList<Item> = arrayListOf()
+    private val breakfastFoodList: ArrayList<Item> = arrayListOf()
+    private val lunchFoodList: ArrayList<Item> = arrayListOf()
+    private val dinnerFoodList: ArrayList<Item> = arrayListOf()
+    private val etcFoodList: ArrayList<Item> = arrayListOf()
+    private val totalFoodList: ArrayList<Item> = arrayListOf()
     private lateinit var breakfastFoodRecordListAdapter: FoodRecordListAdapter
     private lateinit var lunchFoodRecordListAdapter: FoodRecordListAdapter
     private lateinit var dinnerFoodRecordListAdapter: FoodRecordListAdapter
@@ -58,18 +61,17 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         val now = LocalDate.now()
         val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
         initViews()
+        totalFoodList.clear()
         getUserFoodRecord(todayNow, FoodTime.BREAKFAST.time, breakfastFoodList, breakfastFoodRecordListAdapter)
         getUserFoodRecord(todayNow, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
         getUserFoodRecord(todayNow, FoodTime.DINNER.time, dinnerFoodList, dinnerFoodRecordListAdapter)
         getUserFoodRecord(todayNow, FoodTime.ETC.time, etcFoodList, etcFoodRecordListAdapter)
+        Log.d(TAG,"totalfood: $totalFoodList")
+        setupUserKcalInfo()
 
-        /*Log.d(TAG,"breakfast: $breakfastFoodList")
-        Log.d(TAG,"lunch: $lunchFoodList")
-        Log.d(TAG,"dinner: $dinnerFoodList")
-        Log.d(TAG,"etc: $etcFoodList")*/
         isActivityLevelNotNull()
         getFoodRecordWithCalendar()
-        getTodayKcal()
+
 
 
 
@@ -171,12 +173,10 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             getUserFoodRecord(selectedDate, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
             getUserFoodRecord(selectedDate, FoodTime.DINNER.time, dinnerFoodList, dinnerFoodRecordListAdapter)
             getUserFoodRecord(selectedDate, FoodTime.ETC.time, etcFoodList, etcFoodRecordListAdapter)
-            Log.d(TAG,"breakfast: $breakfastFoodList")
-            Log.d(TAG,"lunch: $lunchFoodList")
-            Log.d(TAG,"dinner: $dinnerFoodList")
-            Log.d(TAG,"etc: $etcFoodList")
+            Log.d(TAG,"totalfood: $totalFoodList")
 
-            getTodayKcal()
+
+            totalFoodList.clear()
 
         }
     }
@@ -197,8 +197,10 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                 for (snapshot in querySnapshot!!.documents) {
                     val foodRecordItem = snapshot.toObject(Item::class.java)
                     foodlist.add(foodRecordItem!!)
+                    totalFoodList.add(foodRecordItem!!)
                 }
-                Log.d(TAG,"foodlist: $foodlist")
+                Log.d(TAG,"totalFoodList: $totalFoodList")
+                setupUserKcalInfo()
                 foodRecordListAdapter.notifyDataSetChanged()
             }
     }
@@ -220,8 +222,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             .document(Repository.userId)
             .get()
             .addOnSuccessListener { document ->
-                if (document["activityLevel"] != null) {
-                    Log.d(TAG, "activityLevel : ${document["activityLevel"]}")
+                if (document["userActivityLevel"] != null) {
+                    Log.d(TAG, "userActivityLevel : ${document["userActivityLevel"]}")
                 } else {
                     showActivityLevelInputPopup()
                 }
@@ -245,24 +247,42 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
         val userAgeEditText = activityLevelInfoDialog.findViewById<EditText>(R.id.user_age_EditText)
         val userWeightEditText = activityLevelInfoDialog.findViewById<EditText>(R.id.user_weight_EditText)
-        val radioGroup = activityLevelInfoDialog.findViewById<RadioGroup>(R.id.sex_RadioGroup)
+        val userheightEditText = activityLevelInfoDialog.findViewById<EditText>(R.id.user_height_EditText)
+        val userSexRadioGroup = activityLevelInfoDialog.findViewById<RadioGroup>(R.id.sex_RadioGroup)
         val man = activityLevelInfoDialog.findViewById<RadioButton>(R.id.sex_man)
         val woman = activityLevelInfoDialog.findViewById<RadioButton>(R.id.sex_woman)
-        var userSex: String = ""
+        val userActivityLevelRadioGroup = activityLevelInfoDialog.findViewById<RadioGroup>(R.id.activity_Level_RadioGroup)
         val submitButton = activityLevelInfoDialog.findViewById<Button>(R.id.submitButton)
+
+        var userSex = "" // 유저 성별
+        var userActivityLevel = 0 // 유저 활동지수
         
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+        userSexRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             when(checkedId) {
                 R.id.sex_man -> userSex = man.text.toString()
                 else -> userSex = woman.text.toString()
             }
         }
 
+        userActivityLevelRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            when(checkedId) {
+                R.id.activity_Level_1 -> userActivityLevel = 25 // 활동지수 수치
+                R.id.activity_Level_2 -> userActivityLevel = 30
+                R.id.activity_Level_3 -> userActivityLevel = 35
+                else -> userActivityLevel = 40
+            }
+        }
+
         submitButton.setOnClickListener {
+            val userHeight = userheightEditText.text.toString().toDouble()
+            val userRecommendedKcal = ((userHeight - 100) * 0.9 * userActivityLevel) // 일일 권장량 계산
             val userData = mutableMapOf<String, Any>(
                 "userAge" to userAgeEditText.text.toString(),
                 "userWeight" to userWeightEditText.text.toString(),
-                "userSex" to userSex
+                "userHeight" to userheightEditText.text.toString(),
+                "userSex" to userSex,
+                "userActivityLevel" to userActivityLevel.toString(),
+                "userRecommendedKcal" to userRecommendedKcal.toString().format("%.1f",userRecommendedKcal)
             )
 
             db.collection(DBKey.COLLECTION_NAME_USERS)
@@ -274,7 +294,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                 .addOnFailureListener {
 
                 }
-
+            setupUserKcalInfo()
         }
     }
 
@@ -327,15 +347,25 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
 
 
-    private fun getTodayKcal() {
-        val breakfastKcal = breakfastFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
-        val lunchKcal = lunchFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
-        val dinnerKcal = dinnerFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
-        val etcKcal = etcFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
-
-        val todayTotalKcal = breakfastKcal + lunchKcal + dinnerKcal + etcKcal
+    private fun setupUserKcalInfo() {
+        val todayTotalKcal = totalFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
+        var recommendedKcal = 0.0
+        var remainKcal = 0.0
         Log.d(TAG,"todaykcal: $todayTotalKcal")
+
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(Repository.userId)
+            .get()
+            .addOnSuccessListener { document ->
+                recommendedKcal = document["userRecommendedKcal"].toString().format("%.1d").toDouble()
+                binding.remainKcalTextView.text = (recommendedKcal - todayTotalKcal).toString().plus("kcal")
+                binding.recommendKcalTextView.text = document["userRecommendedKcal"].toString().plus("kcal")
+            }
+            .addOnFailureListener {
+            }
+
         binding.todayTotalKcalTextView.text = todayTotalKcal.toString().plus("kcal")
+
     }
 
     override fun timeGenerator(): String {
