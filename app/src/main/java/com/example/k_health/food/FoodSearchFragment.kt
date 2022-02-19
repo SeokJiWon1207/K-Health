@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.DBKey
@@ -175,6 +176,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                 (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
                     Log.d(TAG, "items : ${it.body!!.items}")
                     submitList(it.body.items!!)
+
                 }
             }
         } catch (exception: Exception) {
@@ -241,6 +243,14 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         }
     }
 
+    private fun showProgress() {
+        binding.progressBar.isVisible = true
+    }
+
+    private fun hideProgress() {
+        binding.progressBar.isVisible = false
+    }
+
     override fun timeGenerator(): String {
         val now = LocalDate.now()
         val todayNow = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
@@ -251,7 +261,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     override fun onResume() {
         super.onResume()
         setupSpinnerMealtime()
-        fetchFoodItems()
         Log.d(TAG, "onResume")
     }
 
@@ -267,14 +276,14 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     override fun onDestroyView() {
         super.onDestroyView()
-        searchEditTextClear()
-         _binding = null
+        // searchEditTextClear()
+        // _binding = null
+        // scope.cancel()
         Log.d(TAG, "onDestroyView")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        scope.cancel()
         Log.d(TAG, "onDestroy")
     }
 

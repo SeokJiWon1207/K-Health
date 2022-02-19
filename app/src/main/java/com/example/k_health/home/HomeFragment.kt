@@ -24,6 +24,7 @@ import com.example.k_health.LoginActivity
 import com.example.k_health.R
 import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentHomeBinding
+import com.example.k_health.food.FoodFragment
 import com.example.k_health.model.TodoList
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -204,6 +205,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
 
         }
+
+    }
+
+    private fun setProgressView() = with(binding) {
+
 
     }
 
@@ -396,7 +402,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        //_binding = null
         scope.cancel()
     }
 }

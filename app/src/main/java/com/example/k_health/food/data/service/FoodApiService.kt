@@ -11,8 +11,8 @@ interface FoodApiService {
 
     @GET(
         "getFoodNtrItdntList1?serviceKey=${BuildConfig.FOOD_SERVICE_KEY}" +
-                "&numOfRows=200" +
-                "&pageNo=5" +
+                "&numOfRows=50" +
+                "&pageNo=10" +
                 "&type=json"
     )
     suspend fun getFoodItems(): Response<FoodResponse>

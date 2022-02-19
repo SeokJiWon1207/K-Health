@@ -2,15 +2,13 @@ package com.example.k_health.food
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,21 +16,25 @@ import com.example.k_health.DBKey
 import com.example.k_health.MainActivity
 import com.example.k_health.R
 import com.example.k_health.Repository
-import com.example.k_health.databinding.ActivitylevelinfoDialogBinding
 import com.example.k_health.databinding.FragmentFoodBinding
 import com.example.k_health.databinding.LayoutFoodBinding
 import com.example.k_health.food.data.models.Item
 import com.example.k_health.health.TimeInterface
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
+import com.skydoves.progressview.progressView
 import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
+    companion object {
+        const val TAG = "FoodFragment"
+    }
+
     private var _binding: FragmentFoodBinding? = null
     private val binding get() = _binding!!
-    private var _activitylevelinfoDialogBinding: ActivitylevelinfoDialogBinding? = null
     private val db = FirebaseFirestore.getInstance()
     private val foodSearchFragment = FoodSearchFragment()
     private val foodInfoFragment = FoodInfoFragment()
@@ -49,10 +51,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private val scope = MainScope()
     private val bundle = Bundle()
 
-    companion object {
-        const val TAG = "FoodFragment"
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,20 +58,16 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
         val now = LocalDate.now()
         val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
-        initViews()
         totalFoodList.clear()
+        initViews()
         getUserFoodRecord(todayNow, FoodTime.BREAKFAST.time, breakfastFoodList, breakfastFoodRecordListAdapter)
         getUserFoodRecord(todayNow, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
         getUserFoodRecord(todayNow, FoodTime.DINNER.time, dinnerFoodList, dinnerFoodRecordListAdapter)
         getUserFoodRecord(todayNow, FoodTime.ETC.time, etcFoodList, etcFoodRecordListAdapter)
-        Log.d(TAG,"totalfood: $totalFoodList")
         setupUserKcalInfo()
-
+        setProgressView()
         isActivityLevelNotNull()
         getFoodRecordWithCalendar()
-
-
-
 
     }
 
@@ -83,11 +77,17 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.BREAKFAST.timeImage)
             timeTextView.text = FoodTime.BREAKFAST.time
             timeTextView.setTextColor(FoodTime.BREAKFAST.textColor)
-            breakfastFoodRecordListAdapter = FoodRecordListAdapter(breakfastFoodList, onClickDeleteButton = {
-                //3. onBindViewHolder에서 listposition을 전달받고 이 함수를 실행하게 된다.
-                // deleteRecord 함수가 포지션값인 it을 받고 지운다.
-                deleteRecord(it, breakfastFoodList, this.foodRecordRecyclerView, FoodTime.BREAKFAST.time)
-            })
+            breakfastFoodRecordListAdapter =
+                FoodRecordListAdapter(breakfastFoodList, onClickDeleteButton = {
+                    //3. onBindViewHolder에서 listposition을 전달받고 이 함수를 실행하게 된다.
+                    // deleteRecord 함수가 포지션값인 it을 받고 지운다.
+                    deleteRecord(
+                        it,
+                        breakfastFoodList,
+                        this.foodRecordRecyclerView,
+                        FoodTime.BREAKFAST.time
+                    )
+                })
             initRecyclerView(foodRecordRecyclerView, breakfastFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.BREAKFAST.time)
@@ -96,9 +96,15 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.LUNCH.timeImage)
             timeTextView.text = FoodTime.LUNCH.time
             timeTextView.setTextColor(FoodTime.LUNCH.textColor)
-            lunchFoodRecordListAdapter = FoodRecordListAdapter(lunchFoodList, onClickDeleteButton = {
-                deleteRecord(it, lunchFoodList, this.foodRecordRecyclerView, FoodTime.LUNCH.time)
-            })
+            lunchFoodRecordListAdapter =
+                FoodRecordListAdapter(lunchFoodList, onClickDeleteButton = {
+                    deleteRecord(
+                        it,
+                        lunchFoodList,
+                        this.foodRecordRecyclerView,
+                        FoodTime.LUNCH.time
+                    )
+                })
             initRecyclerView(foodRecordRecyclerView, lunchFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.LUNCH.time)
@@ -107,9 +113,15 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             timeImageView.setImageResource(FoodTime.DINNER.timeImage)
             timeTextView.text = FoodTime.DINNER.time
             timeTextView.setTextColor(FoodTime.DINNER.textColor)
-            dinnerFoodRecordListAdapter = FoodRecordListAdapter(dinnerFoodList, onClickDeleteButton = {
-                deleteRecord(it, dinnerFoodList, this.foodRecordRecyclerView, FoodTime.DINNER.time)
-            })
+            dinnerFoodRecordListAdapter =
+                FoodRecordListAdapter(dinnerFoodList, onClickDeleteButton = {
+                    deleteRecord(
+                        it,
+                        dinnerFoodList,
+                        this.foodRecordRecyclerView,
+                        FoodTime.DINNER.time
+                    )
+                })
             initRecyclerView(foodRecordRecyclerView, dinnerFoodRecordListAdapter)
             showFoodRecordRecyclerView(foodRecordOpenImageButton, this)
             moveSearchFood(foodAddImageButton, FoodTime.DINNER.time)
@@ -127,10 +139,15 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         }
     }
 
-    private fun deleteRecord(item: Item, foodlist: ArrayList<Item>, recyclerView: RecyclerView, mealtime: String) {
+    private fun deleteRecord(
+        item: Item,
+        foodlist: ArrayList<Item>,
+        recyclerView: RecyclerView,
+        mealtime: String
+    ) {
         foodlist.remove(item)
         val pref = activity?.getSharedPreferences("pref", 0)
-        val toremovedDate = pref?.getString("selectedDate","YYYY")
+        val toremovedDate = pref?.getString("selectedDate", "YYYY")
         val toremovedFoodname = item.foodName
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(Repository.userId)
@@ -140,10 +157,10 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             .document(toremovedFoodname!!)
             .delete()
             .addOnSuccessListener {
-                Log.d(TAG,"removed item")
+                Log.d(TAG, "removed item")
             }
             .addOnFailureListener { e ->
-                Log.d(TAG,"removed failed : $e")
+                Log.d(TAG, "removed failed : $e")
             }
 
         recyclerView.adapter?.notifyDataSetChanged()
@@ -152,6 +169,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private fun getFoodRecordWithCalendar() {
         val pref = activity?.getSharedPreferences("pref", 0)
         val edit = pref?.edit()
+
+        showProgress()
         binding.foodCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             val monthString: String =
                 if (month > 10) "${month + 1}" else String.format("%02d", month + 1)
@@ -160,9 +179,9 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             val todayDate = "${year}/${monthString}/${dayOfMonthString}" //
             val selectedDate =
                 "${year}${monthString}${dayOfMonthString}" // firestore의 path로 '/'사용불가
-            Log.d(TAG,"selectedDate: $selectedDate")
+            Log.d(TAG, "selectedDate: $selectedDate")
 
-            edit?.putString("selectedDate",selectedDate)?.apply() // sharedpreference에 값 저장
+            edit?.putString("selectedDate", selectedDate)?.apply() // sharedpreference에 값 저장
 
             bundle.putString("todayDate", todayDate)
             bundle.putString("selectedDate", selectedDate)
@@ -173,12 +192,11 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             getUserFoodRecord(selectedDate, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
             getUserFoodRecord(selectedDate, FoodTime.DINNER.time, dinnerFoodList, dinnerFoodRecordListAdapter)
             getUserFoodRecord(selectedDate, FoodTime.ETC.time, etcFoodList, etcFoodRecordListAdapter)
-            Log.d(TAG,"totalfood: $totalFoodList")
 
-
+            setProgressView()
             totalFoodList.clear()
-
         }
+        hideProgress()
     }
 
     private fun getUserFoodRecord(
@@ -187,6 +205,9 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         foodlist: ArrayList<Item>,
         foodRecordListAdapter: FoodRecordListAdapter
     ) {
+        val pref = activity?.getSharedPreferences("pref", 0)
+        val edit = pref?.edit()
+
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(Repository.userId)
             .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
@@ -198,9 +219,13 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                     val foodRecordItem = snapshot.toObject(Item::class.java)
                     foodlist.add(foodRecordItem!!)
                     totalFoodList.add(foodRecordItem!!)
+                    Log.d(TAG,"Total@@@@@@@@@@@@@@@@@@@@: ${totalFoodList.isNotEmpty()}")
+                    /*totalFoodList.sumOf { it.carbon!!.toDouble() }.toString()
+                    totalFoodList.sumOf { it.protein!!.toDouble() }.toString()
+                    totalFoodList.sumOf { it.fat!!.toDouble() }.toString()*/
                 }
-                Log.d(TAG,"totalFoodList: $totalFoodList")
                 setupUserKcalInfo()
+                setProgressView()
                 foodRecordListAdapter.notifyDataSetChanged()
             }
     }
@@ -233,7 +258,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             }
     }
 
-    private fun showActivityLevelInputPopup()  {
+    private fun showActivityLevelInputPopup() {
         activityLevelInfoDialog.apply {
             setContentView(R.layout.activitylevelinfo_dialog)
             window!!.setLayout(
@@ -246,26 +271,30 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         }
 
         val userAgeEditText = activityLevelInfoDialog.findViewById<EditText>(R.id.user_age_EditText)
-        val userWeightEditText = activityLevelInfoDialog.findViewById<EditText>(R.id.user_weight_EditText)
-        val userheightEditText = activityLevelInfoDialog.findViewById<EditText>(R.id.user_height_EditText)
-        val userSexRadioGroup = activityLevelInfoDialog.findViewById<RadioGroup>(R.id.sex_RadioGroup)
+        val userWeightEditText =
+            activityLevelInfoDialog.findViewById<EditText>(R.id.user_weight_EditText)
+        val userheightEditText =
+            activityLevelInfoDialog.findViewById<EditText>(R.id.user_height_EditText)
+        val userSexRadioGroup =
+            activityLevelInfoDialog.findViewById<RadioGroup>(R.id.sex_RadioGroup)
         val man = activityLevelInfoDialog.findViewById<RadioButton>(R.id.sex_man)
         val woman = activityLevelInfoDialog.findViewById<RadioButton>(R.id.sex_woman)
-        val userActivityLevelRadioGroup = activityLevelInfoDialog.findViewById<RadioGroup>(R.id.activity_Level_RadioGroup)
+        val userActivityLevelRadioGroup =
+            activityLevelInfoDialog.findViewById<RadioGroup>(R.id.activity_Level_RadioGroup)
         val submitButton = activityLevelInfoDialog.findViewById<Button>(R.id.submitButton)
 
-        var userSex = "" // 유저 성별
+        var userSex: String? = null // 유저 성별
         var userActivityLevel = 0 // 유저 활동지수
-        
+
         userSexRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            when(checkedId) {
+            when (checkedId) {
                 R.id.sex_man -> userSex = man.text.toString()
                 else -> userSex = woman.text.toString()
             }
         }
 
         userActivityLevelRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            when(checkedId) {
+            when (checkedId) {
                 R.id.activity_Level_1 -> userActivityLevel = 25 // 활동지수 수치
                 R.id.activity_Level_2 -> userActivityLevel = 30
                 R.id.activity_Level_3 -> userActivityLevel = 35
@@ -273,31 +302,45 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             }
         }
 
-        submitButton.setOnClickListener {
-            val userHeight = userheightEditText.text.toString().toDouble()
-            val userRecommendedKcal = ((userHeight - 100) * 0.9 * userActivityLevel) // 일일 권장량 계산
-            val userData = mutableMapOf<String, Any>(
-                "userAge" to userAgeEditText.text.toString(),
-                "userWeight" to userWeightEditText.text.toString(),
-                "userHeight" to userheightEditText.text.toString(),
-                "userSex" to userSex,
-                "userActivityLevel" to userActivityLevel.toString(),
-                "userRecommendedKcal" to userRecommendedKcal.toString().format("%.1f",userRecommendedKcal)
-            )
+        submitButton.setOnClickListener { view ->
+            if (userheightEditText.text.isEmpty() || userAgeEditText.text.isEmpty() || userWeightEditText.text.isEmpty()
+                || userActivityLevel.equals(0) || userSex.equals(null)
+            ) {
+                Snackbar.make(view, "항목을 다 채워주세요", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("확인", object : View.OnClickListener {
+                        override fun onClick(v: View?) {
+                        }
+                    })
+                    .show()
+                return@setOnClickListener
+            } else {
+                val userHeight = userheightEditText.text.toString().toDouble()
+                // 일일 권장량 계산
+                val userRecommendedKcal =
+                    String.format("%.1f", ((userHeight - 100) * 0.9 * userActivityLevel))
+                val userData = mutableMapOf<String, Any>(
+                    "userAge" to userAgeEditText.text.toString(),
+                    "userWeight" to userWeightEditText.text.toString(),
+                    "userHeight" to userheightEditText.text.toString(),
+                    "userSex" to userSex!!,
+                    "userActivityLevel" to userActivityLevel.toString(),
+                    "userRecommendedKcal" to userRecommendedKcal
+                )
 
-            db.collection(DBKey.COLLECTION_NAME_USERS)
-                .document(Repository.userId)
-                .update(userData)
-                .addOnSuccessListener {
-                    activityLevelInfoDialog.dismiss()
-                }
-                .addOnFailureListener {
 
-                }
-            setupUserKcalInfo()
+                db.collection(DBKey.COLLECTION_NAME_USERS)
+                    .document(Repository.userId)
+                    .update(userData)
+                    .addOnSuccessListener {
+                        activityLevelInfoDialog.dismiss()
+                    }
+                    .addOnFailureListener {
+
+                    }
+                setupUserKcalInfo()
+            }
         }
     }
-
 
 
     private fun showFoodRecordRecyclerView(
@@ -329,14 +372,13 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private fun moveSearchFood(foodAddImageButton: ImageButton, time: Any) {
         foodAddImageButton.setOnClickListener {
             val mealtime = time.toString()
-            val mealTimePosition = when(mealtime) {
+            val mealTimePosition = when (mealtime) {
                 "아침식사" -> 0
                 "점심식사" -> 1
                 "저녁식사" -> 2
                 else -> 3
             }
             bundle.putInt("selectedMealtime", mealTimePosition)
-            Log.d(TAG, "selectedMealtime : $mealTimePosition")
 
             foodInfoFragment.arguments = bundle
             foodSearchFragment.arguments = bundle
@@ -345,28 +387,44 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         }
     }
 
-
-
     private fun setupUserKcalInfo() {
+        Log.d(TAG, "setup")
         val todayTotalKcal = totalFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
         var recommendedKcal = 0.0
         var remainKcal = 0.0
-        Log.d(TAG,"todaykcal: $todayTotalKcal")
 
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(Repository.userId)
             .get()
             .addOnSuccessListener { document ->
                 recommendedKcal = document["userRecommendedKcal"].toString().format("%.1d").toDouble()
-                binding.remainKcalTextView.text = (recommendedKcal - todayTotalKcal).toString().plus("kcal")
-                binding.recommendKcalTextView.text = document["userRecommendedKcal"].toString().plus("kcal")
+                remainKcal = recommendedKcal - todayTotalKcal
+
+                binding.remainKcalTextView.text = String.format("%.1f", remainKcal).plus("kcal")
+                binding.todayTotalKcalTextView.text = String.format("%.1f", todayTotalKcal).plus("kcal")
+                binding.recommendKcalTextView.text = recommendedKcal.toString().plus("kcal")
             }
             .addOnFailureListener {
+                Log.d(TAG, "$it")
             }
-
-        binding.todayTotalKcalTextView.text = todayTotalKcal.toString().plus("kcal")
-
     }
+
+    /*private fun setProgressView() = with(binding) {
+
+        val carbonAmount = String.format("%.1f",totalFoodList.sumOf { it.carbon!!.toDouble() })
+        carbonProgressView.labelText = getString(R.string.carbon).plus(": "+carbonAmount+"g")
+        carbonProgressView.progress = carbonAmount!!.toFloat()
+        Log.d(TAG,"carbon: $carbonAmount")
+
+        val proteinAmount = String.format("%.1f",totalFoodList.sumOf { it.protein!!.toDouble() })
+        proteinProgressView.labelText = getString(R.string.protein).plus(": "+proteinAmount+"g")
+        proteinProgressView.progress = proteinAmount!!.toFloat()
+        Log.d(TAG,"protein: $proteinAmount")
+
+        val fatAmount = String.format("%.1f",totalFoodList.sumOf { it.fat!!.toDouble() })
+        fatProgressView.labelText = getString(R.string.fat).plus(": "+fatAmount+"g")
+        fatProgressView.progress = fatAmount!!.toFloat()
+    }*/
 
     override fun timeGenerator(): String {
         val now = LocalDate.now()
@@ -375,10 +433,18 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         return todayNow
     }
 
+    private fun showProgress() {
+        binding.progressBar.isVisible = true
+    }
+
+    private fun hideProgress() {
+        binding.progressBar.isVisible = false
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
-        scope.cancel()
+        // _binding = null
+        // scope.cancel()
     }
 }

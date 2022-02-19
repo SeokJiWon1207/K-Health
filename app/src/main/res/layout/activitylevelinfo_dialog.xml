@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5">
+        android:layout_weight="0.2">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/recommend_TextView"
@@ -19,18 +19,10 @@
             android:textSize="25sp"
             android:textStyle="bold"
             android:textColor="@color/lightblue"
-            android:layout_marginTop="10dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_description"
-            app:layout_constraintTop_toBottomOf="@+id/recommend_TextView"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- userInfo -->
@@ -57,6 +49,7 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="50dp"
+            android:gravity="right"
             android:maxLength="3"
             android:textColorHint="@color/gray"
             app:layout_constraintRight_toRightOf="parent"
@@ -104,14 +97,13 @@
             android:id="@+id/user_height_EditText"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:layout_marginRight="50dp"
             android:gravity="right"
             android:hint="@string/cm"
             android:maxLength="5"
             android:textColorHint="@color/gray"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_weight_EditText" />
+            app:layout_constraintTop_toTopOf="@+id/user_height_TextView" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/sex_TextView"
@@ -201,17 +193,79 @@
             android:id="@+id/description1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:text="@string/label_description1"
             app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_Level_RadioGroup" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/decription2"
+            android:id="@+id/non_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="비활동적 - "
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/description2"
+            app:layout_constraintRight_toLeftOf="@id/description2"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/description2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_description2"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/non_activity"
             app:layout_constraintTop_toBottomOf="@+id/description1" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/low_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="낮은활동적 - "
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/description3"
+            app:layout_constraintRight_toLeftOf="@id/description3"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/description3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_description3"
+            app:layout_constraintLeft_toRightOf="@id/low_activity"
+            app:layout_constraintTop_toBottomOf="@+id/description2" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/normal_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="보통활동적 - "
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/description4"
+            app:layout_constraintRight_toLeftOf="@id/description4"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/description4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_description4"
+            app:layout_constraintLeft_toRightOf="@id/normal_activity"
+            app:layout_constraintTop_toBottomOf="@+id/description3" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/high_activity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="높은활동적 - "
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/description5"
+            app:layout_constraintRight_toLeftOf="@id/description5"/>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/description5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_description4"
+            app:layout_constraintLeft_toRightOf="@id/high_activity"
+            app:layout_constraintTop_toBottomOf="@+id/description4" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
