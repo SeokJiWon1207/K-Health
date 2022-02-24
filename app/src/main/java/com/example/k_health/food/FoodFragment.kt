@@ -18,11 +18,11 @@ import com.example.k_health.R
 import com.example.k_health.Repository
 import com.example.k_health.databinding.FragmentFoodBinding
 import com.example.k_health.databinding.LayoutFoodBinding
+import com.example.k_health.food.adapter.FoodRecordListAdapter
 import com.example.k_health.food.data.models.Item
 import com.example.k_health.health.TimeInterface
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
-import com.skydoves.progressview.progressView
 import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -48,14 +48,13 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private lateinit var dinnerFoodRecordListAdapter: FoodRecordListAdapter
     private lateinit var etcFoodRecordListAdapter: FoodRecordListAdapter
     private val activityLevelInfoDialog: Dialog by lazy { Dialog(requireContext()) }
-    private val scope = MainScope()
     private val bundle = Bundle()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentFoodBinding.bind(view)
-
+        isActivityLevelNotNull()
         val now = LocalDate.now()
         val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
         totalFoodList.clear()
@@ -64,11 +63,24 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         getUserFoodRecord(todayNow, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
         getUserFoodRecord(todayNow, FoodTime.DINNER.time, dinnerFoodList, dinnerFoodRecordListAdapter)
         getUserFoodRecord(todayNow, FoodTime.ETC.time, etcFoodList, etcFoodRecordListAdapter)
-        setupUserKcalInfo()
-        setProgressView()
-        isActivityLevelNotNull()
+
         getFoodRecordWithCalendar()
 
+    }
+
+    private fun setDefaultValues() {
+        val defaultValuesData = mutableMapOf<String, Any>()
+        defaultValuesData.set("userActivityLevel","0")
+        defaultValuesData.set("userRecommendedKcal","0")
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(Repository.userId)
+            .update(defaultValuesData)
+            .addOnSuccessListener {
+                Log.d(TAG, "setDefaultValues")
+            }
+            .addOnFailureListener {
+
+            }
     }
 
     @SuppressLint("ResourceAsColor")
@@ -205,8 +217,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         foodlist: ArrayList<Item>,
         foodRecordListAdapter: FoodRecordListAdapter
     ) {
-        val pref = activity?.getSharedPreferences("pref", 0)
-        val edit = pref?.edit()
 
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(Repository.userId)
@@ -220,9 +230,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                     foodlist.add(foodRecordItem!!)
                     totalFoodList.add(foodRecordItem!!)
                     Log.d(TAG,"Total@@@@@@@@@@@@@@@@@@@@: ${totalFoodList.isNotEmpty()}")
-                    /*totalFoodList.sumOf { it.carbon!!.toDouble() }.toString()
-                    totalFoodList.sumOf { it.protein!!.toDouble() }.toString()
-                    totalFoodList.sumOf { it.fat!!.toDouble() }.toString()*/
                 }
                 setupUserKcalInfo()
                 setProgressView()
@@ -247,9 +254,12 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             .document(Repository.userId)
             .get()
             .addOnSuccessListener { document ->
-                if (document["userActivityLevel"] != null) {
+                if (document["userActivityLevel"] != null && document["userActivityLevel"] != "0") {
                     Log.d(TAG, "userActivityLevel : ${document["userActivityLevel"]}")
+                    setupUserKcalInfo()
+                    setProgressView()
                 } else {
+                    setDefaultValues()
                     showActivityLevelInputPopup()
                 }
             }
@@ -409,7 +419,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             }
     }
 
-    /*private fun setProgressView() = with(binding) {
+    private fun setProgressView() = with(binding) {
 
         val carbonAmount = String.format("%.1f",totalFoodList.sumOf { it.carbon!!.toDouble() })
         carbonProgressView.labelText = getString(R.string.carbon).plus(": "+carbonAmount+"g")
@@ -424,7 +434,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         val fatAmount = String.format("%.1f",totalFoodList.sumOf { it.fat!!.toDouble() })
         fatProgressView.labelText = getString(R.string.fat).plus(": "+fatAmount+"g")
         fatProgressView.progress = fatAmount!!.toFloat()
-    }*/
+    }
 
     override fun timeGenerator(): String {
         val now = LocalDate.now()

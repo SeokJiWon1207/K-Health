@@ -1,8 +1,7 @@
-package com.example.k_health.food
+package com.example.k_health.food.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
 import androidx.recyclerview.widget.DiffUtil
@@ -10,7 +9,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemFoodBinding
 import com.example.k_health.food.data.models.Item
-import com.example.k_health.model.HealthList
 
 class FoodListAdapter(private val itemClickListener: (Item) -> Unit) :
     ListAdapter<Item, FoodListAdapter.ViewHolder>(diffUtil) {

@@ -126,7 +126,8 @@
                             android:layout_toRightOf="@id/userWeightTextView"
                             android:text="@string/kg"
                             android:textColor="@color/white"
-                            android:textSize="17sp" />
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
 
                     </RelativeLayout>
 
@@ -170,7 +171,8 @@
                             android:layout_toRightOf="@id/userMuscleTextView"
                             android:text="@string/percent"
                             android:textColor="@color/white"
-                            android:textSize="17sp" />
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
 
                     </RelativeLayout>
 
@@ -214,12 +216,14 @@
                             android:layout_toRightOf="@id/userFatTextView"
                             android:text="@string/percent"
                             android:textColor="@color/white"
-                            android:textSize="17sp" />
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
                     </RelativeLayout>
 
                 </LinearLayout>
 
             </FrameLayout>
+
 
             <com.skydoves.progressview.ProgressView
                 android:id="@+id/weight_progressView"
@@ -236,15 +240,15 @@
                 app:progressView_labelColorOuter="@color/black"
                 app:progressView_labelSize="13sp"
                 app:progressView_labelSpace="10dp"
-                app:progressView_labelText="@string/label_carbon"
                 app:progressView_labelTypeface="bold"
-                app:progressView_max="300"
-                app:progressView_min="100"
+                app:progressView_max="150"
+                app:progressView_min="50"
                 app:progressView_padding="1dp"
                 app:progressView_progress="40"
                 app:progressView_progressFromPrevious="true"
                 app:progressView_radius="12dp"
                 app:layout_constraintTop_toBottomOf="@id/frameLayout"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
             <com.skydoves.progressview.ProgressView
                 android:id="@+id/muscle_progressView"
@@ -256,19 +260,20 @@
                 android:elevation="5dp"
                 app:progressView_autoAnimate="true"
                 app:progressView_colorBackground="@color/white"
-                app:progressView_colorProgress="@color/red"
+                app:progressView_colorProgress="@color/lightblue"
                 app:progressView_labelColorInner="@color/white"
                 app:progressView_labelColorOuter="@color/black"
                 app:progressView_labelSize="13sp"
                 app:progressView_labelSpace="10dp"
-                app:progressView_labelText="@string/label_carbon"
                 app:progressView_labelTypeface="bold"
-                app:progressView_max="300"
-                app:progressView_min="100"
+                app:progressView_max="45"
+                app:progressView_min="15"
                 app:progressView_padding="1dp"
                 app:progressView_progress="40"
                 app:progressView_progressFromPrevious="true"
-                app:progressView_radius="12dp" />
+                app:progressView_radius="12dp"
+                app:layout_constraintTop_toBottomOf="@id/weight_progressView"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
             <com.skydoves.progressview.ProgressView
                 android:id="@+id/fat_progressView"
@@ -280,19 +285,20 @@
                 android:elevation="5dp"
                 app:progressView_autoAnimate="true"
                 app:progressView_colorBackground="@color/white"
-                app:progressView_colorProgress="@color/red"
+                app:progressView_colorProgress="@color/orange"
                 app:progressView_labelColorInner="@color/white"
                 app:progressView_labelColorOuter="@color/black"
                 app:progressView_labelSize="13sp"
                 app:progressView_labelSpace="10dp"
-                app:progressView_labelText="@string/label_carbon"
                 app:progressView_labelTypeface="bold"
-                app:progressView_max="300"
-                app:progressView_min="100"
+                app:progressView_max="39"
+                app:progressView_min="13"
                 app:progressView_padding="1dp"
-                app:progressView_progress="40"
+                app:progressView_progress="10"
                 app:progressView_progressFromPrevious="true"
-                app:progressView_radius="12dp" />
+                app:progressView_radius="12dp"
+                app:layout_constraintTop_toBottomOf="@id/muscle_progressView"
+                app:layout_constraintLeft_toLeftOf="parent"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/todo_TextView"
@@ -305,7 +311,7 @@
                 android:layout_marginLeft="15dp"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayout"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/fat_progressView" />
 
             <LinearLayout
                 android:id="@+id/linearLayout"

@@ -1,4 +1,4 @@
-package com.example.k_health.helper
+package com.example.k_health.helper.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -20,7 +20,7 @@ class HelperNutrientAdapter(private val nutrientData: ArrayList<Nutrient>): Recy
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HelperNutrientAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             ItemNutrientBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -29,7 +29,7 @@ class HelperNutrientAdapter(private val nutrientData: ArrayList<Nutrient>): Recy
         ))
     }
 
-    override fun onBindViewHolder(holder: HelperNutrientAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(nutrientData[position])
     }
 

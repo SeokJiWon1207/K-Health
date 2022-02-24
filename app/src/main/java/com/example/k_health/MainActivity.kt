@@ -1,7 +1,5 @@
 package com.example.k_health
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -16,7 +14,7 @@ import com.example.k_health.report.ReportFragment
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    // val sharedPreferences = this.getSharedPreferences("selectedDate", Context.MODE_PRIVATE)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)

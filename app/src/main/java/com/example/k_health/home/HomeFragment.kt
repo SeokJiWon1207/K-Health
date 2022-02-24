@@ -8,7 +8,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
@@ -18,14 +20,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.k_health.DBKey
+import com.example.k_health.*
 import com.example.k_health.DBKey.Companion.STORAGE_URL_USERPROFILE
-import com.example.k_health.LoginActivity
-import com.example.k_health.R
 import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentHomeBinding
 import com.example.k_health.food.FoodFragment
 import com.example.k_health.model.TodoList
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -52,23 +53,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         const val TAG = "HomeFragment"
     }
 
-    init {
-        setUserProfile()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentHomeBinding.bind(view)
 
-        Log.d(TAG, "userId : ${userId}")
 
         todolist.add(TodoList("아침식사", R.drawable.ic_baseline_restaurant_24_2))
         todolist.add(TodoList("점심식사", R.drawable.ic_baseline_restaurant_24_2))
         todolist.add(TodoList("저녁식사", R.drawable.ic_baseline_restaurant_24_2))
         todolist.add(TodoList("운동", R.drawable.ic_baseline_fitness_center_24_2))
-
-        setUserProfile()
+        // setUserProfile()
         isNicknameNotNull()
         // getProfileImage()
         uploadProfileImage()
@@ -79,6 +74,22 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     }
 
+    private fun setDefaultValues() {
+        val defaultValuesData = mutableMapOf<String, Any>()
+        defaultValuesData.set("userWeight","00.0")
+        defaultValuesData.set("userheight","00.0")
+        defaultValuesData.set("userFat","00.0")
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(userId)
+            .update(defaultValuesData)
+            .addOnSuccessListener {
+                Log.d(TAG, "setDefaultValues")
+            }
+            .addOnFailureListener {
+
+            }
+    }
+
     private fun isNicknameNotNull() {
 
         db.collection(DBKey.COLLECTION_NAME_USERS)
@@ -87,7 +98,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .addOnSuccessListener { document ->
                 if (document["userNickname"] != null) {
                     Log.d("Home", "userNickname : ${document["userNickname"]}")
+                    setUserProfile()
+                    setProgressView()
                 } else {
+                    setDefaultValues()
+                    setUserProfile()
                     showNicknameInputPopup()
                 }
             }
@@ -103,9 +118,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .get()
             .addOnSuccessListener { document ->
                 binding.userNameTextView.text = (document["userNickname"].toString()).plus("님")
-                binding.userWeightTextView.text = document["userWeight"].toString()
-                binding.userMuscleTextView.text = document["userMuscle"].toString()
-                binding.userFatTextView.text = document["userFat"].toString()
+                binding.userWeightTextView.text = document["userWeight"].toString() ?: "00.0"
+                binding.userMuscleTextView.text = document["userMuscle"].toString() ?: "00.0"
+                binding.userFatTextView.text = document["userFat"].toString() ?: "00.0"
 
             }
             .addOnFailureListener {
@@ -134,14 +149,21 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val editText = EditText(requireContext())
 
         AlertDialog.Builder(requireContext())
-            .setTitle("닉네임을 입력해주세요 \n 8자 이하로 작성이 가능합니다.")
+            .setTitle("닉네임을 입력해주세요 \n8자 이하로 작성이 가능합니다.")
             .setView(editText)
             .setPositiveButton("저장") { _, _ ->
                 if (editText.text.isEmpty() || editText.text.length > 8) {
-                    Toast.makeText(requireContext(), "다시 입력해주세요", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(requireView(), "항목을 다 채워주세요.", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("확인", object: View.OnClickListener {
+                            override fun onClick(v: View?) {
+
+                            }
+                        })
+                        .show()
                     showNicknameInputPopup()
                 } else {
                     saveUserNickname(editText.text.toString())
+                    //setProgressView()
                 }
             }
             .setCancelable(false)
@@ -183,26 +205,42 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val userMuscleEditText = userInfoDialog.findViewById<EditText>(R.id.user_muscle_EditText)
         val userFatEditText = userInfoDialog.findViewById<EditText>(R.id.user_fat_EditText)
 
-        if (userWeightEditText.isFocused == true) userFatEditText.text.clear()
+        userInfoDialog.findViewById<Button>(R.id.submitButton).setOnClickListener { view ->
 
-        userInfoDialog.findViewById<Button>(R.id.submitButton).setOnClickListener {
-            val userData = mutableMapOf<String, Any>(
-                "userWeight" to userWeightEditText.text.toString(),
-                "userMuscle" to userMuscleEditText.text.toString(),
-                "userFat" to userFatEditText.text.toString()
-            )
+            if (userWeightEditText.text.isEmpty() || userMuscleEditText.text.isEmpty() || userFatEditText.text.isEmpty()) {
+                Snackbar.make(view, "항목을 다 채워주세요.", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("확인", object: View.OnClickListener {
+                        override fun onClick(v: View?) {
 
-            db.collection(DBKey.COLLECTION_NAME_USERS)
-                .document(userId)
-                .update(userData)
-                .addOnSuccessListener {
-                    userInfoDialog.dismiss()
-                    Toast.makeText(requireContext(), "신체정보가 등록되었습니다", Toast.LENGTH_SHORT).show()
-                    setUserProfile()
-                }
-                .addOnFailureListener {
+                        }
+                    })
+                    .show()
+            } else {
+                val userData = mutableMapOf<String, Any>(
+                    "userWeight" to userWeightEditText.text.toString(),
+                    "userMuscle" to userMuscleEditText.text.toString(),
+                    "userFat" to userFatEditText.text.toString()
+                )
 
-                }
+                db.collection(DBKey.COLLECTION_NAME_USERS)
+                    .document(userId)
+                    .update(userData)
+                    .addOnSuccessListener {
+                        userInfoDialog.dismiss()
+                        Snackbar.make(requireView(), "신체정보가 등록되었습니다.", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("확인", object : View.OnClickListener {
+                                override fun onClick(v: View?) {
+
+                                }
+                            })
+                            .show()
+                        setUserProfile()
+                        setProgressView()
+                    }
+                    .addOnFailureListener {
+
+                    }
+            }
 
         }
 
@@ -210,7 +248,27 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun setProgressView() = with(binding) {
 
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                weightProgressView.labelText = getString(R.string.weight).plus(": "+document["userWeight"].toString()+"kg")
+                weightProgressView.progress = document["userWeight"].toString().toFloat()
 
+                // 골격근량 최대치 -> 이 반이 평균
+                if (document["userWeight"].toString().toFloat() != 00.0f) {
+                    muscleProgressView.max = document["userWeight"].toString().toFloat() * 0.48f * 2
+                }
+
+                muscleProgressView.labelText = getString(R.string.Skeletal_Muscle_Mass).plus(": "+document["userMuscle"].toString()+"kg")
+                muscleProgressView.progress = document["userMuscle"].toString().toFloat()
+
+                fatProgressView.labelText = getString(R.string.body_Fat_Percentage).plus(": "+document["userFat"].toString()+"%")
+                fatProgressView.progress = document["userFat"].toString().toFloat()
+            }
+            .addOnFailureListener {
+                Log.d("Error", "error : $it")
+            }
     }
 
     // DB에 닉네임을 저장
@@ -221,9 +279,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .document(userId)
             .update(userNickname)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "닉네임이 등록되었습니다", Toast.LENGTH_SHORT).show()
-                updateUserNickname()
+                Snackbar.make(requireView(), "닉네임이 등록되었습니다.", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("확인", object : View.OnClickListener {
+                        override fun onClick(v: View?) {
 
+                        }
+                    })
+                    .show()
+                updateUserNickname()
             }
             .addOnFailureListener {
 

@@ -12,16 +12,17 @@ import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.k_health.DBKey
-import com.example.k_health.MainActivity
-import com.example.k_health.R
-import com.example.k_health.Repository
+import com.example.k_health.*
 import com.example.k_health.databinding.FragmentFoodSearchBinding
+import com.example.k_health.food.adapter.FoodHistoryAdapter
+import com.example.k_health.food.adapter.FoodListAdapter
 import com.example.k_health.health.TimeInterface
+import com.example.k_health.model.History
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -37,8 +38,10 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     private val db = FirebaseFirestore.getInstance()
     private val scope = MainScope()
     private val foodInfoFragment = FoodInfoFragment()
-    private lateinit var foodListAdapter: FoodListAdapter
     private val bundle = Bundle()
+    private lateinit var foodListAdapter: FoodListAdapter
+    private lateinit var foodHistoryAdapter: FoodHistoryAdapter
+    private lateinit var roomDB: AppDatabase
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,12 +49,15 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
         Log.d(TAG, "onViewCreated")
 
+        roomDB = getAppDatabase(requireContext())
+
         recordFoods()
         setupSpinnerMealtime()
         setupSpinnerHandler()
         initFoodRecyclerView()
-        fetchFoodItems()
         initSearchEditText()
+        initHistoryRecyclerView()
+        fetchFoodItems()
 
 
     }
@@ -172,14 +178,18 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     // Retrofit 1-4) FoodApiService의 Method 사용으로 받아온 데이터를 RecyclerView에 뿌려주기
     private fun fetchFoodItems(query: String? = null) = scope.launch {
         try {
+            showProgress()
+            hideRetryButton()
             Repository.getFoodItems()?.let {
                 (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
                     Log.d(TAG, "items : ${it.body!!.items}")
                     submitList(it.body.items!!)
-
                 }
+                hideProgress()
             }
         } catch (exception: Exception) {
+            hideProgress()
+            showRetryButton()
             Log.d(TAG, "exception : $exception")
         }
     }
@@ -227,7 +237,8 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
             Repository.getFoodByName(keyword)?.let {
                 (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
                     Log.d(TAG, "keyword items : ${it.body!!.items}")
-
+                    hideHistoryView()
+                    saveSearchKeyword(keyword)
                     submitList(it.body.items!!)
                 }
             }
@@ -235,6 +246,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
             Log.d(TAG, "exception : $exception")
         }
     }
+
 
     private fun searchEditTextClear() = with(binding) {
         editTextClearButton.setOnClickListener {
@@ -249,6 +261,60 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     private fun hideProgress() {
         binding.progressBar.isVisible = false
+    }
+
+    private fun showRetryButton() {
+        binding.retryButton.apply {
+            isVisible = true
+            setOnClickListener {
+                fetchFoodItems()
+            }
+        }
+    }
+
+    private fun hideRetryButton() {
+        binding.retryButton.isVisible = false
+    }
+
+    // 검색한 기록을 보여주는 메소드
+    private fun showHistoryView() {
+        // Room 2-5) MainThread 에서 Room DB에 접근하려고 하면 에러가 발생한다.
+        // Room과 관련된 액션은 Thread, Coroutine 등을 이용해 백그라운드에서 작업해야 한다.
+        CoroutineScope(Dispatchers.IO).launch {
+            roomDB.historyDao().getAll().reversed().run {   // 최신순으로 가져오기
+                // UI 처리
+                binding.historyRecyclerView.isVisible = true
+                foodHistoryAdapter.submitList(this)
+            }
+        }
+    }
+
+    private fun initHistoryRecyclerView() = with(binding) {
+        foodHistoryAdapter = FoodHistoryAdapter(histroyDeleteClickedListener =  {
+            deleteSearchKeyword(it)
+        })
+
+        historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        historyRecyclerView.adapter = foodHistoryAdapter
+
+        initSearchEditText()
+    }
+
+    private fun hideHistoryView() {
+        binding.historyRecyclerView.isVisible = false
+    }
+
+    private fun saveSearchKeyword(keyword: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            roomDB.historyDao().insertHistory(History(null, keyword))
+        }
+    }
+
+    private fun deleteSearchKeyword(keyword: String) {
+        Thread(Runnable{
+            roomDB.historyDao().delete(keyword)
+            showHistoryView()
+        }).start()
     }
 
     override fun timeGenerator(): String {

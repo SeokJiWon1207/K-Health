@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.DBKey
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHelperNutrientBinding
+import com.example.k_health.helper.adapter.HelperNutrientAdapter
 import com.example.k_health.model.Nutrient
 import com.google.firebase.firestore.FirebaseFirestore
 

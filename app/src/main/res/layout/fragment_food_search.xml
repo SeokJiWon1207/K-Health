@@ -44,7 +44,7 @@
             android:layout_gravity="end"
             android:backgroundTint="@color/lightblue"
             android:text="@string/label_enroll"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
 
     </androidx.appcompat.widget.Toolbar>
 
@@ -56,49 +56,72 @@
         android:background="@color/purple"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/search_EditText"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="@drawable/search_background"
-            android:drawableLeft="@drawable/ic_search"
-            android:elevation="50dp"
-            android:hint="원하시는 음식을 검색하세요"
-            android:layout_marginTop="10dp"
-            android:paddingLeft="10dp"
-            android:layout_marginRight="50dp"
-            android:textColorHint="@color/gray"
-            app:layout_constraintTop_toBottomOf="@+id/view"
-            app:layout_constraintLeft_toLeftOf="parent"/>
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/search_EditText"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="50dp"
+        android:background="@drawable/search_background"
+        android:drawableLeft="@drawable/ic_search"
+        android:elevation="50dp"
+        android:hint="원하시는 음식을 검색하세요"
+        android:paddingLeft="10dp"
+        android:textColorHint="@color/gray"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/editText_ClearButton"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_gravity="end|center"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/ic_baseline_clear_24"
-            android:visibility="gone"
-            app:layout_constraintLeft_toRightOf="@+id/search_EditText"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/search_EditText"
-            tools:visibility="visible" />
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/editText_ClearButton"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_gravity="end|center"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/ic_baseline_clear_24"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/search_EditText"
+        app:layout_constraintLeft_toRightOf="@+id/search_EditText"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:visibility="visible" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/retry_Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_background"
+        android:text="@string/label_retry"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/food_RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_EditText" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/history_RecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_EditText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.example.k_health.health
+package com.example.k_health.health.adapter
 
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemHealthsetBinding
+import com.example.k_health.health.RecordHealthListFragment
 import com.example.k_health.model.HealthRecord
 
 class RecordHealthListAdapter(private val healthRecordData: ArrayList<HealthRecord>) : RecyclerView.Adapter<RecordHealthListAdapter.ViewHolder>() {

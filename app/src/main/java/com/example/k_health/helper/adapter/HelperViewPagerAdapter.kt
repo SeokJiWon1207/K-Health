@@ -1,8 +1,10 @@
-package com.example.k_health.helper
+package com.example.k_health.helper.adapter
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.k_health.helper.HelperDietFragment
+import com.example.k_health.helper.HelperNutrientFragment
+import com.example.k_health.helper.HelperPlanningFragment
 
 class HelperViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment){
 

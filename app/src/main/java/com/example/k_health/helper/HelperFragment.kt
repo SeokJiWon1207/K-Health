@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.k_health.databinding.FragmentHelperBinding
+import com.example.k_health.helper.adapter.HelperViewPagerAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
 class HelperFragment : Fragment() {

@@ -3,14 +3,11 @@ package com.example.k_health.health
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.k_health.LoginActivity
-import com.example.k_health.LoginActivity.Companion.TAG
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHealthlistBinding
+import com.example.k_health.health.adapter.HealthListAdapter
 import com.example.k_health.model.HealthList
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore

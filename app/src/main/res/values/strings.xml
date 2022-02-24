@@ -51,6 +51,7 @@
     <string name="label_activity_level_2">낮은활동적</string>
     <string name="label_activity_level_3">보통활동적</string>
     <string name="label_activity_level_4">높은활동적</string>
+    <string name="label_retry">재시도</string>
     <string name="label_description">*일일권장 계산은 사용자의 연령, 체중, 신장, 성별 및 활동 수준 등 \n 고유한 요인에 따른 기준입니다.</string>
     <string name="label_description1">*어떤 활동 지수를 선택해야하나요?</string>
     <string name="label_description2">휴식, 책상작업 또는 운전등은 일상생활 활동입니다. 가벼운 가사 및 서있기도 포함가능하지만 가벼운 운동은 포함되지 않습니다.</string>

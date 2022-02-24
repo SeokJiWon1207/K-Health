@@ -1,4 +1,4 @@
-package com.example.k_health.food
+package com.example.k_health.food.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
