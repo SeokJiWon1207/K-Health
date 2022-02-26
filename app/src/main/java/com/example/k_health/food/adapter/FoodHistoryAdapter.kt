@@ -6,17 +6,21 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemHistoryBinding
-import com.example.k_health.model.History
+import com.example.k_health.food.data.models.History
 
-class FoodHistoryAdapter(val histroyDeleteClickedListener: (String) -> Unit): ListAdapter<History, FoodHistoryAdapter.ViewHolder>(diffUtil) {
+class FoodHistoryAdapter(val histroyDeleteClickedListener: (String) -> Unit, val itemClickListener: (History) -> Unit): ListAdapter<History, FoodHistoryAdapter.ViewHolder>(diffUtil) {
 
     inner class ViewHolder(private val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(historyModel: History) {
-            binding.historyKeywordTextView.text = historyModel.keyword
+        fun bind(history: History) = with(binding){
+            historyKeywordTextView.text = history.keyword
 
-            binding.historyKeywordDeleteButton.setOnClickListener {
-                histroyDeleteClickedListener(historyModel.keyword.orEmpty())
+            historyKeywordDeleteButton.setOnClickListener {
+                histroyDeleteClickedListener(history.keyword.orEmpty())
+            }
+
+            root.setOnClickListener {
+                itemClickListener(history)
             }
         }
 

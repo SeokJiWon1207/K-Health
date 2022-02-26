@@ -8,9 +8,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
@@ -24,8 +22,7 @@ import com.example.k_health.*
 import com.example.k_health.DBKey.Companion.STORAGE_URL_USERPROFILE
 import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentHomeBinding
-import com.example.k_health.food.FoodFragment
-import com.example.k_health.model.TodoList
+import com.example.k_health.home.adapter.TodoList
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth

@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHealthlistBinding
 import com.example.k_health.health.adapter.HealthListAdapter
-import com.example.k_health.model.HealthList
+import com.example.k_health.health.model.HealthList
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.firestore.FirebaseFirestore
 

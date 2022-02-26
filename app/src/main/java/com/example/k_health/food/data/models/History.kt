@@ -1,4 +1,4 @@
-package com.example.k_health.model
+package com.example.k_health.food.data.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

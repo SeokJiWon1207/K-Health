@@ -1,4 +1,4 @@
-package com.example.k_health.model
+package com.example.k_health.health.model
 
 data class HealthRecord(
     val set: String,

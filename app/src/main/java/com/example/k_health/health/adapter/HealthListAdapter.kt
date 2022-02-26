@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.k_health.databinding.ItemHealthlistBinding
-import com.example.k_health.model.HealthList
+import com.example.k_health.health.model.HealthList
 
 class HealthListAdapter(private val healthData: ArrayList<HealthList>) :
     RecyclerView.Adapter<HealthListAdapter.ViewHolder>() {

@@ -16,7 +16,7 @@ import com.example.k_health.R
 import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentRecordHealthlistBinding
 import com.example.k_health.health.adapter.RecordHealthListAdapter
-import com.example.k_health.model.HealthRecord
+import com.example.k_health.health.model.HealthRecord
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment

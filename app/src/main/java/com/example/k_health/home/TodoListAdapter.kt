@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.k_health.databinding.ItemTodolistBinding
-import com.example.k_health.model.TodoList
+import com.example.k_health.home.adapter.TodoList
 
 class TodoListAdapter(private val todolistData: ArrayList<TodoList>) :
     RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {

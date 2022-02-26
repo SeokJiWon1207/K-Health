@@ -8,7 +8,7 @@ import com.example.k_health.DBKey
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentHelperNutrientBinding
 import com.example.k_health.helper.adapter.HelperNutrientAdapter
-import com.example.k_health.model.Nutrient
+import com.example.k_health.food.data.models.Nutrient
 import com.google.firebase.firestore.FirebaseFirestore
 
 class HelperNutrientFragment: Fragment(R.layout.fragment_helper_nutrient) {

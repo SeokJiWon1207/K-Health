@@ -1,4 +1,4 @@
-package com.example.k_health.model
+package com.example.k_health.food.data.models
 
 data class Nutrient(
     val name: String = "",

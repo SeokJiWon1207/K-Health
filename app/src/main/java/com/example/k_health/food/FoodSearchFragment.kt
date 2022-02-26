@@ -1,5 +1,6 @@
 package com.example.k_health.food
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,15 +18,13 @@ import com.example.k_health.databinding.FragmentFoodSearchBinding
 import com.example.k_health.food.adapter.FoodHistoryAdapter
 import com.example.k_health.food.adapter.FoodListAdapter
 import com.example.k_health.health.TimeInterface
-import com.example.k_health.model.History
+import com.example.k_health.food.data.models.History
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterface {
 
@@ -77,10 +76,14 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
             val foodRecordData = mutableMapOf<String, Any>()
 
             if (foodSelectedList.isEmpty()) {
-                Snackbar.make(requireView(), "선택된 식사가 없습니다. \n식사를 선택해주세요", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("확인", object: View.OnClickListener {
+                Snackbar.make(
+                    requireView(),
+                    "선택된 식사가 없습니다. \n식사를 선택해주세요",
+                    Snackbar.LENGTH_INDEFINITE
+                )
+                    .setAction("확인", object : View.OnClickListener {
                         override fun onClick(v: View?) {
-                        //
+                            //
                         }
                     })
                     .show()
@@ -97,8 +100,10 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                 foodRecordData["cholesterol"] = foodSelectedList[i].cholesterol.toString()
                 foodRecordData["sodium"] = foodSelectedList[i].sodium.toString()
                 foodRecordData["sugar"] = foodSelectedList[i].sugar.toString()
-                foodRecordData["saturatedFattyAcids"] = foodSelectedList[i].saturatedFattyAcids.toString()
-                foodRecordData["unsaturatedFattyAcids"] = foodSelectedList[i].unsaturatedFattyAcids.toString()
+                foodRecordData["saturatedFattyAcids"] =
+                    foodSelectedList[i].saturatedFattyAcids.toString()
+                foodRecordData["unsaturatedFattyAcids"] =
+                    foodSelectedList[i].unsaturatedFattyAcids.toString()
 
                 db.collection(DBKey.COLLECTION_NAME_USERS)
                     .document(Repository.userId)
@@ -109,8 +114,12 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                     .set(foodRecordData) // 식사 데이터
                     .addOnSuccessListener {
                         if (i.equals(foodSelectedList.size - 1)) { // 마지막 데이터를 넣을 때 스낵바 호출
-                            Snackbar.make(requireView(), "${mealtime}가 등록되었습니다.", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("확인", object: View.OnClickListener {
+                            Snackbar.make(
+                                requireView(),
+                                "${mealtime}가 등록되었습니다.",
+                                Snackbar.LENGTH_INDEFINITE
+                            )
+                                .setAction("확인", object : View.OnClickListener {
                                     override fun onClick(v: View?) {
                                         val foodFragment = FoodFragment()
                                         (activity as MainActivity).replaceFragment(foodFragment)
@@ -131,7 +140,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         val mealtime = resources.getStringArray(R.array.spinner_mealtime)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mealtime)
         val selectedMealtime = arguments?.getInt("selectedMealtime")
-        Log.d(TAG,"selectedMealtime: ${arguments?.getInt("selectedMealtime")}")
+        Log.d(TAG, "selectedMealtime: ${arguments?.getInt("selectedMealtime")}")
         binding.spinner.adapter = adapter
         binding.spinner.setSelection(selectedMealtime!!)
     }
@@ -147,7 +156,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                 id: Long
             ) {
                 bundle.putString("mealtime", binding.spinner.selectedItem.toString())
-                Log.d(TAG, "mealtime: ${binding.spinner.selectedItem.toString()}")
 
                 foodInfoFragment.arguments = bundle
             }
@@ -179,6 +187,9 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     private fun fetchFoodItems(query: String? = null) = scope.launch {
         try {
             showProgress()
+            showFoodListView()
+            hideHistoryView()
+            hideAlertTextView()
             hideRetryButton()
             Repository.getFoodItems()?.let {
                 (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
@@ -194,14 +205,25 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initSearchEditText() = with(binding) {
         searchEditText.apply {
             setOnKeyListener { v, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
+                    hideHistoryView()
                     search(binding.searchEditText.text.toString())
+                    showFoodListView()
                     return@setOnKeyListener true
                 }
                 return@setOnKeyListener false
+            }
+
+            setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    hideFoodListView()
+                    showHistoryView()
+                }
+                return@setOnTouchListener false
             }
 
             addTextChangedListener(object : TextWatcher {
@@ -235,11 +257,17 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     private fun search(keyword: String) = scope.launch {
         try {
             Repository.getFoodByName(keyword)?.let {
-                (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
-                    Log.d(TAG, "keyword items : ${it.body!!.items}")
-                    hideHistoryView()
-                    saveSearchKeyword(keyword)
-                    submitList(it.body.items!!)
+                if (it.body!!.totalCount == 0) {
+                    showAlertTextView(keyword)
+                } else {
+                    (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
+                        hideHistoryView()
+                        hideAlertTextView()
+                        showFoodListView()
+                        saveSearchKeyword(keyword)
+                        submitList(it.body!!.items)
+                    }
+                    Log.d(TAG, "search: $keyword")
                 }
             }
         } catch (exception: Exception) {
@@ -250,7 +278,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     private fun searchEditTextClear() = with(binding) {
         editTextClearButton.setOnClickListener {
-            Log.d(TAG,"clear")
+            Log.d(TAG, "clear")
             searchEditText.text!!.clear()
         }
     }
@@ -281,19 +309,23 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         // Room 2-5) MainThread 에서 Room DB에 접근하려고 하면 에러가 발생한다.
         // Room과 관련된 액션은 Thread, Coroutine 등을 이용해 백그라운드에서 작업해야 한다.
         CoroutineScope(Dispatchers.IO).launch {
-            roomDB.historyDao().getAll().reversed().run {   // 최신순으로 가져오기
-                // UI 처리
-                binding.historyRecyclerView.isVisible = true
-                foodHistoryAdapter.submitList(this)
+            scope.launch {
+                roomDB.historyDao().getAll().distinctBy { it.keyword }.reversed().run {
+                    foodHistoryAdapter.submitList(this)
+                    binding.historyRecyclerView.isVisible = true
+                }
+                Log.d(TAG,"room: ${roomDB.historyDao().getAll()}")
             }
         }
     }
 
     private fun initHistoryRecyclerView() = with(binding) {
-        foodHistoryAdapter = FoodHistoryAdapter(histroyDeleteClickedListener =  {
+        foodHistoryAdapter = FoodHistoryAdapter(histroyDeleteClickedListener = {
             deleteSearchKeyword(it)
+        },itemClickListener = {
+            searchEditText.setText(it.keyword.toString())
+            search(it.keyword!!)
         })
-
         historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         historyRecyclerView.adapter = foodHistoryAdapter
 
@@ -304,6 +336,14 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         binding.historyRecyclerView.isVisible = false
     }
 
+    private fun showFoodListView() {
+        binding.foodRecyclerView.isVisible = true
+    }
+
+    private fun hideFoodListView() {
+        binding.foodRecyclerView.isVisible = false
+    }
+
     private fun saveSearchKeyword(keyword: String) {
         CoroutineScope(Dispatchers.IO).launch {
             roomDB.historyDao().insertHistory(History(null, keyword))
@@ -311,10 +351,20 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     }
 
     private fun deleteSearchKeyword(keyword: String) {
-        Thread(Runnable{
+        CoroutineScope(Dispatchers.IO).launch {
             roomDB.historyDao().delete(keyword)
             showHistoryView()
-        }).start()
+        }
+    }
+
+    private fun showAlertTextView(searchKeyword: String) = with(binding){
+        alertTextView.apply {
+            isVisible = true
+            alertTextView.text = searchKeyword+getString(R.string.label_alerttext)
+        }
+    }
+    private fun hideAlertTextView() = with(binding) {
+        alertTextView.isVisible = false
     }
 
     override fun timeGenerator(): String {
@@ -343,7 +393,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     override fun onDestroyView() {
         super.onDestroyView()
         // searchEditTextClear()
-        // _binding = null
         // scope.cancel()
         Log.d(TAG, "onDestroyView")
     }

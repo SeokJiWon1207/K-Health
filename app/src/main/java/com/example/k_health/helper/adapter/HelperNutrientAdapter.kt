@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.k_health.databinding.ItemNutrientBinding
-import com.example.k_health.model.Nutrient
+import com.example.k_health.food.data.models.Nutrient
 
 class HelperNutrientAdapter(private val nutrientData: ArrayList<Nutrient>): RecyclerView.Adapter<HelperNutrientAdapter.ViewHolder>() {
 

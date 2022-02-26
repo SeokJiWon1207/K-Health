@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.k_health.Dao.HistoryDao
-import com.example.k_health.model.History
+import com.example.k_health.food.data.models.History
 
 // 1-3) History Entity 모델을 베이스로 하고 History의 메소드를 가지고 있는 Database생성
 @Database(entities = [History::class],version = 2)
