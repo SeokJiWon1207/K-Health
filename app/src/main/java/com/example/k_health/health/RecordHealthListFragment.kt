@@ -20,6 +20,7 @@ import com.example.k_health.health.model.HealthRecord
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -28,7 +29,7 @@ import kotlin.collections.ArrayList
 class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
 
     companion object {
-        const val TAG = "Record"
+        const val TAG = "RecordHealthListFragment"
     }
 
     private var _binding: FragmentRecordHealthlistBinding? = null
@@ -88,8 +89,12 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
     }
 
     private fun initViews() = with(binding) {
+
         healthlistNameTextView.text = arguments?.getString("name")
         healthlistEngnameTextView.text = arguments?.getString("engName")
+
+        val pref = activity?.getSharedPreferences("pref", 0)
+        selectedHealthDateTextView.text = pref?.getString("selectedHealthDate","날짜")
 
         submitButton.setOnClickListener {
             Toast.makeText(requireContext(), "클릭되었습니다.", Toast.LENGTH_LONG).show()
@@ -117,6 +122,8 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
 
     private fun uploadHealthRecord() {
         val today = timeGenerator()
+        val pref = activity?.getSharedPreferences("pref", 0)
+        val selectedHealthDate = pref?.getString("selectedHealthDate","날짜") ?: today
         val healthName: String = arguments?.getString("name") ?: "null"
         val healthRecordData = mutableMapOf<String, Any>()
 
@@ -125,20 +132,23 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
         healthRecordData["pos"] = arguments?.getInt("pos")!!.toInt()
 
         binding.submitButton.setOnClickListener {
-            db.collection(DBKey.COLLECTION_NAME_USERS)
-                .document(userId)
-                .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 헬스기록보관
-                .document(today) // 당일 날짜
-                .collection(healthName) // 현재 클릭한 운동의 이름
-                .document(recordHealthList[0].set) // 첫 번째 세트
-                .set(healthRecordData) // 운동 데이터
-                .addOnSuccessListener {
-                    Log.d(TAG, "success")
-                    dismiss()
-                }
-                .addOnFailureListener { error ->
-                    Log.d(TAG, "error : $error")
-                }
+            val userHealthRecordedData = recordHealthListAdapter.getAll()
+            Log.d(TAG,"${userHealthRecordedData}")
+            for (i in userHealthRecordedData.indices) {
+                db.collection(DBKey.COLLECTION_NAME_USERS)
+                    .document(userId)
+                    .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 헬스기록보관
+                    .document(selectedHealthDate) // 당일 날짜
+                    .collection(healthName) // 현재 클릭한 운동의 이름
+                    .document(userHealthRecordedData[i].set) // 첫 번째 세트
+                    .set(userHealthRecordedData[i]) // 운동 데이터
+                    .addOnSuccessListener {
+                        dismiss()
+                    }
+                    .addOnFailureListener { error ->
+                        Log.d(TAG, "error : $error")
+                    }
+            }
         }
     }
 

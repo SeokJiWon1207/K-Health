@@ -28,11 +28,14 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
     }
 
     private fun setDateToday() {
+        val pref = activity?.getSharedPreferences("pref", 0)
+        val edit = pref?.edit()
+        edit!!.putString("selectedHealthDate", timeGenerator()).apply() // 기본값을 오늘 날짜로 설정
         binding.healthCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             val monthString: String = if (month > 10) "${month+1}" else String.format("%02d", month+1)
             val dayOfMonthString: String = if (dayOfMonth >= 10) "$dayOfMonth" else String.format("%02d", dayOfMonth)
-
-            Log.d("health", "${year}/${month}/${dayOfMonthString}")
+            val selectedHealthDate = "${year}${monthString}${dayOfMonthString}"
+            edit!!.putString("selectedHealthDate", selectedHealthDate).apply()
 
             binding.todayDateTextView.text = "${year}/${monthString}/${dayOfMonthString}"
         }
@@ -46,7 +49,7 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
 
     override fun timeGenerator(): String {
         val now = LocalDate.now()
-        val todayDate = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
+        val todayDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
 
         return todayDate
     }

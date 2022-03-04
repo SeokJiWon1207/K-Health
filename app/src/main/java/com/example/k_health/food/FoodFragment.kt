@@ -189,9 +189,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             val dayOfMonthString: String =
                 if (dayOfMonth >= 10) "$dayOfMonth" else String.format("%02d", dayOfMonth)
             val todayDate = "${year}/${monthString}/${dayOfMonthString}" //
-            val selectedDate =
-                "${year}${monthString}${dayOfMonthString}" // firestore의 path로 '/'사용불가
-            Log.d(TAG, "selectedDate: $selectedDate")
+            val selectedDate = "${year}${monthString}${dayOfMonthString}" // firestore의 path로 '/'사용불가
 
             edit?.putString("selectedDate", selectedDate)?.apply() // sharedpreference에 값 저장
 
@@ -229,7 +227,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                     val foodRecordItem = snapshot.toObject(Item::class.java)
                     foodlist.add(foodRecordItem!!)
                     totalFoodList.add(foodRecordItem!!)
-                    Log.d(TAG,"Total@@@@@@@@@@@@@@@@@@@@: ${totalFoodList.isNotEmpty()}")
                 }
                 setupUserKcalInfo()
                 setProgressView()
