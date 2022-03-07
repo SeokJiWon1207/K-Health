@@ -211,13 +211,16 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
             setOnKeyListener { v, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
                     hideHistoryView()
-                    search(binding.searchEditText.text.toString())
+                    search(this.text.toString())
                     showFoodListView()
                     return@setOnKeyListener true
                 }
                 return@setOnKeyListener false
             }
 
+            /*ACTION_DOWN : 처음 눌렸을 때
+            ACTION_MOVE : 누르고 움직였을 때
+            ACTION_UP : 누른걸 땠을 때*/
             setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     hideFoodListView()

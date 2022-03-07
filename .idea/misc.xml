@@ -37,6 +37,7 @@
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable/ic_baseline_arrow_drop_up_24.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable/ic_baseline_backspace_24.xml" value="0.1984375" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable/ic_baseline_clear_24.xml" value="0.15416666666666667" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable/ic_baseline_content_paste_off_24.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable/ic_baseline_double_arrow_24.xml" value="0.20625" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable/ic_baseline_fitness_center_24_2.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable/ic_baseline_looks_one_24.xml" value="0.265625" />
@@ -60,7 +61,7 @@
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/fragment_food.xml" value="0.176" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/fragment_food_info.xml" value="0.264" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/fragment_food_search.xml" value="0.264" />
-        <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/fragment_health.xml" value="0.2" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/fragment_health.xml" value="0.4" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/fragment_healthlist.xml" value="0.13229166666666667" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/fragment_helper.xml" value="0.13177083333333334" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/fragment_helper_nutrient.xml" value="0.1203125" />
@@ -73,6 +74,7 @@
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/item_food.xml" value="0.4" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/item_foodrecord.xml" value="0.264" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/item_healthlist.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/item_healthrecord.xml" value="0.4" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/item_healthset.xml" value="0.4" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/item_history.xml" value="0.1" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/layout/item_nutrient.xml" value="0.264" />

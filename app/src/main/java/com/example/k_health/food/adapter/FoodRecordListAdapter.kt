@@ -7,7 +7,7 @@ import com.example.k_health.databinding.ItemFoodrecordBinding
 import com.example.k_health.food.data.models.Item
 
 //2. delete button이 눌렸을때 onclickDeleteIcon을 실행하라는뜻, 0->Unit이기때문에 함수자체에 return없다는뜻
-class FoodRecordListAdapter(private val foodRecordData: ArrayList<Item>, val onClickDeleteButton: (item: Item) -> Unit) :
+class FoodRecordListAdapter(val foodRecordData: ArrayList<Item>, val onClickDeleteButton: (item: Item) -> Unit) :
     RecyclerView.Adapter<FoodRecordListAdapter.ViewHolder>() {
 
     companion object {
@@ -25,14 +25,7 @@ class FoodRecordListAdapter(private val foodRecordData: ArrayList<Item>, val onC
             fatTextView.text = item.fat.plus("g")
             kcalTextView.text = item.kcal.plus("kcal")
 
-            /*removeImageButton.setOnClickListener {
-                val pos = adapterPosition
-                Log.d(TAG,"removed foodName: ${foodRecordData[pos].foodName}")
-                foodRecordData.removeAt(pos)
-                Log.d(TAG,"pos: $pos")
 
-                notifyDataSetChanged()
-            }*/
         }
     }
 

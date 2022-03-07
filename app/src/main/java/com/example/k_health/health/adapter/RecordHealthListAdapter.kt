@@ -1,9 +1,11 @@
 package com.example.k_health.health.adapter
 
+import android.annotation.SuppressLint
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +28,7 @@ class RecordHealthListAdapter(val healthRecordData: ArrayList<HealthRecord>) :
         val countList = countRecordedData.values.toList()
 
         for (i in weightList.indices) {
-            recordedData.add(HealthRecord((i+1).toString(), weightList[i], countList[i]))
+            recordedData.add(HealthRecord((i + 1).toString(), weightList[i], countList[i]))
         }
 
         return recordedData.distinct()
@@ -35,6 +37,7 @@ class RecordHealthListAdapter(val healthRecordData: ArrayList<HealthRecord>) :
     inner class ViewHolder(private val binding: ItemHealthsetBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        @SuppressLint("ClickableViewAccessibility")
         fun bind(healthRecord: HealthRecord) = with(binding) {
             val pos = adapterPosition
 
@@ -50,30 +53,50 @@ class RecordHealthListAdapter(val healthRecordData: ArrayList<HealthRecord>) :
                 notifyDataSetChanged()
             }
 
-            weightEditText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            weightEditText.apply {
+                addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    weightRecordedData.put((pos + 1).toString(), p0.toString())
-                    Log.d(TAG,"weight: ${weightRecordedData}")
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        weightRecordedData.put((pos + 1).toString(), p0.toString())
+                        Log.d(TAG, "weight: ${weightRecordedData}")
+                    }
+
+                    override fun afterTextChanged(p0: Editable?) {}
+                })
+                setOnTouchListener { v, event ->
+                    if (event.action == MotionEvent.ACTION_DOWN) {
+                        this.hint = null
+                        this.text = null
+                    }
+                    return@setOnTouchListener false
                 }
+            }
 
-                override fun afterTextChanged(p0: Editable?) {}
-            })
+            countEditText.apply {
+                addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-            countEditText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        countRecordedData.put((pos + 1).toString(), p0.toString())
+                        Log.d(TAG, "count: $countRecordedData")
+                    }
 
-                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    countRecordedData.put((pos + 1).toString(), p0.toString())
-                    Log.d(TAG,"count: $countRecordedData")
+                    override fun afterTextChanged(p0: Editable?) {}
+
+                })
+
+                setOnTouchListener { v, event ->
+                    if (event.action == MotionEvent.ACTION_DOWN) {
+                        this.hint = null
+                        this.text = null
+                    }
+                    return@setOnTouchListener false
                 }
-
-                override fun afterTextChanged(p0: Editable?) {}
-
-            })
+            }
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(

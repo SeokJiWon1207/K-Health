@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.DBKey
 import com.example.k_health.R
+import com.example.k_health.Repository
 import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentRecordHealthlistBinding
 import com.example.k_health.health.adapter.RecordHealthListAdapter
@@ -35,7 +36,7 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
     private var _binding: FragmentRecordHealthlistBinding? = null
     private val binding get() = _binding!!
     private val db = FirebaseFirestore.getInstance()
-    private var recordHealthList: ArrayList<HealthRecord> = arrayListOf()
+    private var recordHealthList = arrayListOf<HealthRecord>()
     private var recordHealthListAdapter = RecordHealthListAdapter(recordHealthList)
 
     override fun onCreateView(
@@ -123,17 +124,13 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
     private fun uploadHealthRecord() {
         val today = timeGenerator()
         val pref = activity?.getSharedPreferences("pref", 0)
+        val edit = pref?.edit()
         val selectedHealthDate = pref?.getString("selectedHealthDate","날짜") ?: today
         val healthName: String = arguments?.getString("name") ?: "null"
-        val healthRecordData = mutableMapOf<String, Any>()
-
-        healthRecordData["weight"] = recordHealthList[0].weight ?: "null"
-        healthRecordData["count"] = recordHealthList[0].weight ?: "null"
-        healthRecordData["pos"] = arguments?.getInt("pos")!!.toInt()
 
         binding.submitButton.setOnClickListener {
             val userHealthRecordedData = recordHealthListAdapter.getAll()
-            Log.d(TAG,"${userHealthRecordedData}")
+
             for (i in userHealthRecordedData.indices) {
                 db.collection(DBKey.COLLECTION_NAME_USERS)
                     .document(userId)
@@ -143,6 +140,9 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
                     .document(userHealthRecordedData[i].set) // 첫 번째 세트
                     .set(userHealthRecordedData[i]) // 운동 데이터
                     .addOnSuccessListener {
+                        Repository.todayHealthList.add(healthName)
+                        edit?.putStringSet(selectedHealthDate,Repository.todayHealthList)?.apply()
+                        Log.d(TAG,"data: ${pref?.getStringSet(selectedHealthDate, mutableSetOf("2","1"))}")
                         dismiss()
                     }
                     .addOnFailureListener { error ->

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/health_Name_TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:textColor="@color/lightblue"
+        android:textSize="15sp"
+        android:layout_marginLeft="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tool:text="벤치프레스" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="2dp"
+        android:layout_height="20dp"
+        android:background="@color/lightblue"
+        android:layout_marginRight="5dp"
+        app:layout_constraintRight_toLeftOf="@id/health_Name_TextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/health_Set_TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/lightblue"
+        android:textSize="15sp"
+        android:layout_marginRight="5dp"
+        app:layout_constraintRight_toLeftOf="@+id/health_Weight_TextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tool:text="1set" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/health_Weight_TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dp"
+        android:textColor="@color/lightblue"
+        android:textSize="15sp"
+        app:layout_constraintRight_toLeftOf="@id/health_Count_TextView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tool:text="10kg" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/health_Count_TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:textColor="@color/lightblue"
+        android:textSize="15sp"
+        app:layout_constraintRight_toLeftOf="@id/remove_ImageButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tool:text="10회" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/remove_ImageButton"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/ic_baseline_clear_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

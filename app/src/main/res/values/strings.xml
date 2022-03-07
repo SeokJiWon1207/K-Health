@@ -47,6 +47,9 @@
     <string name="label_sex">성별</string>
     <string name="label_sex_man">남자</string>
     <string name="label_sex_woman">여자</string>
+    <string name="label_set">set</string>
+    <string name="label_kg">kg</string>
+    <string name="label_count">회</string>
     <string name="label_activity_level">활동지수</string>
     <string name="label_activity_level_1">비활동적</string>
     <string name="label_activity_level_2">낮은활동적</string>

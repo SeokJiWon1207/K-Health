@@ -181,7 +181,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private fun getFoodRecordWithCalendar() {
         val pref = activity?.getSharedPreferences("pref", 0)
         val edit = pref?.edit()
-
         showProgress()
         binding.foodCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
             val monthString: String =
@@ -215,7 +214,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         foodlist: ArrayList<Item>,
         foodRecordListAdapter: FoodRecordListAdapter
     ) {
-
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(Repository.userId)
             .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
@@ -227,6 +225,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                     val foodRecordItem = snapshot.toObject(Item::class.java)
                     foodlist.add(foodRecordItem!!)
                     totalFoodList.add(foodRecordItem!!)
+                    Log.d(TAG,"$foodlist")
                 }
                 setupUserKcalInfo()
                 setProgressView()
