@@ -75,26 +75,26 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
     private fun getUserHealthRecord(
         selectedDate: String,
     ) {
+        hideView()
         val pref = activity?.getSharedPreferences("pref", 0)
-        val healthName = pref?.getStringSet(selectedDate, mutableSetOf("", ""))!!.toList()
-        Log.d(TAG, "healthName: $healthName")
+        val todayHealthNameList = pref?.getStringSet(selectedDate, mutableSetOf("", ""))!!.toList()
+        Log.d(TAG, "todayHealthNameList: $todayHealthNameList")
 
         try {
-            for (i in healthName.indices) {
+            for (i in todayHealthNameList.indices) {
                 db.collection(DBKey.COLLECTION_NAME_USERS)
                     .document(Repository.userId)
                     .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 식사기록보관
                     .document(selectedDate)
-                    .collection(healthName[i])
+                    .collection(todayHealthNameList[i])
                     .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                        healthRecordData.clear()
+                        // healthRecordData.clear()
                         for (snapshot in querySnapshot!!.documents) {
                             val healthRecordItem = snapshot.toObject(HealthRecord::class.java)
-                            healthRecordData.add(UserHealthRecord(healthName[i],healthRecordItem!!.set, healthRecordItem!!.weight, healthRecordItem!!.count))
+                            healthRecordData.add(UserHealthRecord(todayHealthNameList[i],healthRecordItem!!.set, healthRecordItem!!.weight, healthRecordItem!!.count))
                             hideAlertText()
+                            getHealthListAdapter.notifyDataSetChanged()
                         }
-                        Log.d(TAG, "healthdata: $healthRecordData")
-                        getHealthListAdapter.notifyDataSetChanged()
                     }
             }
         } catch (e: Exception) {
@@ -103,6 +103,7 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
             healthRecordData.clear()
             getHealthListAdapter.notifyDataSetChanged()
             showAlertText()
+            hideProgress()
         }
     }
 
@@ -111,16 +112,22 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
         userHealthRecord: UserHealthRecord,
         userHealthList: ArrayList<UserHealthRecord>,
     ) {
+        showView()
+        showProgress()
 
         val pref = activity?.getSharedPreferences("pref", 0)
         val toremovedDate = pref?.getString("selectedHealthDate", "YYYY")
         val toremovedName = userHealthRecord.name
         val toremovedSize = userHealthList.filter { it.name == toremovedName }.size
+        Log.d(TAG,"before currentList: $userHealthList")
+
         repeat(toremovedSize) {
-            userHealthList.remove(userHealthRecord)
+            userHealthList.removeIf { it.name == toremovedName }
+            Log.d(TAG, "after currentList: $userHealthList")
         }
-        val healthNameList = pref?.getStringSet(toremovedDate, mutableSetOf("", ""))!!.toMutableList()
-        healthNameList.remove(userHealthRecord.name)
+
+        val todayHealthSet = pref?.getStringSet(toremovedDate, mutableSetOf("", ""))
+        todayHealthSet!!.remove(toremovedName)
 
         for (i in 1..toremovedSize) {
             db.collection(DBKey.COLLECTION_NAME_USERS)
@@ -131,18 +138,19 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
                 .document(i.toString())
                 .delete()
                 .addOnSuccessListener {
-                    Log.d(TAG, "removed item")
-                    Log.d(TAG, "toremovedDate: $toremovedDate")
-                    Log.d(TAG, "${userHealthRecord.name}")
-                    Log.d(TAG, "userHealthList: ${userHealthList}")
-                    Log.d(TAG, "toremovedSize: $toremovedSize")
-                    Log.d(TAG, "i: $i")
+                    Log.d(TAG, "before userHealthList: ${userHealthList}")
+                    userHealthList.removeIf { it.name == toremovedName }
+                    Log.d(TAG, "after userHealthList: ${userHealthList}")
+                    if (i==toremovedSize) {
+                        getHealthListAdapter.notifyDataSetChanged()
+                        hideView()
+                        hideProgress()
+                    }
                     if (healthRecordData.isEmpty()) showAlertText() else hideAlertText()
                 }
                 .addOnFailureListener { e ->
                     Log.d(TAG, "removed failed : $e")
                 }
-            binding.healthRecordRecyclerView.adapter?.notifyDataSetChanged()
         }
     }
 
@@ -165,6 +173,22 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
 
     private fun hideAlertText() = with(binding){
         alertLinearLayout.isVisible = false
+    }
+
+    private fun showView() = with(binding) {
+        view.isVisible = true
+    }
+
+    private fun hideView() = with(binding) {
+        view.isVisible = false
+    }
+
+    private fun showProgress() = with(binding) {
+        binding.progressBar.isVisible = true
+    }
+
+    private fun hideProgress() = with(binding) {
+        binding.progressBar.isVisible = false
     }
 
 }

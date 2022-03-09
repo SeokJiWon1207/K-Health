@@ -161,6 +161,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         val pref = activity?.getSharedPreferences("pref", 0)
         val toremovedDate = pref?.getString("selectedDate", "YYYY")
         val toremovedFoodname = item.foodName
+
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(Repository.userId)
             .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관

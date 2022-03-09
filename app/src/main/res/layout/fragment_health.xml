@@ -69,7 +69,23 @@
                 android:text="운동기록이 없습니다."
                 android:textSize="20sp"
                 android:textColor="@color/gray" />
+
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/health_background"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="15dp"
+            android:visibility="visible" />
+
+        <android.widget.ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

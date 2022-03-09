@@ -1,10 +1,8 @@
 package com.example.k_health
 
 import com.example.k_health.food.data.models.FoodResponse
-import com.example.k_health.food.data.models.Item
 import com.example.k_health.food.data.service.FoodApiService
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,7 +13,6 @@ import java.util.concurrent.TimeUnit
 
 object Repository {
     val userId = Firebase.auth.currentUser?.uid.orEmpty()
-    val todayHealthList = mutableSetOf<String>()
 
     // Retrofit 1-3) Retrofit 인스턴스 생성, 싱글톤의 instance interface 객체 구현
     private val foodApiService: FoodApiService by lazy {

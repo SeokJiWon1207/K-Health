@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -46,7 +47,8 @@ class RecordHealthListAdapter(val healthRecordData: ArrayList<HealthRecord>) :
             countEditText.setText(healthRecord.count)
 
             // 첫 번째 운동세트는 못지우게 삭제버튼 GONE처리
-            if (pos == 0) binding.deleteImageButton.isVisible = false
+            if (pos == 0) deleteImageButton.visibility =
+                View.GONE else deleteImageButton.visibility = View.VISIBLE
 
             deleteImageButton.setOnClickListener {
                 healthRecordData.removeAt(pos)

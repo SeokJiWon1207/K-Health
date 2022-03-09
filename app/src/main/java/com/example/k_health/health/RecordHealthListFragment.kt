@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.DBKey
 import com.example.k_health.R
-import com.example.k_health.Repository
 import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentRecordHealthlistBinding
 import com.example.k_health.health.adapter.RecordHealthListAdapter
@@ -21,11 +20,9 @@ import com.example.k_health.health.model.HealthRecord
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import kotlin.collections.ArrayList
 
 class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
 
@@ -126,11 +123,12 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
         val pref = activity?.getSharedPreferences("pref", 0)
         val edit = pref?.edit()
         val selectedHealthDate = pref?.getString("selectedHealthDate","날짜") ?: today
+        val todayHealthSet = pref?.getStringSet(selectedHealthDate, mutableSetOf("", ""))
+        todayHealthSet!!.remove("")
         val healthName: String = arguments?.getString("name") ?: "null"
 
         binding.submitButton.setOnClickListener {
             val userHealthRecordedData = recordHealthListAdapter.getAll()
-
             for (i in userHealthRecordedData.indices) {
                 db.collection(DBKey.COLLECTION_NAME_USERS)
                     .document(userId)
@@ -140,14 +138,14 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
                     .document(userHealthRecordedData[i].set) // 첫 번째 세트
                     .set(userHealthRecordedData[i]) // 운동 데이터
                     .addOnSuccessListener {
-                        Repository.todayHealthList.add(healthName)
-                        edit?.putStringSet(selectedHealthDate,Repository.todayHealthList)?.apply()
-                        Log.d(TAG,"data: ${pref?.getStringSet(selectedHealthDate, mutableSetOf("2","1"))}")
                         dismiss()
                     }
                     .addOnFailureListener { error ->
                         Log.d(TAG, "error : $error")
                     }
+                todayHealthSet!!.add(healthName)
+                Log.d(TAG,"after: $todayHealthSet")
+                edit?.putStringSet(selectedHealthDate,todayHealthSet)?.apply()
             }
         }
     }
