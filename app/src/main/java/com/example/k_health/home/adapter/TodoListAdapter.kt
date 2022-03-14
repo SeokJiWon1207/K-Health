@@ -1,23 +1,31 @@
-package com.example.k_health.home
+package com.example.k_health.home.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.k_health.databinding.ItemTodolistBinding
-import com.example.k_health.home.adapter.TodoList
+import com.example.k_health.home.model.TodoList
 
-class TodoListAdapter(private val todolistData: ArrayList<TodoList>) :
+class TodoListAdapter(private val todolistData: List<TodoList>) :
     RecyclerView.Adapter<TodoListAdapter.ViewHolder>() {
+
     inner class ViewHolder(private val binding: ItemTodolistBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(todoList: TodoList) {
+        fun bind(todoList: TodoList) = with(binding) {
 
-            binding.todolistNameTextView.text = todoList.name
+            todolistNameTextView.text = todoList.todoName
+            todolistTImeTextView.text = todoList.time
 
-            Glide.with(binding.todolistImageView)
+            if (todoList.isComplete == true) {
+                todolistNotifyTextView.text = "기록이 완료 되었습니다"
+            } else {
+                todolistNotifyTextView.text = "기록을 해주세요"
+            }
+
+            Glide.with(todolistImageView)
                 .load(todoList.image)
-                .into(binding.todolistImageView)
+                .into(todolistImageView)
         }
     }
 
@@ -35,5 +43,5 @@ class TodoListAdapter(private val todolistData: ArrayList<TodoList>) :
         holder.bind(todolistData[position])
     }
 
-    override fun getItemCount() = 4
+    override fun getItemCount() = todolistData.size
 }

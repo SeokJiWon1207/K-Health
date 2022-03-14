@@ -22,7 +22,11 @@ import com.example.k_health.*
 import com.example.k_health.DBKey.Companion.STORAGE_URL_USERPROFILE
 import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentHomeBinding
-import com.example.k_health.home.adapter.TodoList
+import com.example.k_health.health.TimeInterface
+import com.example.k_health.health.model.HealthRecord
+import com.example.k_health.health.model.UserHealthRecord
+import com.example.k_health.home.adapter.TodoListAdapter
+import com.example.k_health.home.model.TodoList
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -30,10 +34,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
+import okhttp3.internal.filterList
 
-class HomeFragment : Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -44,7 +48,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val userInfoDialog: Dialog by lazy { Dialog(requireContext()) }
     private var scope = MainScope()
     private var todolist: ArrayList<TodoList> = arrayListOf()
-    private val todoListAdater = TodoListAdapter(todolist)
+    private var todoListAdater = TodoListAdapter(todolist)
 
     companion object {
         const val TAG = "HomeFragment"
@@ -55,27 +59,23 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         _binding = FragmentHomeBinding.bind(view)
 
-
-        todolist.add(TodoList("아침식사", R.drawable.ic_baseline_restaurant_24_2))
-        todolist.add(TodoList("점심식사", R.drawable.ic_baseline_restaurant_24_2))
-        todolist.add(TodoList("저녁식사", R.drawable.ic_baseline_restaurant_24_2))
-        todolist.add(TodoList("운동", R.drawable.ic_baseline_fitness_center_24_2))
-        // setUserProfile()
         isNicknameNotNull()
-        // getProfileImage()
         uploadProfileImage()
+        notcompletedTodoList(false)
         userInfoSetPopup()
         logoutButton()
         initRecyclerView()
+        clickTodoButton()
 
 
     }
 
+
     private fun setDefaultValues() {
         val defaultValuesData = mutableMapOf<String, Any>()
-        defaultValuesData.set("userWeight","00.0")
-        defaultValuesData.set("userheight","00.0")
-        defaultValuesData.set("userFat","00.0")
+        defaultValuesData.set("userWeight", "00.0")
+        defaultValuesData.set("userheight", "00.0")
+        defaultValuesData.set("userFat", "00.0")
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(userId)
             .update(defaultValuesData)
@@ -151,7 +151,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .setPositiveButton("저장") { _, _ ->
                 if (editText.text.isEmpty() || editText.text.length > 8) {
                     Snackbar.make(requireView(), "항목을 다 채워주세요.", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("확인", object: View.OnClickListener {
+                        .setAction("확인", object : View.OnClickListener {
                             override fun onClick(v: View?) {
 
                             }
@@ -180,6 +180,74 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    private fun clickTodoButton() = with(binding) {
+        todoLayout.setOnClickListener {
+            notcompletedTodoList(false)
+        }
+        completeLayout.setOnClickListener {
+            notcompletedTodoList(true)
+        }
+    }
+
+    private fun notcompletedTodoList(isDone: Boolean) {
+        val today = timeGenerator()
+        val mealtimeList = arrayListOf("아침식사", "점심식사", "저녁식사")
+        var isCompleted: Boolean
+        var eatTime = "12:00 PM"
+        val pref = activity?.getSharedPreferences("pref", 0)
+        val healthisComplete = pref?.getStringSet(today, mutableSetOf("", ""))!!.toList().isEmpty().not()
+        todolist.clear()
+        hideAlertText()
+
+        todolist.add(
+            TodoList(
+                R.drawable.ic_baseline_fitness_center_24_2,
+                "운동",
+                eatTime,
+                healthisComplete
+            )
+        )
+
+        for (i in mealtimeList.indices) {
+            db.collection(DBKey.COLLECTION_NAME_USERS)
+                .document(userId)
+                .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
+                .document(today) // 오늘의 날짜
+                .collection(mealtimeList[i]) // 식사 구분
+                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                     eatTime = when (mealtimeList[i]) {
+                        "아침식사" -> "08:00 AM"
+                        "점심식사" -> "13:00 PM"
+                        else -> "18:00 PM"
+                    }
+
+                    isCompleted = querySnapshot!!.isEmpty.not() // 비어있다면 -> 오늘 할 일
+                    todolist.add(
+                        TodoList(
+                            R.drawable.ic_baseline_restaurant_24_2,
+                            mealtimeList[i],
+                            eatTime,
+                            isCompleted
+                        )
+                    )
+                    Log.d(TAG,"original: $todolist")
+                    if (i == mealtimeList.lastIndex) {
+                        val originalList = todolist.clone() as ArrayList<TodoList>
+                        todolist.removeIf { it.isComplete == isDone.not() }
+                        Log.d(TAG,"new: $todolist")
+                        todoListAdater.notifyDataSetChanged()
+                        binding.todoTaskTextView.text = originalList.filter { it.isComplete == false }.size.toString()
+                        binding.completeTaskTextView.text = originalList.filter { it.isComplete == true }.size.toString()
+                        // 오늘 할 일의 리스트가 비워져있다면 임무 완료 팝업 띄우기
+                        if (isDone == false && todolist.isEmpty()) {
+                            showAlertText()
+                        }
+                    }
+                }
+        }
+
+    }
+
     private fun initRecyclerView() {
         binding.todolistRecyclerView.apply {
             adapter = todoListAdater
@@ -206,7 +274,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             if (userWeightEditText.text.isEmpty() || userMuscleEditText.text.isEmpty() || userFatEditText.text.isEmpty()) {
                 Snackbar.make(view, "항목을 다 채워주세요.", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("확인", object: View.OnClickListener {
+                    .setAction("확인", object : View.OnClickListener {
                         override fun onClick(v: View?) {
 
                         }
@@ -249,7 +317,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .document(userId)
             .get()
             .addOnSuccessListener { document ->
-                weightProgressView.labelText = getString(R.string.weight).plus(": "+document["userWeight"].toString()+"kg")
+                weightProgressView.labelText =
+                    getString(R.string.weight).plus(": " + document["userWeight"].toString() + "kg")
                 weightProgressView.progress = document["userWeight"].toString().toFloat()
 
                 // 골격근량 최대치 -> 이 반이 평균
@@ -257,10 +326,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     muscleProgressView.max = document["userWeight"].toString().toFloat() * 0.48f * 2
                 }
 
-                muscleProgressView.labelText = getString(R.string.Skeletal_Muscle_Mass).plus(": "+document["userMuscle"].toString()+"kg")
+                muscleProgressView.labelText =
+                    getString(R.string.Skeletal_Muscle_Mass).plus(": " + document["userMuscle"].toString() + "kg")
                 muscleProgressView.progress = document["userMuscle"].toString().toFloat()
 
-                fatProgressView.labelText = getString(R.string.body_Fat_Percentage).plus(": "+document["userFat"].toString()+"%")
+                fatProgressView.labelText =
+                    getString(R.string.body_Fat_Percentage).plus(": " + document["userFat"].toString() + "%")
                 fatProgressView.progress = document["userFat"].toString().toFloat()
             }
             .addOnFailureListener {
@@ -337,8 +408,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
                         1010
                     )
-
-
                 }
             }
         }
@@ -452,12 +521,24 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     }
 
+    private fun showAlertText() = with(binding){
+        alertLinearLayout.isVisible = true
+    }
+
+    private fun hideAlertText() = with(binding){
+        alertLinearLayout.isVisible = false
+    }
+
     private fun showProgress() {
         binding.progressBar.isVisible = true
     }
 
     private fun hideProgress() {
         binding.progressBar.isVisible = false
+    }
+
+    override fun timeGenerator(): String {
+        return super.timeGenerator()
     }
 
     override fun onDestroyView() {

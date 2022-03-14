@@ -158,8 +158,9 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         mealtime: String
     ) {
         foodlist.remove(item)
+        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
         val pref = activity?.getSharedPreferences("pref", 0)
-        val toremovedDate = pref?.getString("selectedDate", "YYYY")
+        val toremovedDate = pref?.getString("selectedDate", "YYYY") ?: today // 선택 날짜 없을시 -> 오늘
         val toremovedFoodname = item.foodName
 
         db.collection(DBKey.COLLECTION_NAME_USERS)

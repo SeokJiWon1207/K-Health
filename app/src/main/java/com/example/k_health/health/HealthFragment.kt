@@ -84,11 +84,10 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
             for (i in todayHealthNameList.indices) {
                 db.collection(DBKey.COLLECTION_NAME_USERS)
                     .document(Repository.userId)
-                    .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 식사기록보관
+                    .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 운동기록보관
                     .document(selectedDate)
                     .collection(todayHealthNameList[i])
                     .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                        // healthRecordData.clear()
                         for (snapshot in querySnapshot!!.documents) {
                             val healthRecordItem = snapshot.toObject(HealthRecord::class.java)
                             healthRecordData.add(UserHealthRecord(todayHealthNameList[i],healthRecordItem!!.set, healthRecordItem!!.weight, healthRecordItem!!.count))
@@ -116,14 +115,17 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
         showProgress()
 
         val pref = activity?.getSharedPreferences("pref", 0)
+        val edit = pref?.edit()
         val toremovedDate = pref?.getString("selectedHealthDate", "YYYY")
         val toremovedName = userHealthRecord.name
         val toremovedSize = userHealthList.filter { it.name == toremovedName }.size
-        Log.d(TAG,"before currentList: $userHealthList")
+
+        val todayHealthNameList = pref?.getStringSet(toremovedDate, mutableSetOf("", ""))!!.toMutableList()
+        todayHealthNameList.remove(toremovedName)
+        edit?.putStringSet(toremovedDate,todayHealthNameList.toSet())
 
         repeat(toremovedSize) {
             userHealthList.removeIf { it.name == toremovedName }
-            Log.d(TAG, "after currentList: $userHealthList")
         }
 
         val todayHealthSet = pref?.getStringSet(toremovedDate, mutableSetOf("", ""))

@@ -195,6 +195,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                 (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
                     Log.d(TAG, "items : ${it.body!!.items}")
                     submitList(it.body.items!!)
+                    hideRetryButton()
                 }
                 hideProgress()
             }
