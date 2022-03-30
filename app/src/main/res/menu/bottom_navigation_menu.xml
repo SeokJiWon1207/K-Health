@@ -28,9 +28,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/report"
+        android:id="@+id/sns"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_bar_chart_24"
-        android:title="리포트"
+        android:icon="@drawable/ic_baseline_group_24"
+        android:title="투게더"
         app:showAsAction="ifRoom" />
 </menu>

@@ -396,8 +396,8 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // searchEditTextClear()
-        // scope.cancel()
+        _binding = null
+        scope.cancel()
         Log.d(TAG, "onDestroyView")
     }
 

@@ -9,7 +9,7 @@ import com.example.k_health.food.FoodFragment
 import com.example.k_health.health.HealthFragment
 import com.example.k_health.helper.HelperFragment
 import com.example.k_health.home.HomeFragment
-import com.example.k_health.report.ReportFragment
+import com.example.k_health.sns.SnsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,14 +20,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         Log.d("Main","is login")
 
         val homeFragment = HomeFragment()
         val helperFragment = HelperFragment()
         val healthFragment = HealthFragment()
         val foodFragment = FoodFragment()
-        val reportFragment = ReportFragment()
+        val snsFragment = SnsFragment()
 
 
         // 초기화면 설정
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.helper -> replaceFragment(helperFragment)
                 R.id.health -> replaceFragment(healthFragment)
                 R.id.food -> replaceFragment(foodFragment)
-                R.id.report -> replaceFragment(reportFragment)
+                R.id.sns -> replaceFragment(snsFragment)
             }
             true
         }

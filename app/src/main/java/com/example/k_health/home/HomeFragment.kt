@@ -126,7 +126,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
 
 
         storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE)
-            .child("${userId}.png").downloadUrl.addOnCompleteListener {
+            .child("${userId}.png").downloadUrl
+            .addOnCompleteListener {
                 if (it.isSuccessful) {
                     Glide.with(this)
                         .load(it.result)
@@ -199,6 +200,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
         todolist.clear()
         hideAlertText()
 
+        Log.d(TAG,"healthcomplete: $healthisComplete")
         todolist.add(
             TodoList(
                 R.drawable.ic_baseline_fitness_center_24_2,
@@ -543,7 +545,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //_binding = null
+        _binding = null
         scope.cancel()
     }
 }

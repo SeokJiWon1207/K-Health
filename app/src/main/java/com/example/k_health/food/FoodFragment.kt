@@ -163,6 +163,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         val toremovedDate = pref?.getString("selectedDate", "YYYY") ?: today // 선택 날짜 없을시 -> 오늘
         val toremovedFoodname = item.foodName
 
+        Log.d(TAG,"today: $toremovedDate")
+
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(Repository.userId)
             .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
@@ -452,7 +454,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // _binding = null
-        // scope.cancel()
+        _binding = null
     }
 }
