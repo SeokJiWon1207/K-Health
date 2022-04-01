@@ -12,7 +12,6 @@ import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 object Repository {
-    val userId = Firebase.auth.currentUser?.uid.orEmpty()
 
     // Retrofit 1-3) Retrofit 인스턴스 생성, 싱글톤의 instance interface 객체 구현
     private val foodApiService: FoodApiService by lazy {

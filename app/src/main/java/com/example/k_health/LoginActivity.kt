@@ -9,7 +9,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.k_health.DBKey.Companion.COLLECTION_NAME_USERS
-import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.ActivityLoginBinding
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
@@ -38,14 +37,15 @@ import com.nhn.android.naverlogin.OAuthLoginHandler
 
 
 class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+    private var _binding: ActivityLoginBinding? = null
+    private val binding get() = _binding!!
     private lateinit var auth: FirebaseAuth
+    private val userId = Firebase.auth.currentUser?.uid.orEmpty()
     private lateinit var callbackManager: CallbackManager
     private lateinit var mOAuthLoginInstance: OAuthLogin
     private lateinit var mContext: Context
     private var googleSignInClient: GoogleSignInClient? = null
     private val db = FirebaseFirestore.getInstance()
-
 
     companion object {
         const val TAG = "LoginActivity"
@@ -54,10 +54,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        _binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        Log.d(TAG, "onCreate()")
 
         // Firebase Authentication 관리 클래스
         auth = Firebase.auth
@@ -82,13 +80,13 @@ class LoginActivity : AppCompatActivity() {
             getString(R.string.naver_client_name)
         )
 
-        initNaverLoginButton()
-        initKakaoLoginButton()
+        // initNaverLoginButton()
+        // initKakaoLoginButton()
         initFacebookLoginButton()
         initGoogleLoginButton()
     }
 
-    private fun initNaverLoginButton() {
+    /*private fun initNaverLoginButton() {
         val mOAuthLoginHandler: OAuthLoginHandler = @SuppressLint("HandlerLeak")
         object : OAuthLoginHandler() {
             override fun run(success: Boolean) {
@@ -106,10 +104,10 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         binding.naverLoginButton.setOAuthLoginHandler(mOAuthLoginHandler)
-    }
+    }*/
 
 
-    private fun initKakaoLoginButton() {
+    /*private fun initKakaoLoginButton() {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
             if (error != null) {
                 when {
@@ -160,7 +158,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-    }
+    }*/
 
     private fun initFacebookLoginButton() {
         binding.facebookLoginButton.setPermissions("email", "public_profile")
@@ -201,12 +199,12 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun googleLogin() {
-        var signInIntent = googleSignInClient?.signInIntent
+        val signInIntent = googleSignInClient?.signInIntent
         startActivityForResult(signInIntent, GOOGLE_LOGIN_CODE)
     }
 
     private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
-        var credential = GoogleAuthProvider.getCredential(account?.idToken, null)
+        val credential = GoogleAuthProvider.getCredential(account?.idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this@LoginActivity) { task ->
                 if (task.isSuccessful) {

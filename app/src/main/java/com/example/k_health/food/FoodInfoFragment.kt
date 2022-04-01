@@ -50,6 +50,6 @@ class FoodInfoFragment : Fragment(R.layout.fragment_food_info) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        // _binding = null
     }
 }

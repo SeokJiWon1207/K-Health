@@ -15,18 +15,22 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    companion object {
+        const val TAG = "MainActivity"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        Log.d("Main","is login")
 
         val homeFragment = HomeFragment()
         val helperFragment = HelperFragment()
         val healthFragment = HealthFragment()
         val foodFragment = FoodFragment()
         val snsFragment = SnsFragment()
+
+        Log.d(TAG,"main oncreate")
 
 
         // 초기화면 설정

@@ -13,14 +13,15 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.DBKey
 import com.example.k_health.R
-import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentRecordHealthlistBinding
 import com.example.k_health.health.adapter.RecordHealthListAdapter
 import com.example.k_health.health.model.HealthRecord
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -32,6 +33,7 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
 
     private var _binding: FragmentRecordHealthlistBinding? = null
     private val binding get() = _binding!!
+    private val userId = Firebase.auth.currentUser?.uid.orEmpty()
     private val db = FirebaseFirestore.getInstance()
     private var recordHealthList = arrayListOf<HealthRecord>()
     private var recordHealthListAdapter = RecordHealthListAdapter(recordHealthList)

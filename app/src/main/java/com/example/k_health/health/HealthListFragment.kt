@@ -174,7 +174,7 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        // _binding = null
     }
 
 }

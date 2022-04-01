@@ -20,7 +20,9 @@ import com.example.k_health.food.adapter.FoodListAdapter
 import com.example.k_health.health.TimeInterface
 import com.example.k_health.food.data.models.History
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -34,6 +36,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     private var _binding: FragmentFoodSearchBinding? = null
     private val binding get() = _binding!!
+    private val userId = Firebase.auth.currentUser?.uid.orEmpty()
     private val db = FirebaseFirestore.getInstance()
     private val scope = MainScope()
     private val foodInfoFragment = FoodInfoFragment()
@@ -106,7 +109,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                     foodSelectedList[i].unsaturatedFattyAcids.toString()
 
                 db.collection(DBKey.COLLECTION_NAME_USERS)
-                    .document(Repository.userId)
+                    .document(userId)
                     .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
                     .document(selectedDate) // 선택 날짜
                     .collection(mealtime) // 현재 선택한 식사 시간
@@ -396,7 +399,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        // _binding = null
         scope.cancel()
         Log.d(TAG, "onDestroyView")
     }

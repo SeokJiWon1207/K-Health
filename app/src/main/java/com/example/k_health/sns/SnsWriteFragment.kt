@@ -9,10 +9,13 @@ import com.example.k_health.R
 import com.example.k_health.databinding.FragmentSnsWriteBinding
 
 class SnsWriteFragment: Fragment(R.layout.fragment_sns_write) {
+
+    companion object {
+        const val TAG = "SnsWriteFragment"
+    }
     private var _binding: FragmentSnsWriteBinding? = null
     private val binding get() = _binding!!
-    private val snsFragment = SnsFragment()
-    private val snsWriteFragment = SnsWriteFragment()
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -24,12 +27,15 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write) {
     }
 
     fun setToolbar() = with(binding) {
-        toolbar.inflateMenu(R.menu.toolbar_sns)
+        val snsFragment = SnsFragment()
+
+        toolbar.inflateMenu(R.menu.toolbar_sns_write)
 
         // 프래그먼트가 메뉴 관련 콜백을 수신하려 한다고 시스템에 알림
         // 메뉴 관련 이벤트(생성, 클릭 등)가 발생하면 이벤트 처리 메서드가 먼저 활동에서 호출된 후 프래그먼트에서 호출
         setHasOptionsMenu(true)
         toolbar.title = "글쓰기"
+        // toolbar.menu.getItem(R.id.action_refresh).isVisible = false
 
         // 액션버튼 클릭 했을 때 이벤트 처리
         toolbar.setOnMenuItemClickListener { item ->
@@ -38,12 +44,6 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write) {
                     //홈버튼 눌렀을 때
                     (activity as MainActivity).replaceFragment(snsFragment)
                     Log.d(SnsFragment.TAG, "홈 버튼 클릭")
-                    true
-                }
-                R.id.action_write -> {
-                    //글쓰기 버튼 눌렀을 때
-                    (activity as MainActivity).replaceFragment(snsWriteFragment)
-                    Log.d(SnsFragment.TAG, "글쓰기 버튼 클릭")
                     true
                 }
                 R.id.action_refresh -> {

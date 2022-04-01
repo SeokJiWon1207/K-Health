@@ -12,7 +12,6 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -20,11 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.k_health.*
 import com.example.k_health.DBKey.Companion.STORAGE_URL_USERPROFILE
-import com.example.k_health.Repository.userId
 import com.example.k_health.databinding.FragmentHomeBinding
 import com.example.k_health.health.TimeInterface
-import com.example.k_health.health.model.HealthRecord
-import com.example.k_health.health.model.UserHealthRecord
 import com.example.k_health.home.adapter.TodoListAdapter
 import com.example.k_health.home.model.TodoList
 import com.google.android.material.snackbar.Snackbar
@@ -35,7 +31,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.*
-import okhttp3.internal.filterList
 
 class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
 
@@ -43,6 +38,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
     private val binding get() = _binding!!
     private var selectedUri: Uri? = null
     private val auth: FirebaseAuth by lazy { Firebase.auth }
+    private val userId = Firebase.auth.currentUser?.uid.orEmpty()
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val db = FirebaseFirestore.getInstance()
     private val userInfoDialog: Dialog by lazy { Dialog(requireContext()) }
@@ -94,7 +90,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
             .get()
             .addOnSuccessListener { document ->
                 if (document["userNickname"] != null) {
-                    Log.d("Home", "userNickname : ${document["userNickname"]}")
                     setUserProfile()
                     setProgressView()
                 } else {
@@ -115,9 +110,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
             .get()
             .addOnSuccessListener { document ->
                 binding.userNameTextView.text = (document["userNickname"].toString()).plus("님")
-                binding.userWeightTextView.text = document["userWeight"].toString() ?: "00.0"
-                binding.userMuscleTextView.text = document["userMuscle"].toString() ?: "00.0"
-                binding.userFatTextView.text = document["userFat"].toString() ?: "00.0"
+                binding.userWeightTextView.text = document["userWeight"].toString()
+                binding.userMuscleTextView.text = document["userMuscle"].toString()
+                binding.userFatTextView.text = document["userFat"].toString()
 
             }
             .addOnFailureListener {
@@ -444,7 +439,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
             .document(userId)
             .update(userProfile)
             .addOnSuccessListener {
-                Toast.makeText(requireContext(), "프로필 사진이 등록됐습니다", Toast.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), "프로필 사진이 등록되었습니다", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("확인", object : View.OnClickListener {
+                        override fun onClick(v: View?) {
+
+                        }
+                    })
+                    .show()
             }
             .addOnFailureListener {
 
@@ -464,7 +465,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     startContentProvider()
                 } else {
-                    Toast.makeText(requireContext(), "권한을 거부하셨습니다.", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(requireView(), "권한을 거부하셨습니다", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("확인", object : View.OnClickListener {
+                            override fun onClick(v: View?) {
+
+                            }
+                        })
+                        .show()
                 }
         }
     }
@@ -490,22 +497,44 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                     binding?.userProfileImageView?.setImageURI(uri)
                     selectedUri = uri
                     uploadPhoto(selectedUri!!, successHandler = { uri ->
-                        Toast.makeText(requireContext(), "사진 업로드에 성공했습니다.", Toast.LENGTH_SHORT)
+                        Snackbar.make(requireView(), "사진 업로드에 성공했습니다", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("확인", object : View.OnClickListener {
+                                override fun onClick(v: View?) {
+
+                                }
+                            })
                             .show()
                         hideProgress()
                     },
                         errorHandler = {
-                            Toast.makeText(requireContext(), "사진 업로드에 실패했습니다.", Toast.LENGTH_SHORT)
+                            Snackbar.make(requireView(), "사진 업로드에 실패했습니다", Snackbar.LENGTH_INDEFINITE)
+                                .setAction("확인", object : View.OnClickListener {
+                                    override fun onClick(v: View?) {
+
+                                    }
+                                })
                                 .show()
                             hideProgress()
                         })
                 } else {
-                    Toast.makeText(requireContext(), "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                    Snackbar.make(requireView(), "사진을 가져오지 못했습니다", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("확인", object : View.OnClickListener {
+                            override fun onClick(v: View?) {
+
+                            }
+                        })
+                        .show()
                 }
 
             }
             else -> {
-                Toast.makeText(requireContext(), "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                Snackbar.make(requireView(), "사진을 가져오지 못했습니다", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("확인", object : View.OnClickListener {
+                        override fun onClick(v: View?) {
+
+                        }
+                    })
+                    .show()
             }
         }
     }
@@ -545,7 +574,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        // _binding = null
         scope.cancel()
     }
 }

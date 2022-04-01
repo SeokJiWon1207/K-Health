@@ -15,7 +15,9 @@ import com.example.k_health.food.FoodFragment
 import com.example.k_health.health.adapter.GetHealthListAdapter
 import com.example.k_health.health.model.HealthRecord
 import com.example.k_health.health.model.UserHealthRecord
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -27,6 +29,7 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
 
     private var _binding: FragmentHealthBinding? = null
     private val binding get() = _binding!!
+    private val userId = Firebase.auth.currentUser?.uid.orEmpty()
     private val db = FirebaseFirestore.getInstance()
     private val healthListFragment = HealthListFragment()
     private val healthRecordData = arrayListOf<UserHealthRecord>()
@@ -83,7 +86,7 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
         try {
             for (i in todayHealthNameList.indices) {
                 db.collection(DBKey.COLLECTION_NAME_USERS)
-                    .document(Repository.userId)
+                    .document(userId)
                     .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 운동기록보관
                     .document(selectedDate)
                     .collection(todayHealthNameList[i])
@@ -133,16 +136,14 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
 
         for (i in 1..toremovedSize) {
             db.collection(DBKey.COLLECTION_NAME_USERS)
-                .document(Repository.userId)
+                .document(userId)
                 .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 운동기록보관
                 .document(toremovedDate!!) // 캘린더 선택 날짜
                 .collection(toremovedName) // 삭제할 운동 이름
                 .document(i.toString())
                 .delete()
                 .addOnSuccessListener {
-                    Log.d(TAG, "before userHealthList: ${userHealthList}")
                     userHealthList.removeIf { it.name == toremovedName }
-                    Log.d(TAG, "after userHealthList: ${userHealthList}")
                     if (i==toremovedSize) {
                         getHealthListAdapter.notifyDataSetChanged()
                         hideView()

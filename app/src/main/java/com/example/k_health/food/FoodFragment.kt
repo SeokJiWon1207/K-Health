@@ -22,7 +22,9 @@ import com.example.k_health.food.adapter.FoodRecordListAdapter
 import com.example.k_health.food.data.models.Item
 import com.example.k_health.health.TimeInterface
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -35,6 +37,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
     private var _binding: FragmentFoodBinding? = null
     private val binding get() = _binding!!
+    private val userId = Firebase.auth.currentUser?.uid.orEmpty()
     private val db = FirebaseFirestore.getInstance()
     private val foodSearchFragment = FoodSearchFragment()
     private val foodInfoFragment = FoodInfoFragment()
@@ -73,10 +76,9 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         defaultValuesData.set("userActivityLevel","0")
         defaultValuesData.set("userRecommendedKcal","0")
         db.collection(DBKey.COLLECTION_NAME_USERS)
-            .document(Repository.userId)
+            .document(userId)
             .update(defaultValuesData)
             .addOnSuccessListener {
-                Log.d(TAG, "setDefaultValues")
             }
             .addOnFailureListener {
 
@@ -163,10 +165,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         val toremovedDate = pref?.getString("selectedDate", "YYYY") ?: today // 선택 날짜 없을시 -> 오늘
         val toremovedFoodname = item.foodName
 
-        Log.d(TAG,"today: $toremovedDate")
-
         db.collection(DBKey.COLLECTION_NAME_USERS)
-            .document(Repository.userId)
+            .document(userId)
             .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
             .document(toremovedDate!!) // 캘린더 선택 날짜
             .collection(mealtime) // 식사 구분
@@ -219,7 +219,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         foodRecordListAdapter: FoodRecordListAdapter
     ) {
         db.collection(DBKey.COLLECTION_NAME_USERS)
-            .document(Repository.userId)
+            .document(userId)
             .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
             .document(selectedDate) // 캘린더 선택 날짜
             .collection(mealtime) // 식사 구분
@@ -229,7 +229,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                     val foodRecordItem = snapshot.toObject(Item::class.java)
                     foodlist.add(foodRecordItem!!)
                     totalFoodList.add(foodRecordItem!!)
-                    Log.d(TAG,"$foodlist")
                 }
                 setupUserKcalInfo()
                 setProgressView()
@@ -251,11 +250,10 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     // 활동지수 유무확인
     private fun isActivityLevelNotNull() {
         db.collection(DBKey.COLLECTION_NAME_USERS)
-            .document(Repository.userId)
+            .document(userId)
             .get()
             .addOnSuccessListener { document ->
                 if (document["userActivityLevel"] != null && document["userActivityLevel"] != "0") {
-                    Log.d(TAG, "userActivityLevel : ${document["userActivityLevel"]}")
                     setupUserKcalInfo()
                     setProgressView()
                 } else {
@@ -339,7 +337,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
 
                 db.collection(DBKey.COLLECTION_NAME_USERS)
-                    .document(Repository.userId)
+                    .document(userId)
                     .update(userData)
                     .addOnSuccessListener {
                         activityLevelInfoDialog.dismiss()
@@ -398,13 +396,12 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     }
 
     private fun setupUserKcalInfo() {
-        Log.d(TAG, "setup")
         val todayTotalKcal = totalFoodList.sumOf { it.kcal!!.format("04d").toDouble() }
         var recommendedKcal = 0.0
         var remainKcal = 0.0
 
         db.collection(DBKey.COLLECTION_NAME_USERS)
-            .document(Repository.userId)
+            .document(userId)
             .get()
             .addOnSuccessListener { document ->
                 recommendedKcal = document["userRecommendedKcal"].toString().format("%.1d").toDouble()
@@ -454,6 +451,6 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        // _binding = null
     }
 }
