@@ -358,13 +358,12 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
             }
     }
 
-    private fun updateUserNickname() {
+    private fun updateUserNickname() = with(binding){
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(userId)
             .get()
             .addOnSuccessListener { document ->
-                binding?.userNameTextView?.text = (document["userNickname"].toString()).plus("님")
-
+                userNameTextView.text = (document["userNickname"].toString()).plus("님")
             }
             .addOnFailureListener {
             }
@@ -566,10 +565,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
 
     private fun hideProgress() {
         binding.progressBar.isVisible = false
-    }
-
-    override fun timeGenerator(): String {
-        return super.timeGenerator()
     }
 
     override fun onDestroyView() {

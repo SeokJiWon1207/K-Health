@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.k_health.MainActivity
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentSnsBinding
+import com.example.k_health.home.HomeFragment
 
 class SnsFragment : Fragment(R.layout.fragment_sns) {
 
