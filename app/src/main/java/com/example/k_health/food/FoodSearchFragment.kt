@@ -290,12 +290,12 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         }
     }
 
-    private fun showProgress() {
-        binding.progressBar.isVisible = true
+    private fun showProgress() = with(binding) {
+        progressBar.isVisible = true
     }
 
-    private fun hideProgress() {
-        binding.progressBar.isVisible = false
+    private fun hideProgress() = with(binding) {
+        progressBar.isVisible = false
     }
 
     private fun showRetryButton() {
@@ -307,8 +307,8 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         }
     }
 
-    private fun hideRetryButton() {
-        binding.retryButton.isVisible = false
+    private fun hideRetryButton() = with(binding) {
+        retryButton.isVisible = false
     }
 
     // 검색한 기록을 보여주는 메소드
@@ -339,16 +339,16 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         initSearchEditText()
     }
 
-    private fun hideHistoryView() {
-        binding.historyRecyclerView.isVisible = false
+    private fun hideHistoryView() = with(binding) {
+        historyRecyclerView.isVisible = false
     }
 
-    private fun showFoodListView() {
-        binding.foodRecyclerView.isVisible = true
+    private fun showFoodListView() = with(binding) {
+        foodRecyclerView.isVisible = true
     }
 
-    private fun hideFoodListView() {
-        binding.foodRecyclerView.isVisible = false
+    private fun hideFoodListView() = with(binding) {
+        foodRecyclerView.isVisible = false
     }
 
     private fun saveSearchKeyword(keyword: String) {

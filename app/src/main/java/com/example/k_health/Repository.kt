@@ -2,8 +2,6 @@ package com.example.k_health
 
 import com.example.k_health.food.data.models.FoodResponse
 import com.example.k_health.food.data.service.FoodApiService
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

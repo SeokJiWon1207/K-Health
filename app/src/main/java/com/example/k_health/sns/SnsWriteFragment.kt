@@ -7,10 +7,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
-import android.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.k_health.DBKey
@@ -21,10 +20,12 @@ import com.example.k_health.health.TimeInterface
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
-import java.time.LocalDate
+import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -39,7 +40,8 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
     private val userId = Firebase.auth.currentUser?.uid.orEmpty()
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val db = FirebaseFirestore.getInstance()
-
+    private val userUploadTime = timeGenerator()
+    private val userUploadDate = timeGenerator().substring(0,8) // 년,월,일
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,13 +70,15 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
                 R.id.action_home -> {
                     // 홈버튼 눌렀을 때
                     (activity as MainActivity).replaceFragment(snsFragment)
-                    Log.d(SnsFragment.TAG, "홈 버튼 클릭")
+                    Log.d(TAG, "홈 버튼 클릭")
                     true
                 }
                 R.id.action_upload -> {
                     // 체크버튼을 눌렀을 때
-                    Log.d(SnsFragment.TAG, "글쓰기 완료")
-                    uploadPhoto(selectedUri!!, successHandler = { uri ->
+                    showProgress()
+                    Log.d(TAG, "글쓰기 완료")
+                    uploadToFireStore()
+                    uploadToFireStorage(selectedUri!!, successHandler = { uri ->
                         Snackbar.make(requireView(), "글이 작성 되었습니다.", Snackbar.LENGTH_INDEFINITE)
                             .setAction("확인", object : View.OnClickListener {
                                 override fun onClick(v: View?) {
@@ -98,7 +102,7 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
         }
     }
 
-    // 1-1) 업로드할 사진 불러오기
+    // 업로드할 사진 불러오기
     private fun getLoadGalleryImage() = with(binding) {
         addPhotoFab.setOnClickListener {
             when {
@@ -123,10 +127,8 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
         }
     }
 
-
-
     // storage에 업로드
-    private fun uploadPhoto(uri: Uri, successHandler: (String) -> Unit, errorHandler: () -> Unit) {
+    private fun uploadToFireStorage(uri: Uri, successHandler: (String) -> Unit, errorHandler: () -> Unit) {
         // 현재의 시간명으로 파일이름 지정
         val fileName = "${timeGenerator()}.png"
         storage.reference.child("sns/${userId}").child(fileName)
@@ -137,7 +139,6 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
                         .downloadUrl
                         .addOnSuccessListener { uri ->
                             successHandler(uri.toString())
-                            // uploadDB(uri)
                         }.addOnFailureListener {
                             errorHandler()
                         }
@@ -148,25 +149,79 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
     }
 
     // fireStore에 저장
-    private fun uploadDB(photoUri: Uri) {
-        val userProfile = mutableMapOf<String, Any>()
-        userProfile["userProfile"] = photoUri.toString()
+    private fun uploadToFireStore() = with(binding) {
 
-        db.collection(DBKey.COLLECTION_NAME_USERS)
-            .document(userId)
-            .update(userProfile)
-            .addOnSuccessListener {
-                Snackbar.make(requireView(), "프로필 사진이 등록되었습니다", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("확인", object : View.OnClickListener {
-                        override fun onClick(v: View?) {
+        CoroutineScope(Dispatchers.IO).launch {
 
-                        }
-                    })
-                    .show()
+            var currentBoardNumber: String
+            // 업로드 하기 전에 먼저 게시판의 게시글 번호를 얻어옴
+            runBlocking {
+                currentBoardNumber = getBoardNumber()
             }
-            .addOnFailureListener {
+            Log.d(TAG,"current: $currentBoardNumber")
+            val snsContent = mutableMapOf<String, Any>()
 
+            val nextBoardNumber = currentBoardNumber.toInt().plus(1).toString()
+
+            snsContent["userSnsContent"] = contentEditText.text.toString()
+            snsContent["userUploadTime"] = userUploadTime
+            snsContent["boardNumber"] = nextBoardNumber // 현재 게시글 번호의 다음 번호를 업로드
+
+            val nextBoardNumberMap = mutableMapOf<String, String>()
+
+
+            nextBoardNumberMap["boardNumber"] = nextBoardNumber
+
+            // 업로드 부분
+            try {
+                db.collection(DBKey.COLLECTION_NAME_SNS)
+                    .document(userUploadDate)
+                    .collection(userUploadDate)
+                    .document(nextBoardNumber)
+                    .set(snsContent)
+                    .addOnSuccessListener {
+                        Log.d(TAG,"DB에 글쓰기 완료")
+                    }
+                    .addOnFailureListener {
+                        Log.d(TAG,"error: $it")
+                    }
+            } catch (e: Exception) {
+                Log.d(TAG,"error: $e")
             }
+
+            setBoardNumber(nextBoardNumberMap)
+        }
+    }
+
+    suspend fun getBoardNumber(): String {
+        var result: String = "0"
+        return try {
+            db.collection(DBKey.COLLECTION_NAME_SNS)
+                .document(userUploadDate)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document["boardNumber"] == null) {
+                        val defaultBoardNumberMap = mutableMapOf<String, String>()
+                        defaultBoardNumberMap["boardNumber"] = "0"
+                        setBoardNumber(defaultBoardNumberMap)
+                    } else {
+                        result = document["boardNumber"].toString()
+                    }
+                }.await()
+            result
+        } catch (e: FirebaseFirestoreException) {
+            result
+        }
+    }
+
+    private fun setBoardNumber(map: MutableMap<String, String>) {
+        try {
+            db.collection(DBKey.COLLECTION_NAME_SNS)
+                .document(userUploadDate)
+                .set(map)
+        } catch (e: FirebaseFirestoreException) {
+
+        }
     }
 
     private fun startContentProvider() {
@@ -202,9 +257,9 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
 
                 // 선택한 사진이 있을 경우
                 if (uri != null) {
-                    Glide.with(binding.uploadPhotoImageView.context)
+                    Glide.with(binding.contentPhotoImageView.context)
                         .load(uri)
-                        .into(binding.uploadPhotoImageView)
+                        .into(binding.contentPhotoImageView)
 
                     selectedUri = uri // 선택한 사진을 selectedUri에 저장
 
@@ -224,9 +279,17 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
 
     override fun timeGenerator(): String {
         val now = LocalDateTime.now()
-        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd/HHmmss"))
+        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
 
         return todayNow
+    }
+
+    private fun showProgress() = with(binding) {
+        progressBar.isVisible = true
+    }
+
+    private fun hideProgress() = with(binding){
+        progressBar.isVisible = false
     }
 
 
