@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_weight="10"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.2">
+        android:layout_weight="0.3">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/recommend_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/label_recommend_kcal"
+            android:textColor="@color/lightblue"
             android:textSize="25sp"
             android:textStyle="bold"
-            android:textColor="@color/lightblue"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -39,7 +39,7 @@
             android:layout_marginLeft="30dp"
             android:text="@string/label_age"
             android:textColor="@color/lightblue"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -50,8 +50,10 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="50dp"
             android:gravity="right"
+            android:hint="세"
             android:maxLength="3"
             android:textColorHint="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/user_age_TextView"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,12 +62,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
+            android:layout_marginTop="15dp"
             android:text="@string/weight"
             android:textColor="@color/lightblue"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/user_weight_EditText" />
+            app:layout_constraintTop_toBottomOf="@id/user_age_TextView" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/user_weight_EditText"
@@ -77,6 +80,7 @@
             android:hint="@string/kg"
             android:maxLength="5"
             android:textColorHint="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/user_weight_TextView"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_age_EditText" />
 
@@ -85,10 +89,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="15dp"
             android:text="@string/height"
             android:textColor="@color/lightblue"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_weight_TextView" />
@@ -102,6 +106,7 @@
             android:hint="@string/cm"
             android:maxLength="5"
             android:textColorHint="@color/gray"
+            app:layout_constraintBottom_toBottomOf="@id/user_height_TextView"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/user_height_TextView" />
 
@@ -110,10 +115,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:text="@string/label_sex"
             android:textColor="@color/lightblue"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/user_height_TextView" />
@@ -122,9 +127,10 @@
             android:id="@+id/sex_RadioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal"
             app:layout_constraintLeft_toLeftOf="@id/user_weight_EditText"
-            app:layout_constraintTop_toTopOf="@id/sex_TextView">
+            app:layout_constraintTop_toBottomOf="@+id/user_height_EditText">
 
             <RadioButton
                 android:id="@+id/sex_man"
@@ -146,10 +152,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:text="@string/label_activity_level"
             android:textColor="@color/lightblue"
-            android:textSize="30sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/sex_TextView" />
@@ -158,9 +164,8 @@
             android:id="@+id/activity_Level_RadioGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
             android:orientation="vertical"
-            app:layout_constraintLeft_toRightOf="@id/user_activity_level_TextView"
+            app:layout_constraintLeft_toLeftOf="@id/user_age_EditText"
             app:layout_constraintTop_toTopOf="@id/user_activity_level_TextView">
 
             <RadioButton
@@ -193,8 +198,8 @@
             android:id="@+id/description1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
             android:text="@string/label_description1"
+            android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_Level_RadioGroup" />
@@ -203,10 +208,11 @@
             android:id="@+id/non_activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
             android:text="비활동적 - "
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@id/description2"
-            app:layout_constraintRight_toLeftOf="@id/description2"/>
+            app:layout_constraintRight_toLeftOf="@id/description2"
+            app:layout_constraintTop_toTopOf="@id/description2" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/description2"
@@ -222,8 +228,8 @@
             android:layout_height="wrap_content"
             android:text="낮은활동적 - "
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@id/description3"
-            app:layout_constraintRight_toLeftOf="@id/description3"/>
+            app:layout_constraintRight_toLeftOf="@id/description3"
+            app:layout_constraintTop_toTopOf="@id/description3" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/description3"
@@ -239,8 +245,8 @@
             android:layout_height="wrap_content"
             android:text="보통활동적 - "
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@id/description4"
-            app:layout_constraintRight_toLeftOf="@id/description4"/>
+            app:layout_constraintRight_toLeftOf="@id/description4"
+            app:layout_constraintTop_toTopOf="@id/description4" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/description4"
@@ -256,14 +262,14 @@
             android:layout_height="wrap_content"
             android:text="높은활동적 - "
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="@id/description5"
-            app:layout_constraintRight_toLeftOf="@id/description5"/>
+            app:layout_constraintRight_toLeftOf="@id/description5"
+            app:layout_constraintTop_toTopOf="@id/description5" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/description5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_description4"
+            android:text="@string/label_description5"
             app:layout_constraintLeft_toRightOf="@id/high_activity"
             app:layout_constraintTop_toBottomOf="@+id/description4" />
 

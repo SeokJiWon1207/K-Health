@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
@@ -45,6 +46,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
     private var scope = MainScope()
     private var todolist: ArrayList<TodoList> = arrayListOf()
     private var todoListAdater = TodoListAdapter(todolist)
+    private val today = timeGenerator()
 
     companion object {
         const val TAG = "HomeFragment"
@@ -59,11 +61,26 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
         uploadProfileImage()
         notcompletedTodoList(false)
         userInfoSetPopup()
-        logoutButton()
         initRecyclerView()
         clickTodoButton()
+        isHealthTodo()
 
 
+    }
+
+    private fun setDefaultFoodValues() {
+        val defaultValuesData = mutableMapOf<String, Any>()
+        defaultValuesData.set("userActivityLevel","0")
+        defaultValuesData.set("userRecommendedKcal","0")
+        db.collection(DBKey.COLLECTION_NAME_USERS)
+            .document(userId)
+            .update(defaultValuesData)
+            .addOnSuccessListener {
+                Log.d(TAG,"set values")
+            }
+            .addOnFailureListener {
+
+            }
     }
 
 
@@ -76,7 +93,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
             .document(userId)
             .update(defaultValuesData)
             .addOnSuccessListener {
-                Log.d(TAG, "setDefaultValues")
             }
             .addOnFailureListener {
 
@@ -93,6 +109,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                     setUserProfile()
                     setProgressView()
                 } else {
+                    // 초기단계
+                    setDefaultFoodValues()
                     setDefaultValues()
                     setUserProfile()
                     showNicknameInputPopup()
@@ -156,7 +174,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                     showNicknameInputPopup()
                 } else {
                     saveUserNickname(editText.text.toString())
-                    //setProgressView()
+                    setProgressView()
                 }
             }
             .setCancelable(false)
@@ -166,13 +184,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
     private fun userInfoSetPopup() {
         binding.userInfoFloatingButton.setOnClickListener {
             showPopup()
-        }
-    }
-
-    private fun logoutButton() {
-        binding.logoutButton.setOnClickListener {
-            auth.signOut()
-            startActivity(Intent(requireContext(), LoginActivity::class.java))
         }
     }
 
@@ -186,16 +197,16 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
     }
 
     private fun notcompletedTodoList(isDone: Boolean) {
-        val today = timeGenerator()
         val mealtimeList = arrayListOf("아침식사", "점심식사", "저녁식사")
         var isCompleted: Boolean
         var eatTime = "12:00 PM"
         val pref = activity?.getSharedPreferences("pref", 0)
-        val healthisComplete = pref?.getStringSet(today, mutableSetOf("", ""))!!.toList().isEmpty().not()
+        val healthisComplete =
+            pref?.getStringSet(today, mutableSetOf("", ""))!!.toList().isEmpty().not()
+        Log.d(TAG, "$healthisComplete")
         todolist.clear()
         hideAlertText()
 
-        Log.d(TAG,"healthcomplete: $healthisComplete")
         todolist.add(
             TodoList(
                 R.drawable.ic_baseline_fitness_center_24_2,
@@ -212,12 +223,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                 .document(today) // 오늘의 날짜
                 .collection(mealtimeList[i]) // 식사 구분
                 .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-                     eatTime = when (mealtimeList[i]) {
+                    eatTime = when (mealtimeList[i]) {
                         "아침식사" -> "08:00 AM"
                         "점심식사" -> "13:00 PM"
                         else -> "18:00 PM"
                     }
-
                     isCompleted = querySnapshot!!.isEmpty.not() // 비어있다면 -> 오늘 할 일
                     todolist.add(
                         TodoList(
@@ -227,14 +237,16 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                             isCompleted
                         )
                     )
-                    Log.d(TAG,"original: $todolist")
+                    Log.d(TAG, "original: $todolist")
                     if (i == mealtimeList.lastIndex) {
                         val originalList = todolist.clone() as ArrayList<TodoList>
                         todolist.removeIf { it.isComplete == isDone.not() }
-                        Log.d(TAG,"new: $todolist")
+                        Log.d(TAG, "new: $todolist")
                         todoListAdater.notifyDataSetChanged()
-                        binding.todoTaskTextView.text = originalList.filter { it.isComplete == false }.size.toString()
-                        binding.completeTaskTextView.text = originalList.filter { it.isComplete == true }.size.toString()
+                        binding.todoTaskTextView.text =
+                            originalList.filter { it.isComplete == false }.size.toString()
+                        binding.completeTaskTextView.text =
+                            originalList.filter { it.isComplete == true }.size.toString()
                         // 오늘 할 일의 리스트가 비워져있다면 임무 완료 팝업 띄우기
                         if (isDone == false && todolist.isEmpty()) {
                             showAlertText()
@@ -245,8 +257,12 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
 
     }
 
-    private fun initRecyclerView() {
-        binding.todolistRecyclerView.apply {
+    private fun isHealthTodo() {
+
+    }
+
+    private fun initRecyclerView() = with(binding) {
+        todolistRecyclerView.apply {
             adapter = todoListAdater
             layoutManager = LinearLayoutManager(context)
         }
@@ -358,7 +374,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
             }
     }
 
-    private fun updateUserNickname() = with(binding){
+    private fun updateUserNickname() = with(binding) {
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(userId)
             .get()
@@ -369,22 +385,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
             }
     }
 
-    /*// 기존 등록한 유저 프로필 가져오기
-    private fun getProfileImage() {
-        storage.getReferenceFromUrl(STORAGE_URL_USERPROFILE)
-            .child("${userId}.png").downloadUrl.addOnCompleteListener {
-                if (it.isSuccessful) {
-                    Glide.with(requireContext())
-                        .load(it.result)
-                        .into(binding!!.userProfileImageView)
-                }
-            }
-            .addOnFailureListener { error ->
-                Glide.with(requireContext())
-                    .load(R.drawable.ic_baseline_account_circle_24)
-                    .into(binding!!.userProfileImageView)
-            }
-    }*/
 
     private fun uploadProfileImage() {
         binding.userProfileImageView.setOnClickListener {
@@ -496,7 +496,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                     binding?.userProfileImageView?.setImageURI(uri)
                     selectedUri = uri
                     uploadPhoto(selectedUri!!, successHandler = { uri ->
-                        Snackbar.make(requireView(), "사진 업로드에 성공했습니다", Snackbar.LENGTH_INDEFINITE)
+                        Snackbar.make(
+                            requireView(),
+                            "사진 업로드에 성공했습니다",
+                            Snackbar.LENGTH_INDEFINITE
+                        )
                             .setAction("확인", object : View.OnClickListener {
                                 override fun onClick(v: View?) {
 
@@ -506,7 +510,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                         hideProgress()
                     },
                         errorHandler = {
-                            Snackbar.make(requireView(), "사진 업로드에 실패했습니다", Snackbar.LENGTH_INDEFINITE)
+                            Snackbar.make(
+                                requireView(),
+                                "사진 업로드에 실패했습니다",
+                                Snackbar.LENGTH_INDEFINITE
+                            )
                                 .setAction("확인", object : View.OnClickListener {
                                     override fun onClick(v: View?) {
 
@@ -551,11 +559,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
 
     }
 
-    private fun showAlertText() = with(binding){
+    private fun showAlertText() = with(binding) {
         alertLinearLayout.isVisible = true
     }
 
-    private fun hideAlertText() = with(binding){
+    private fun hideAlertText() = with(binding) {
         alertLinearLayout.isVisible = false
     }
 

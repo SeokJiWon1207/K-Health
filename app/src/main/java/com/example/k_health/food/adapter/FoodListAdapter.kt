@@ -55,7 +55,6 @@ class FoodListAdapter(private val itemClickListener: (Item) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
         holder.bind(currentList.shuffled()[position])
     }
 

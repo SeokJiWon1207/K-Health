@@ -181,7 +181,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
         })
         binding.foodRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = foodListAdapter
         }
     }
@@ -261,24 +261,25 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         searchEditTextClear()
     }
 
-    private fun search(keyword: String) = scope.launch {
+    private fun search(keyword: String) {
         try {
-            Repository.getFoodByName(keyword)?.let {
-                if (it.body!!.totalCount == 0) {
-                    showAlertTextView(keyword)
-                } else {
-                    (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
-                        hideHistoryView()
-                        hideAlertTextView()
-                        showFoodListView()
-                        saveSearchKeyword(keyword)
-                        submitList(it.body!!.items)
+            CoroutineScope(Dispatchers.IO).launch {
+                Repository.getFoodByName(keyword)?.let {
+                    if (it.body!!.totalCount == 0) {
+                        showAlertTextView(keyword)
+                    } else {
+                        (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
+                            hideHistoryView()
+                            hideAlertTextView()
+                            showFoodListView()
+                            saveSearchKeyword(keyword)
+                            submitList(it.body!!.items)
+                        }
                     }
-                    Log.d(TAG, "search: $keyword")
                 }
             }
-        } catch (exception: Exception) {
-            Log.d(TAG, "exception : $exception")
+        } catch (e: Exception) {
+
         }
     }
 
@@ -383,7 +384,8 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     override fun onResume() {
         super.onResume()
-        setupSpinnerMealtime()
+        // setupSpinnerMealtime()
+        // fetchFoodItems()
         Log.d(TAG, "onResume")
     }
 
@@ -399,8 +401,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // _binding = null
-        scope.cancel()
         Log.d(TAG, "onDestroyView")
     }
 

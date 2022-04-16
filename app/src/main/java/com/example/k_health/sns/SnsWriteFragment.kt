@@ -29,11 +29,12 @@ import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
+class SnsWriteFragment : Fragment(R.layout.fragment_sns_write), TimeInterface {
 
     companion object {
         const val TAG = "SnsWriteFragment"
     }
+
     private var _binding: FragmentSnsWriteBinding? = null
     private val binding get() = _binding!!
     private var selectedUri: Uri? = null
@@ -41,17 +42,40 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val db = FirebaseFirestore.getInstance()
     private val userUploadTime = timeGenerator()
-    private val userUploadDate = timeGenerator().substring(0,8) // 년,월,일
+    private val userUploadDate = timeGenerator().substring(0, 8) // 년,월,일
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentSnsWriteBinding.bind(view)
 
-        setToolbar()
         getLoadGalleryImage()
+        setToolbar()
 
 
+    }
+
+    // 업로드할 사진 불러오기
+    private fun getLoadGalleryImage() = with(binding) {
+        addPhotoFab.setOnClickListener {
+            when {
+                ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    startContentProvider()
+                }
+                shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE) -> {
+                    showPermissionContextPopup()
+                }
+                else -> {
+                    requestPermissions(
+                        arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                        1010
+                    )
+                }
+            }
+        }
     }
 
     private fun setToolbar() = with(binding) {
@@ -70,31 +94,27 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
                 R.id.action_home -> {
                     // 홈버튼 눌렀을 때
                     (activity as MainActivity).replaceFragment(snsFragment)
-                    Log.d(TAG, "홈 버튼 클릭")
                     true
                 }
                 R.id.action_upload -> {
                     // 체크버튼을 눌렀을 때
-                    showProgress()
-                    Log.d(TAG, "글쓰기 완료")
-                    uploadToFireStore()
-                    uploadToFireStorage(selectedUri!!, successHandler = { uri ->
-                        Snackbar.make(requireView(), "글이 작성 되었습니다.", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("확인", object : View.OnClickListener {
-                                override fun onClick(v: View?) {
 
-                                }
-                            })
-                            .show()
-                    }, errorHandler = {
-                            Snackbar.make(requireView(), "글 작성에 실패했습니다.", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("확인", object : View.OnClickListener {
-                                    override fun onClick(v: View?) {
-
-                                    }
-                                })
-                                .show()
+                    if (selectedUri == null) {
+                        showSnackBar("사진을 등록해주세요")
+                        // hideProgress()
+                    } else if (binding.contentEditText.text.toString() == "") {
+                        showSnackBar("내용을 입력해주세요")
+                        // hideProgress()
+                    } else {
+                        showProgress()
+                        uploadToFireStore(selectedUri)
+                        uploadToFireStorage(selectedUri, successHandler = { uri ->
+                            showSnackBar("게시글이 작성되었습니다")
+                            hideProgress()
+                        }, errorHandler = {
+                            showSnackBar("게시글 등록에 실패했습니다")
                         })
+                    }
                     true
                 }
                 else -> false
@@ -102,68 +122,29 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
         }
     }
 
-    // 업로드할 사진 불러오기
-    private fun getLoadGalleryImage() = with(binding) {
-        addPhotoFab.setOnClickListener {
-            when {
-                ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    android.Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED -> {
-                    startContentProvider()
-                    Log.d(TAG,"권한 허락")
-                }
-                shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE) -> {
-                    showPermissionContextPopup()
-                }
-                else -> {
-                    requestPermissions(
-                        arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        1010
-                    )
-                    Log.d(TAG,"권한 없음")
-                }
-            }
-        }
-    }
-
-    // storage에 업로드
-    private fun uploadToFireStorage(uri: Uri, successHandler: (String) -> Unit, errorHandler: () -> Unit) {
-        // 현재의 시간명으로 파일이름 지정
-        val fileName = "${timeGenerator()}.png"
-        storage.reference.child("sns/${userId}").child(fileName)
-            .putFile(uri)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    storage.reference.child("sns/${userId}").child(fileName)
-                        .downloadUrl
-                        .addOnSuccessListener { uri ->
-                            successHandler(uri.toString())
-                        }.addOnFailureListener {
-                            errorHandler()
-                        }
-                } else {
-                    errorHandler()
-                }
-            }
-    }
-
     // fireStore에 저장
-    private fun uploadToFireStore() = with(binding) {
+    private fun uploadToFireStore(uri: Uri?) = with(binding) {
 
         CoroutineScope(Dispatchers.IO).launch {
 
             var currentBoardNumber: String
+            var userNickname: String
+            var userProfile: String
             // 업로드 하기 전에 먼저 게시판의 게시글 번호를 얻어옴
             runBlocking {
                 currentBoardNumber = getBoardNumber()
+                userNickname = getUserNickName()
+                userProfile = getUserProfile()
             }
-            Log.d(TAG,"current: $currentBoardNumber")
+            Log.d(TAG, "current: $currentBoardNumber")
             val snsContent = mutableMapOf<String, Any>()
 
             val nextBoardNumber = currentBoardNumber.toInt().plus(1).toString()
 
             snsContent["userSnsContent"] = contentEditText.text.toString()
+            snsContent["userUploadImage"] = uri.toString()
+            snsContent["userNickname"] = userNickname
+            snsContent["userProfile"] = userProfile
             snsContent["userUploadTime"] = userUploadTime
             snsContent["boardNumber"] = nextBoardNumber // 현재 게시글 번호의 다음 번호를 업로드
 
@@ -180,19 +161,46 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
                     .document(nextBoardNumber)
                     .set(snsContent)
                     .addOnSuccessListener {
-                        Log.d(TAG,"DB에 글쓰기 완료")
                     }
                     .addOnFailureListener {
-                        Log.d(TAG,"error: $it")
                     }
             } catch (e: Exception) {
-                Log.d(TAG,"error: $e")
+                Log.d(TAG, "error: $e")
             }
 
             setBoardNumber(nextBoardNumberMap)
         }
     }
 
+    // storage에 업로드
+    private fun uploadToFireStorage(
+        uri: Uri?,
+        successHandler: (String) -> Unit,
+        errorHandler: () -> Unit
+    ) {
+        // 현재의 시간명으로 파일이름 지정
+        val fileName = "${timeGenerator()}.png"
+
+        storage.reference.child("sns/${userId}").child(fileName)
+            .putFile(uri!!)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    storage.reference.child("sns/${userId}").child(fileName)
+                        .downloadUrl
+                        .addOnSuccessListener { uri ->
+                            successHandler(uri.toString())
+                            Log.d(TAG, "uri: ${uri}")
+                        }.addOnFailureListener {
+                            errorHandler()
+                        }
+                } else {
+                    errorHandler()
+                }
+            }
+    }
+
+
+    // 현재 게시판 번호 가져오기
     suspend fun getBoardNumber(): String {
         var result: String = "0"
         return try {
@@ -211,6 +219,38 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
             result
         } catch (e: FirebaseFirestoreException) {
             result
+        }
+    }
+
+    suspend fun getUserNickName(): String {
+        var userNickname: String = ""
+
+        return try {
+            db.collection(DBKey.COLLECTION_NAME_USERS)
+                .document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+                    userNickname = document["userNickname"].toString()
+                }.await()
+            userNickname
+        } catch (e: FirebaseFirestoreException) {
+            userNickname
+        }
+    }
+
+    suspend fun getUserProfile(): String {
+        var userProfile: String = ""
+
+        return try {
+            db.collection(DBKey.COLLECTION_NAME_USERS)
+                .document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+                    userProfile = document["userProfile"].toString()
+                }.await()
+            userProfile
+        } catch (e: FirebaseFirestoreException) {
+            userProfile
         }
     }
 
@@ -263,15 +303,8 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
 
                     selectedUri = uri // 선택한 사진을 selectedUri에 저장
 
-                    Log.d(TAG,"선택한 사진이 존재")
                 } else {
-                    Snackbar.make(requireView(), "사진을 가져오지 못했습니다", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("확인", object : View.OnClickListener {
-                            override fun onClick(v: View?) {
-
-                            }
-                        })
-                        .show()
+                    showSnackBar("사진을 가져오지 못했습니다.")
                 }
             }
         }
@@ -284,13 +317,23 @@ class SnsWriteFragment: Fragment(R.layout.fragment_sns_write), TimeInterface {
         return todayNow
     }
 
+
+
     private fun showProgress() = with(binding) {
-        progressBar.isVisible = true
+        progressBar.visibility = View.VISIBLE
     }
 
-    private fun hideProgress() = with(binding){
-        progressBar.isVisible = false
+    private fun hideProgress() = with(binding) {
+        progressBar.visibility = View.GONE
     }
 
+    private fun showSnackBar(alertText: String) {
+        Snackbar.make(requireView(), alertText, Snackbar.LENGTH_INDEFINITE)
+            .setAction("확인", object : View.OnClickListener {
+                override fun onClick(v: View?) {
 
+                }
+            })
+            .show()
+    }
 }

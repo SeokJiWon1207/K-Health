@@ -52,15 +52,15 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
     private lateinit var etcFoodRecordListAdapter: FoodRecordListAdapter
     private val activityLevelInfoDialog: Dialog by lazy { Dialog(requireContext()) }
     private val bundle = Bundle()
+    private val todayNow = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentFoodBinding.bind(view)
         isActivityLevelNotNull()
-        val now = LocalDate.now()
-        val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
         totalFoodList.clear()
+        setSelectedDateDefaultValues()
         initViews()
         getUserFoodRecord(todayNow, FoodTime.BREAKFAST.time, breakfastFoodList, breakfastFoodRecordListAdapter)
         getUserFoodRecord(todayNow, FoodTime.LUNCH.time, lunchFoodList, lunchFoodRecordListAdapter)
@@ -69,6 +69,13 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
 
         getFoodRecordWithCalendar()
 
+    }
+
+    // 음식을 삭제 할 때 날짜의 기본값을 오늘로 설정해 줌
+    private fun setSelectedDateDefaultValues() {
+        val pref = activity?.getSharedPreferences("pref", 0)
+        val edit = pref?.edit()
+        edit?.putString("selectedDate", todayNow)?.apply()
     }
 
     private fun setDefaultValues() {
@@ -165,6 +172,8 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         val toremovedDate = pref?.getString("selectedDate", "YYYY") ?: today // 선택 날짜 없을시 -> 오늘
         val toremovedFoodname = item.foodName
 
+        Log.d(TAG,"day: $toremovedDate")
+
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(userId)
             .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
@@ -257,7 +266,7 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
                     setupUserKcalInfo()
                     setProgressView()
                 } else {
-                    setDefaultValues()
+                    // setDefaultValues()
                     showActivityLevelInputPopup()
                 }
             }
@@ -440,17 +449,12 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
         return todayNow
     }
 
-    private fun showProgress() {
-        binding.progressBar.isVisible = true
+    private fun showProgress() = with(binding){
+        progressBar.isVisible = true
     }
 
-    private fun hideProgress() {
-        binding.progressBar.isVisible = false
+    private fun hideProgress() = with(binding) {
+        progressBar.isVisible = false
     }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // _binding = null
-    }
 }

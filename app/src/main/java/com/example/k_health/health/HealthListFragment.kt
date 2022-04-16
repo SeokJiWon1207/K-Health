@@ -78,8 +78,8 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
     }
 
-    private fun initRecyclerView() {
-        binding.recyclerView.apply {
+    private fun initRecyclerView() = with(binding){
+        recyclerView.apply {
             adapter = healthListAdapter
             layoutManager = LinearLayoutManager(context)
         }

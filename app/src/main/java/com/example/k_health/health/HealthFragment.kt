@@ -125,7 +125,9 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
 
         val todayHealthNameList = pref?.getStringSet(toremovedDate, mutableSetOf("", ""))!!.toMutableList()
         todayHealthNameList.remove(toremovedName)
-        edit?.putStringSet(toremovedDate,todayHealthNameList.toSet())
+        todayHealthNameList.remove("벤치프레스")
+        Log.d(TAG,"after remove: $todayHealthNameList")
+        edit?.putStringSet(toremovedDate,todayHealthNameList.toSet())!!.apply()
 
         repeat(toremovedSize) {
             userHealthList.removeIf { it.name == toremovedName }

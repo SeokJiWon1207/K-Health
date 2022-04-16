@@ -3,6 +3,7 @@ package com.example.k_health
 import com.example.k_health.food.data.models.FoodResponse
 import com.example.k_health.food.data.service.FoodApiService
 import okhttp3.OkHttpClient
+import okhttp3.internal.wait
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
