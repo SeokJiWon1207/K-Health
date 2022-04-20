@@ -24,12 +24,5 @@
             <solid android:color="#1ACCCCCC" />
         </shape>
     </item> <!-- Background -->
-    <item>
-        <shape>
-            <corners
-                android:radius="20dp" />
-            <solid android:color="@color/white" />
-        </shape>
-    </item>
 
 </layer-list>

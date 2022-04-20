@@ -2,7 +2,7 @@ package com.example.k_health.food.data.models
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 // Retrofit 1-1) REST API로 받아올 데이터를 받아올 모델 클래스 생성
 // 서버에서 받는 데이터 모델

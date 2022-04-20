@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.k_health.DBKey
+import com.example.k_health.GlobalApplication
 import com.example.k_health.R
 import com.example.k_health.databinding.FragmentRecordHealthlistBinding
 import com.example.k_health.health.adapter.RecordHealthListAdapter
@@ -37,6 +38,7 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
     private val db = FirebaseFirestore.getInstance()
     private var recordHealthList = arrayListOf<HealthRecord>()
     private var recordHealthListAdapter = RecordHealthListAdapter(recordHealthList)
+    private val today = timeGenerator()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -109,7 +111,7 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
         recordHealthList.add(HealthRecord("1set","0","0"))
         binding.recyclerView.apply {
             adapter = recordHealthListAdapter
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
@@ -120,16 +122,13 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
         }
     }
 
-    private fun uploadHealthRecord() {
-        val today = timeGenerator()
-        val pref = activity?.getSharedPreferences("pref", 0)
-        val edit = pref?.edit()
-        val selectedHealthDate = pref?.getString("selectedHealthDate","날짜") ?: today
-        val todayHealthSet = pref?.getStringSet(selectedHealthDate, mutableSetOf("", ""))
-        todayHealthSet!!.remove("")
+    private fun uploadHealthRecord() = with(binding) {
+        val selectedHealthDate = GlobalApplication.prefs.getString("selectedHealthDate",today)
+        val todayHealthSet = GlobalApplication.prefs.getStringSet(selectedHealthDate, mutableSetOf("", ""))
+        todayHealthSet.remove("")
         val healthName: String = arguments?.getString("name") ?: "null"
 
-        binding.submitButton.setOnClickListener {
+        submitButton.setOnClickListener {
             val userHealthRecordedData = recordHealthListAdapter.getAll()
             for (i in userHealthRecordedData.indices) {
                 db.collection(DBKey.COLLECTION_NAME_USERS)
@@ -147,7 +146,7 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
                     }
                 todayHealthSet!!.add(healthName)
                 Log.d(TAG,"after: $todayHealthSet")
-                edit?.putStringSet(selectedHealthDate,todayHealthSet)?.apply()
+                GlobalApplication.prefs.setStringSet(selectedHealthDate, todayHealthSet)
             }
         }
     }

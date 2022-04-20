@@ -9,15 +9,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.k_health.DBKey
 import com.example.k_health.MainActivity
 import com.example.k_health.R
+import com.example.k_health.Repository
 import com.example.k_health.databinding.FragmentSnsWriteBinding
 import com.example.k_health.health.TimeInterface
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -100,19 +99,17 @@ class SnsWriteFragment : Fragment(R.layout.fragment_sns_write), TimeInterface {
                     // 체크버튼을 눌렀을 때
 
                     if (selectedUri == null) {
-                        showSnackBar("사진을 등록해주세요")
-                        // hideProgress()
+                        Repository.showSnackBar(requireView(),"사진을 등록해주세요")
                     } else if (binding.contentEditText.text.toString() == "") {
-                        showSnackBar("내용을 입력해주세요")
-                        // hideProgress()
+                        Repository.showSnackBar(requireView(),"내용을 입력해주세요")
                     } else {
                         showProgress()
                         uploadToFireStore(selectedUri)
                         uploadToFireStorage(selectedUri, successHandler = { uri ->
-                            showSnackBar("게시글이 작성되었습니다")
+                            Repository.showSnackBar(requireView(),"게시글이 작성되었습니다")
                             hideProgress()
                         }, errorHandler = {
-                            showSnackBar("게시글 등록에 실패했습니다")
+                            Repository.showSnackBar(requireView(),"게시글 등록에 실패했습니다")
                         })
                     }
                     true
@@ -136,7 +133,6 @@ class SnsWriteFragment : Fragment(R.layout.fragment_sns_write), TimeInterface {
                 userNickname = getUserNickName()
                 userProfile = getUserProfile()
             }
-            Log.d(TAG, "current: $currentBoardNumber")
             val snsContent = mutableMapOf<String, Any>()
 
             val nextBoardNumber = currentBoardNumber.toInt().plus(1).toString()
@@ -304,7 +300,7 @@ class SnsWriteFragment : Fragment(R.layout.fragment_sns_write), TimeInterface {
                     selectedUri = uri // 선택한 사진을 selectedUri에 저장
 
                 } else {
-                    showSnackBar("사진을 가져오지 못했습니다.")
+                    Repository.showSnackBar(requireView(), "사진을 가져오지 못했습니다.")
                 }
             }
         }
@@ -327,13 +323,4 @@ class SnsWriteFragment : Fragment(R.layout.fragment_sns_write), TimeInterface {
         progressBar.visibility = View.GONE
     }
 
-    private fun showSnackBar(alertText: String) {
-        Snackbar.make(requireView(), alertText, Snackbar.LENGTH_INDEFINITE)
-            .setAction("확인", object : View.OnClickListener {
-                override fun onClick(v: View?) {
-
-                }
-            })
-            .show()
-    }
 }

@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:elevation="50dp"
-        android:background="@drawable/calendar_background"
+        android:elevation="20dp"
+        android:background="@color/white"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout

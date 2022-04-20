@@ -1,15 +1,13 @@
 package com.example.k_health.health
 
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.k_health.DBKey
-import com.example.k_health.MainActivity
-import com.example.k_health.R
-import com.example.k_health.Repository
+import com.example.k_health.*
 import com.example.k_health.databinding.FragmentHealthBinding
 import com.example.k_health.food.FoodFragment
 import com.example.k_health.health.adapter.GetHealthListAdapter
@@ -58,16 +56,14 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
     }
 
     private fun setDateToday() {
-        val pref = activity?.getSharedPreferences("pref", 0)
-        val edit = pref?.edit()
-        edit!!.putString("selectedHealthDate", timeGenerator()).apply() // 기본값을 오늘 날짜로 설정
-        binding.healthCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+        GlobalApplication.prefs.setString("selectedHealthDate", timeGenerator())
+        binding.healthCalendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val monthString: String =
                 if (month > 10) "${month + 1}" else String.format("%02d", month + 1)
             val dayOfMonthString: String =
                 if (dayOfMonth >= 10) "$dayOfMonth" else String.format("%02d", dayOfMonth)
             val selectedHealthDate = "${year}${monthString}${dayOfMonthString}"
-            edit!!.putString("selectedHealthDate", selectedHealthDate).apply()
+            GlobalApplication.prefs.setString("selectedHealthDate", selectedHealthDate)
 
             getUserHealthRecord(selectedHealthDate)
 
@@ -79,8 +75,7 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
         selectedDate: String,
     ) {
         hideView()
-        val pref = activity?.getSharedPreferences("pref", 0)
-        val todayHealthNameList = pref?.getStringSet(selectedDate, mutableSetOf("", ""))!!.toList()
+        val todayHealthNameList = GlobalApplication.prefs.getStringSet(selectedDate, mutableSetOf("","")).toMutableList()
         Log.d(TAG, "todayHealthNameList: $todayHealthNameList")
 
         try {
@@ -90,7 +85,7 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
                     .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 운동기록보관
                     .document(selectedDate)
                     .collection(todayHealthNameList[i])
-                    .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                    .addSnapshotListener { querySnapshot, _ ->
                         for (snapshot in querySnapshot!!.documents) {
                             val healthRecordItem = snapshot.toObject(HealthRecord::class.java)
                             healthRecordData.add(UserHealthRecord(todayHealthNameList[i],healthRecordItem!!.set, healthRecordItem!!.weight, healthRecordItem!!.count))
@@ -117,30 +112,26 @@ class HealthFragment : Fragment(R.layout.fragment_health), TimeInterface {
         showView()
         showProgress()
 
-        val pref = activity?.getSharedPreferences("pref", 0)
-        val edit = pref?.edit()
-        val toremovedDate = pref?.getString("selectedHealthDate", "YYYY")
+        val toremovedDate = GlobalApplication.prefs.getString("selectedHealthDate", "YYYY")
         val toremovedName = userHealthRecord.name
         val toremovedSize = userHealthList.filter { it.name == toremovedName }.size
 
-        val todayHealthNameList = pref?.getStringSet(toremovedDate, mutableSetOf("", ""))!!.toMutableList()
+        val todayHealthNameList = GlobalApplication.prefs.getStringSet(toremovedDate, mutableSetOf("", "")).toMutableList()
         todayHealthNameList.remove(toremovedName)
-        todayHealthNameList.remove("벤치프레스")
         Log.d(TAG,"after remove: $todayHealthNameList")
-        edit?.putStringSet(toremovedDate,todayHealthNameList.toSet())!!.apply()
+        GlobalApplication.prefs.setStringSet(toremovedDate, todayHealthNameList.toMutableSet())
+
+        Log.d(TAG, "pref: ${GlobalApplication.prefs.getAll()}")
 
         repeat(toremovedSize) {
             userHealthList.removeIf { it.name == toremovedName }
         }
 
-        val todayHealthSet = pref?.getStringSet(toremovedDate, mutableSetOf("", ""))
-        todayHealthSet!!.remove(toremovedName)
-
         for (i in 1..toremovedSize) {
             db.collection(DBKey.COLLECTION_NAME_USERS)
                 .document(userId)
                 .collection(DBKey.COLLECTION_NAME_HEALTHRECORD) // 운동기록보관
-                .document(toremovedDate!!) // 캘린더 선택 날짜
+                .document(toremovedDate) // 캘린더 선택 날짜
                 .collection(toremovedName) // 삭제할 운동 이름
                 .document(i.toString())
                 .delete()

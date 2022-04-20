@@ -23,12 +23,15 @@ class SnsArticleListAdapter() : ListAdapter<SNS, SnsArticleListAdapter.ViewHolde
             Glide.with(userProfileImageView.context)
                 .load(sns.userProfile)
                 .circleCrop()
+                .thumbnail(0.1f)
+                .placeholder(R.drawable.ic_baseline_account_circle_24)
                 .into(userProfileImageView)
 
             Glide.with(userUploadImageImageView.context)
                 .load(sns.userUploadImage)
                 .fitCenter()
-                .placeholder(R.drawable.app_logo)
+                .thumbnail(0.1f)
+                .placeholder(R.drawable.loading)
                 .into(userUploadImageImageView)
 
         }

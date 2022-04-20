@@ -11,6 +11,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.k_health.DBKey
 import com.example.k_health.MainActivity
 import com.example.k_health.R
+import com.example.k_health.Repository
 import com.example.k_health.databinding.FragmentSnsBinding
 import com.example.k_health.health.TimeInterface
 import com.example.k_health.home.HomeFragment
@@ -72,7 +73,7 @@ class SnsFragment : Fragment(R.layout.fragment_sns), TimeInterface {
                 R.id.action_refresh -> {
                     //새로고침 버튼 눌렀을 때
                     fetchSnsArticleItems()
-                    showSnackBar("새로고침이 완료되었습니다.")
+                    Repository.showSnackBar(requireView(), "새로고침이 완료되었습니다.")
                     Log.d(TAG, "새로고침 버튼 클릭")
                     true
                 }
@@ -140,19 +141,9 @@ class SnsFragment : Fragment(R.layout.fragment_sns), TimeInterface {
             override fun onRefresh() {
                 fetchSnsArticleItems()
                 refreshLayout.isRefreshing = false // 작업이 끝난 후 로딩 표시 해제
-                showSnackBar("새로고침이 완료되었습니다.")
+                Repository.showSnackBar(requireView(),"새로고침이 완료되었습니다.")
             }
         })
-    }
-
-    private fun showSnackBar(alertText: String) {
-        Snackbar.make(requireView(), alertText, Snackbar.LENGTH_INDEFINITE)
-            .setAction("확인", object : View.OnClickListener {
-                override fun onClick(v: View?) {
-
-                }
-            })
-            .show()
     }
 
     // 메뉴를 앱 바의 옵션 메뉴에 병합하려면 프래그먼트에서 onCreateOptionsMenu()를 재정의

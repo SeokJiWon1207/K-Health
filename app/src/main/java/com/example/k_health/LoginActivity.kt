@@ -1,11 +1,13 @@
 package com.example.k_health
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.k_health.DBKey.Companion.COLLECTION_NAME_USERS
@@ -21,25 +23,22 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FacebookAuthProvider
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import com.kakao.sdk.common.model.AuthErrorCause.*
 import com.kakao.sdk.auth.*
-import com.kakao.sdk.user.UserApiClient
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.model.AuthErrorCause
+import com.kakao.sdk.common.model.AuthErrorCause.*
 import com.nhn.android.naverlogin.OAuthLogin
-import com.nhn.android.naverlogin.OAuthLoginHandler
+import com.royrodriguez.transitionbutton.TransitionButton
+import com.royrodriguez.transitionbutton.TransitionButton.OnAnimationStopEndListener
 
 
 class LoginActivity : AppCompatActivity() {
     private var _binding: ActivityLoginBinding? = null
     private val binding get() = _binding!!
-    private lateinit var auth: FirebaseAuth
+    private val auth = Firebase.auth
     private val userId = Firebase.auth.currentUser?.uid.orEmpty()
     private lateinit var callbackManager: CallbackManager
     private lateinit var mOAuthLoginInstance: OAuthLogin
@@ -57,11 +56,9 @@ class LoginActivity : AppCompatActivity() {
         _binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Firebase Authentication 관리 클래스
-        auth = Firebase.auth
 
         //구글 로그인 옵션
-        var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.google_webclient_id))
             .requestEmail()
             .build()
@@ -70,20 +67,49 @@ class LoginActivity : AppCompatActivity() {
         // Facebook 로그인 처리 결과 관리 클래스
         callbackManager = CallbackManager.Factory.create()
 
-        mContext = this
 
         mOAuthLoginInstance = OAuthLogin.getInstance()
         mOAuthLoginInstance.init(
-            mContext,
+            this,
             getString(R.string.naver_client_id),
             getString(R.string.naver_client_password),
             getString(R.string.naver_client_name)
         )
-
+        initRegisterButton()
         // initNaverLoginButton()
         // initKakaoLoginButton()
         initFacebookLoginButton()
         initGoogleLoginButton()
+    }
+
+    private fun initRegisterButton() = with(binding) {
+        registerButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                // Start the loading animation when the user tap the button
+                registerButton.startAnimation()
+
+                // Do your networking task or background work here.
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed(Runnable {
+                    val isSuccessful = true
+
+                    // 로그인에 성공했을 때
+                    if (isSuccessful) {
+                        registerButton.stopAnimation(TransitionButton.StopAnimationStyle.EXPAND,
+                            object: OnAnimationStopEndListener {
+                                override fun onAnimationStopEnd() {
+                                    startRegisterActivity()
+                                }
+                            })
+                    } else {
+                        // 로그인에 실패했을 때
+                        registerButton.stopAnimation(
+                            TransitionButton.StopAnimationStyle.SHAKE, null
+                        )
+                    }
+                }, 2000)
+            }
+        })
     }
 
     /*private fun initNaverLoginButton() {
@@ -277,6 +303,10 @@ class LoginActivity : AppCompatActivity() {
 
     private fun startLoginActivity() {
         startActivity(Intent(this@LoginActivity, LoginActivity::class.java))
+    }
+
+    private fun startRegisterActivity() {
+        startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
     }
 
     fun moveMainPage(user: FirebaseUser?) {

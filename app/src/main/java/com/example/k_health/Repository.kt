@@ -1,7 +1,9 @@
 package com.example.k_health
 
+import android.view.View
 import com.example.k_health.food.data.models.FoodResponse
 import com.example.k_health.food.data.service.FoodApiService
+import com.google.android.material.snackbar.Snackbar
 import okhttp3.OkHttpClient
 import okhttp3.internal.wait
 import okhttp3.logging.HttpLoggingInterceptor
@@ -45,6 +47,16 @@ object Repository {
                     }
                 }
             ).build()
+
+    fun showSnackBar(v: View, alertText: String) {
+        Snackbar.make(v, alertText, Snackbar.LENGTH_INDEFINITE)
+            .setAction("확인", object : View.OnClickListener {
+                override fun onClick(v: View?) {
+
+                }
+            })
+            .show()
+    }
 
 
 }

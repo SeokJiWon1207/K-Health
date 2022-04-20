@@ -79,78 +79,73 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
             val foodRecordData = mutableMapOf<String, Any>()
 
             if (foodSelectedList.isEmpty()) {
-                Snackbar.make(
+                Repository.showSnackBar(
                     requireView(),
-                    "선택된 식사가 없습니다. \n식사를 선택해주세요",
-                    Snackbar.LENGTH_INDEFINITE
+                    "선택된 식사가 없습니다. \n식사를 선택해주세요."
                 )
-                    .setAction("확인", object : View.OnClickListener {
-                        override fun onClick(v: View?) {
-                            //
+                return@setOnClickListener
+            } else {
+
+                for (i in foodSelectedList.indices) {
+
+                    foodRecordData["foodName"] = foodSelectedList[i].foodName.toString()
+                    foodRecordData["gram"] = foodSelectedList[i].gram.toString()
+                    foodRecordData["kcal"] = foodSelectedList[i].kcal.toString()
+                    foodRecordData["carbon"] = foodSelectedList[i].carbon.toString()
+                    foodRecordData["protein"] = foodSelectedList[i].protein.toString()
+                    foodRecordData["fat"] = foodSelectedList[i].fat.toString()
+                    foodRecordData["cholesterol"] = foodSelectedList[i].cholesterol.toString()
+                    foodRecordData["sodium"] = foodSelectedList[i].sodium.toString()
+                    foodRecordData["sugar"] = foodSelectedList[i].sugar.toString()
+                    foodRecordData["saturatedFattyAcids"] =
+                        foodSelectedList[i].saturatedFattyAcids.toString()
+                    foodRecordData["unsaturatedFattyAcids"] =
+                        foodSelectedList[i].unsaturatedFattyAcids.toString()
+
+                    db.collection(DBKey.COLLECTION_NAME_USERS)
+                        .document(userId)
+                        .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
+                        .document(selectedDate) // 선택 날짜
+                        .collection(mealtime) // 현재 선택한 식사 시간
+                        .document(foodSelectedList[i].foodName!!)
+                        .set(foodRecordData) // 식사 데이터
+                        .addOnSuccessListener {
+                            if (i.equals(foodSelectedList.size - 1)) { // 마지막 데이터를 넣을 때 스낵바 호출
+                                Snackbar.make(
+                                    requireView(),
+                                    "${mealtime}가 등록되었습니다.",
+                                    Snackbar.LENGTH_INDEFINITE
+                                )
+                                    .setAction("확인", object : View.OnClickListener {
+                                        override fun onClick(v: View?) {
+                                            val foodFragment = FoodFragment()
+                                            (activity as MainActivity).replaceFragment(foodFragment)
+                                        }
+                                    })
+                                    .show()
+                            }
                         }
-                    })
-                    .show()
-            }
-
-            for (i in foodSelectedList.indices) {
-
-                foodRecordData["foodName"] = foodSelectedList[i].foodName.toString()
-                foodRecordData["gram"] = foodSelectedList[i].gram.toString()
-                foodRecordData["kcal"] = foodSelectedList[i].kcal.toString()
-                foodRecordData["carbon"] = foodSelectedList[i].carbon.toString()
-                foodRecordData["protein"] = foodSelectedList[i].protein.toString()
-                foodRecordData["fat"] = foodSelectedList[i].fat.toString()
-                foodRecordData["cholesterol"] = foodSelectedList[i].cholesterol.toString()
-                foodRecordData["sodium"] = foodSelectedList[i].sodium.toString()
-                foodRecordData["sugar"] = foodSelectedList[i].sugar.toString()
-                foodRecordData["saturatedFattyAcids"] =
-                    foodSelectedList[i].saturatedFattyAcids.toString()
-                foodRecordData["unsaturatedFattyAcids"] =
-                    foodSelectedList[i].unsaturatedFattyAcids.toString()
-
-                db.collection(DBKey.COLLECTION_NAME_USERS)
-                    .document(userId)
-                    .collection(DBKey.COLLECTION_NAME_FOODRECORD) // 식사기록보관
-                    .document(selectedDate) // 선택 날짜
-                    .collection(mealtime) // 현재 선택한 식사 시간
-                    .document(foodSelectedList[i].foodName!!)
-                    .set(foodRecordData) // 식사 데이터
-                    .addOnSuccessListener {
-                        if (i.equals(foodSelectedList.size - 1)) { // 마지막 데이터를 넣을 때 스낵바 호출
-                            Snackbar.make(
-                                requireView(),
-                                "${mealtime}가 등록되었습니다.",
-                                Snackbar.LENGTH_INDEFINITE
-                            )
-                                .setAction("확인", object : View.OnClickListener {
-                                    override fun onClick(v: View?) {
-                                        val foodFragment = FoodFragment()
-                                        (activity as MainActivity).replaceFragment(foodFragment)
-                                    }
-                                })
-                                .show()
+                        .addOnFailureListener { error ->
+                            Log.d(TAG, "error : $error")
                         }
-                    }
-                    .addOnFailureListener { error ->
-                        Log.d(TAG, "error : $error")
-                    }
+                }
             }
         }
     }
 
     // 스피너 아이템 등록
-    private fun setupSpinnerMealtime() {
+    private fun setupSpinnerMealtime() = with(binding) {
         val mealtime = resources.getStringArray(R.array.spinner_mealtime)
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, mealtime)
         val selectedMealtime = arguments?.getInt("selectedMealtime")
         Log.d(TAG, "selectedMealtime: ${arguments?.getInt("selectedMealtime")}")
-        binding.spinner.adapter = adapter
-        binding.spinner.setSelection(selectedMealtime!!)
+        spinner.adapter = adapter
+        spinner.setSelection(selectedMealtime!!)
     }
 
     // 스피너 이벤트 관련 핸들러
-    private fun setupSpinnerHandler() {
-        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+    private fun setupSpinnerHandler() = with(binding) {
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             // 아이템이 선택되었을때
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -158,7 +153,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                 position: Int,
                 id: Long
             ) {
-                bundle.putString("mealtime", binding.spinner.selectedItem.toString())
+                bundle.putString("mealtime", spinner.selectedItem.toString())
 
                 foodInfoFragment.arguments = bundle
             }
@@ -212,7 +207,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     @SuppressLint("ClickableViewAccessibility")
     private fun initSearchEditText() = with(binding) {
         searchEditText.apply {
-            setOnKeyListener { v, keyCode, event ->
+            setOnKeyListener { _, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == MotionEvent.ACTION_DOWN) {
                     hideHistoryView()
                     search(this.text.toString())
@@ -273,7 +268,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                             hideAlertTextView()
                             showFoodListView()
                             saveSearchKeyword(keyword)
-                            submitList(it.body!!.items)
+                            submitList(it.body.items)
                         }
                     }
                 }
@@ -322,7 +317,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
                     foodHistoryAdapter.submitList(this)
                     binding.historyRecyclerView.isVisible = true
                 }
-                Log.d(TAG,"room: ${roomDB.historyDao().getAll()}")
             }
         }
     }
@@ -330,7 +324,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
     private fun initHistoryRecyclerView() = with(binding) {
         foodHistoryAdapter = FoodHistoryAdapter(histroyDeleteClickedListener = {
             deleteSearchKeyword(it)
-        },itemClickListener = {
+        }, itemClickListener = {
             searchEditText.setText(it.keyword.toString())
             search(it.keyword!!)
         })
@@ -365,12 +359,13 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         }
     }
 
-    private fun showAlertTextView(searchKeyword: String) = with(binding){
+    private fun showAlertTextView(searchKeyword: String) = with(binding) {
         alertTextView.apply {
             isVisible = true
-            alertTextView.text = searchKeyword+getString(R.string.label_alerttext)
+            alertTextView.text = searchKeyword + getString(R.string.label_alerttext)
         }
     }
+
     private fun hideAlertTextView() = with(binding) {
         alertTextView.isVisible = false
     }
@@ -384,8 +379,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
 
     override fun onResume() {
         super.onResume()
-        // setupSpinnerMealtime()
-        // fetchFoodItems()
         Log.d(TAG, "onResume")
     }
 

@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/background"
                 android:paddingLeft="15dp"
-                android:textColor="@color/gray"
+                android:textColor="@color/lightblue"
                 android:textSize="30sp"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"

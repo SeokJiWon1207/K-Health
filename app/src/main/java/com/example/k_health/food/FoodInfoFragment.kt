@@ -29,8 +29,6 @@ class FoodInfoFragment : Fragment(R.layout.fragment_food_info) {
     private fun fetchFoodNutrientInfo() {
         val items = arguments?.getParcelable<Item>("item")
         val mealtime = arguments?.getString("mealtime")
-        Log.d(TAG, "items: $items")
-        Log.d(TAG, "mealtime: $mealtime")
 
         with(binding) {
             foodNameInfoTextView.text = items!!.foodName
@@ -46,10 +44,5 @@ class FoodInfoFragment : Fragment(R.layout.fragment_food_info) {
             foodUnsaturatedFattyAcidsInfoTextView.text = items.unsaturatedFattyAcids
             foodTimeInfoTextView.text = mealtime
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // _binding = null
     }
 }
