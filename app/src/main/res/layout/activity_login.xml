@@ -30,7 +30,9 @@
             android:id="@+id/email_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="email" />
+            android:background="@color/white"
+            android:hint="email"
+            android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -45,6 +47,7 @@
             android:id="@+id/password_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:hint="password"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -59,6 +62,8 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         app:defaultColor="@color/lightblue"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInput2"
         app:loaderColor="@android:color/white" />
 
@@ -76,7 +81,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_Button"
         app:loaderColor="@android:color/white" />
-
 
     <RelativeLayout
         android:id="@+id/relativelayout"
@@ -116,7 +120,7 @@
 
         <ImageButton
             android:id="@+id/googleLoginButton"
-            android:layout_width="300dp"
+            android:layout_width="500dp"
             android:layout_height="50dp"
             android:layout_below="@id/facebookLoginButton"
             android:layout_marginTop="10dp"

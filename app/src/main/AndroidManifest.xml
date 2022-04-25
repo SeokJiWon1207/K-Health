@@ -31,6 +31,7 @@
             android:windowSoftInputMode="adjustPan"/>
 
         <activity android:name=".RegisterActivity"
+            android:parentActivityName=".LoginActivity"
             android:windowSoftInputMode="adjustPan"/>
 
         <meta-data

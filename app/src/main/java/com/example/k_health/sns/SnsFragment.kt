@@ -44,7 +44,7 @@ class SnsFragment : Fragment(R.layout.fragment_sns), TimeInterface {
 
         _binding = FragmentSnsBinding.bind(view)
 
-        setToolbar()
+        initToolbar()
         initSnsArticleRecyclerView()
         fetchSnsArticleItems()
         refreshBoard()
@@ -52,13 +52,12 @@ class SnsFragment : Fragment(R.layout.fragment_sns), TimeInterface {
 
     }
 
-    private fun setToolbar() = with(binding) {
+    private fun initToolbar() = with(binding) {
         val snsWriteFragment = SnsWriteFragment()
         toolbar.inflateMenu(R.menu.toolbar_sns)
 
         // 프래그먼트가 메뉴 관련 콜백을 수신하려 한다고 시스템에 알림
         // 메뉴 관련 이벤트(생성, 클릭 등)가 발생하면 이벤트 처리 메서드가 먼저 활동에서 호출된 후 프래그먼트에서 호출
-        // setHasOptionsMenu(true)
         toolbar.title = "Together"
 
         // 액션버튼 클릭 했을 때 이벤트 처리

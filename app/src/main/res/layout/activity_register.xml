@@ -2,8 +2,22 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white">
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/email_TextView"
@@ -17,16 +31,24 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/email_EditText"
-        android:layout_width="200dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/email_TextInput"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_gray"
-        android:hint="이메일"
-        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="20dp"
         android:textColorHint="@color/gray"
         app:layout_constraintLeft_toLeftOf="@+id/email_TextView"
-        app:layout_constraintTop_toBottomOf="@+id/email_TextView" />
+        app:layout_constraintTop_toBottomOf="@+id/email_TextView">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/gray_ec"
+            android:hint="@string/label_email"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/password_TextView"
@@ -36,39 +58,78 @@
         android:text="비밀번호"
         android:textColor="@color/gray"
         android:textSize="20sp"
-        app:layout_constraintLeft_toLeftOf="@+id/email_EditText"
-        app:layout_constraintTop_toBottomOf="@+id/email_EditText" />
+        app:layout_constraintLeft_toLeftOf="@+id/email_TextView"
+        app:layout_constraintTop_toBottomOf="@+id/email_TextInput" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/password_EditText"
-        android:layout_width="200dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/password_TextInput"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_gray"
-        android:hint="비밀번호"
-        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="20dp"
         android:textColorHint="@color/gray"
         app:layout_constraintLeft_toLeftOf="@+id/password_TextView"
-        app:layout_constraintTop_toBottomOf="@+id/password_TextView" />
+        app:layout_constraintTop_toBottomOf="@+id/password_TextView">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/password_Check_EditText"
-        android:layout_width="200dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/gray_ec"
+            android:hint="@string/label_password"
+            android:inputType="textPassword"
+            android:textColorHint="@color/gray" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/alert_Password_TextView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:background="@color/dark_gray"
-        android:hint="비밀번호 확인"
+        android:text="비밀번호는 6~20자로 입력해주세요."
+        android:textColor="@color/red"
+        android:textSize="10sp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="@+id/password_TextInput"
+        app:layout_constraintTop_toBottomOf="@+id/password_TextInput" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/password_Check_TextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:textColorHint="@color/gray"
-        app:layout_constraintLeft_toLeftOf="@+id/password_TextView"
-        app:layout_constraintTop_toBottomOf="@+id/password_EditText" />
+        app:layout_constraintLeft_toLeftOf="@+id/password_TextInput"
+        app:layout_constraintTop_toBottomOf="@+id/alert_Password_TextView">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/password_Check_EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@color/gray_ec"
+            android:hint="@string/label_check_password"
+            android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/alert_Password_Check_TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10sp"
+        app:layout_constraintLeft_toLeftOf="@+id/password_Check_TextInput"
+        app:layout_constraintTop_toBottomOf="@+id/password_Check_TextInput" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/register_Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
-        android:clickable="false"
+        android:background="@drawable/button_click"
+        android:enabled="false"
         android:text="가입하기"
-        android:textColor="@color/gray"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 

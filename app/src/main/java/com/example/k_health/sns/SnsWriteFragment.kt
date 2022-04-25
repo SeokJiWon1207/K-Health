@@ -49,7 +49,7 @@ class SnsWriteFragment : Fragment(R.layout.fragment_sns_write), TimeInterface {
         _binding = FragmentSnsWriteBinding.bind(view)
 
         getLoadGalleryImage()
-        setToolbar()
+        initToolbar()
 
 
     }
@@ -77,7 +77,7 @@ class SnsWriteFragment : Fragment(R.layout.fragment_sns_write), TimeInterface {
         }
     }
 
-    private fun setToolbar() = with(binding) {
+    private fun initToolbar() = with(binding) {
         val snsFragment = SnsFragment()
 
         toolbar.inflateMenu(R.menu.toolbar_sns_write)

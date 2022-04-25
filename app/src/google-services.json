@@ -1,41 +1,33 @@
 {
   "project_info": {
-    "project_number": "216295992635",
-    "project_id": "khealth-942c7",
-    "storage_bucket": "khealth-942c7.appspot.com"
+    "project_number": "1038647039912",
+    "project_id": "k-health-51286",
+    "storage_bucket": "k-health-51286.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:216295992635:android:20c6f74b7b6e4ca53bdb1e",
+        "mobilesdk_app_id": "1:1038647039912:android:d025d71ce34a0b5d846f9d",
         "android_client_info": {
           "package_name": "com.example.k_health"
         }
       },
       "oauth_client": [
         {
-          "client_id": "216295992635-9t0g4t4tci1gcuree4o9vkk5l6c4ur5t.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.k_health",
-            "certificate_hash": "bcd70dcdd76b4f24bbac4599726df0fbbb284de4"
-          }
-        },
-        {
-          "client_id": "216295992635-18ue7bmi2p0hb77368ueou3ns8ls5h98.apps.googleusercontent.com",
+          "client_id": "1038647039912-71ghvqrg7ukrtc7vcqact482lsrralra.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDUhWMO17OM96WmuOx1-S3lGXTgdbQk7Y4"
+          "current_key": "AIzaSyA_58ViNzpwv45Fba6v2LLwFxNEEj6mXGI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "216295992635-18ue7bmi2p0hb77368ueou3ns8ls5h98.apps.googleusercontent.com",
+              "client_id": "1038647039912-71ghvqrg7ukrtc7vcqact482lsrralra.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

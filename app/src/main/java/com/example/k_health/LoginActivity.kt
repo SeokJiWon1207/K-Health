@@ -33,6 +33,7 @@ import com.kakao.sdk.common.model.AuthErrorCause.*
 import com.nhn.android.naverlogin.OAuthLogin
 import com.royrodriguez.transitionbutton.TransitionButton
 import com.royrodriguez.transitionbutton.TransitionButton.OnAnimationStopEndListener
+import kotlinx.coroutines.tasks.await
 
 
 class LoginActivity : AppCompatActivity() {
@@ -75,12 +76,44 @@ class LoginActivity : AppCompatActivity() {
             getString(R.string.naver_client_password),
             getString(R.string.naver_client_name)
         )
+        initSignInWithEmailAndPassword()
         initRegisterButton()
         // initNaverLoginButton()
         // initKakaoLoginButton()
         initFacebookLoginButton()
         initGoogleLoginButton()
     }
+
+    private fun initSignInWithEmailAndPassword() = with(binding){
+        loginButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(v: View?) {
+                // Start the loading animation when the user tap the button
+                loginButton.startAnimation()
+
+                // Do your networking task or background work here.
+                val handler = Handler(Looper.getMainLooper())
+                handler.postDelayed(Runnable {
+                    if (emailEdittext.text!!.isNotEmpty() && passwordEdittext.text!!.isNotEmpty()) {
+                        auth.signInWithEmailAndPassword(emailEdittext.text.toString(), passwordEdittext.text.toString())
+                            .addOnCompleteListener() { task ->
+                                if (task.isSuccessful) {
+                                    loginButton.stopAnimation(TransitionButton.StopAnimationStyle.EXPAND,
+                                        object: OnAnimationStopEndListener {
+                                            override fun onAnimationStopEnd() {
+                                                moveMainPage(auth.currentUser)
+                                            }
+                                        })
+                                } else {
+                                    // 로그인에 실패했을 때, 옆으로 흔들리는 효과
+                                    loginButton.stopAnimation(TransitionButton.StopAnimationStyle.SHAKE, null)
+                                }
+                            }
+                    }
+                }, 2000)
+            }
+        })
+    }
+
 
     private fun initRegisterButton() = with(binding) {
         registerButton.setOnClickListener(object : View.OnClickListener {
@@ -101,13 +134,9 @@ class LoginActivity : AppCompatActivity() {
                                     startRegisterActivity()
                                 }
                             })
-                    } else {
-                        // 로그인에 실패했을 때
-                        registerButton.stopAnimation(
-                            TransitionButton.StopAnimationStyle.SHAKE, null
-                        )
                     }
-                }, 2000)
+
+                }, 1000)
             }
         })
     }
