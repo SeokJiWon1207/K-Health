@@ -27,7 +27,7 @@
                 android:layout_weight="0.7"
                 android:elevation="25dp"
                 android:gravity="center"
-                android:text="@string/today_kcal"
+                android:text="@string/label_food_diary"
                 android:textColor="@color/lightblue"
                 android:textSize="23sp"
                 android:textStyle="bold" />

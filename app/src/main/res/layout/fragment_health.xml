@@ -6,21 +6,47 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/health_Title_TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/label_health_diary"
+        android:textColor="@color/lightblue"
+        android:textSize="23sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view3"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/lightblue"
+        app:layout_constraintBottom_toTopOf="@id/health_CalendarView"
+        app:layout_constraintTop_toBottomOf="@id/health_Title_TextView" />
+
     <CalendarView
-        android:id="@+id/healthCalendarView"
+        android:id="@+id/health_CalendarView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:elevation="10dp"
         android:background="@color/white"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:elevation="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/view3" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/healthCalendarView">
+        app:layout_constraintTop_toBottomOf="@+id/health_CalendarView">
 
         <TextView
             android:id="@+id/today_Date_TextView"
@@ -54,8 +80,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:visibility="gone"
             android:orientation="horizontal"
+            android:visibility="gone"
             tools:visibility="visible">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -67,8 +93,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="운동기록이 없습니다."
-                android:textSize="20sp"
-                android:textColor="@color/gray" />
+                android:textColor="@color/gray"
+                android:textSize="20sp" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -76,16 +102,16 @@
             android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/health_background"
             android:layout_marginHorizontal="15dp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/health_background"
             android:visibility="visible" />
 
         <android.widget.ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
     </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -96,9 +122,9 @@
         android:backgroundTint="@color/lightblue"
         android:src="@drawable/ic_baseline_double_arrow_24"
         app:elevation="30dp"
-        app:tint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:tint="@color/white" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

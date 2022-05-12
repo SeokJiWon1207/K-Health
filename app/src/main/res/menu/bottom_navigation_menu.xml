@@ -8,12 +8,6 @@
         android:title="홈"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/helper"
-        android:enabled="true"
-        android:icon="@drawable/ic_baseline_sentiment_satisfied_alt_24"
-        android:title="헬퍼"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/health"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_fitness_center_24"

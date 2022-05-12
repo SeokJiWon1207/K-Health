@@ -6,7 +6,6 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import com.example.k_health.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -50,7 +49,8 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun checkEmailAndPassword() = with(binding) {
-        var currentPassword: String = ""
+        var currentPassword = ""
+
         passwordEditText.apply {
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -76,12 +76,10 @@ class RegisterActivity : AppCompatActivity() {
                         // 6자리 이상이며 비밀번호와 맞을 때
                         correctAlertPasswordCheck()
                         setClickOnRegisterButton()
-                        Log.d(TAG, "맞음")
                     } else if (p0.length >= 6 && !currentPassword.equals(p0.toString())) {
                         // 6자리 이상이며 비밀번호와 틀릴 대
                         notCorrectAlertPasswordCheck()
                         setClickOffRegisterButton()
-                        Log.d(TAG, "틀림")
                     } else {
                         hideAlertPasswordCheck()
                         setClickOffRegisterButton()

@@ -14,16 +14,12 @@ import com.example.k_health.R
 import com.example.k_health.Repository
 import com.example.k_health.databinding.FragmentSnsBinding
 import com.example.k_health.health.TimeInterface
-import com.example.k_health.home.HomeFragment
 import com.example.k_health.sns.adapter.SnsArticleListAdapter
 import com.example.k_health.sns.model.SNS
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.await
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class SnsFragment : Fragment(R.layout.fragment_sns), TimeInterface {
 

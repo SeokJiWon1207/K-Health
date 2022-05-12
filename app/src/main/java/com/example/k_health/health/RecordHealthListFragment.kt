@@ -95,8 +95,8 @@ class RecordHealthListFragment : BottomSheetDialogFragment(),TimeInterface {
         healthlistNameTextView.text = arguments?.getString("name")
         healthlistEngnameTextView.text = arguments?.getString("engName")
 
-        val pref = activity?.getSharedPreferences("pref", 0)
-        selectedHealthDateTextView.text = pref?.getString("selectedHealthDate","날짜")
+        selectedHealthDateTextView.text =
+            GlobalApplication.prefs.getString("selectedHealthDate",timeGenerator())
 
         submitButton.setOnClickListener {
             Toast.makeText(requireContext(), "클릭되었습니다.", Toast.LENGTH_LONG).show()

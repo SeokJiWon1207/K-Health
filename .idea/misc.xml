@@ -15,6 +15,18 @@
         <entry key="..\:/Users/K-Health/app/src/main/res/layout/item_healthlist.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/K-Health/app/src/main/res/layout/item_healthset.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/K-Health/app/src/main/res/layout/layout_food.xml" value="0.20208333333333334" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/layout/activity_login.xml" value="0.264" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/layout/activity_register.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/layout/activitylevelinfo_dialog.xml" value="0.23617339312406577" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/layout/fragment_food.xml" value="0.16" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/layout/fragment_health.xml" value="0.2" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/layout/fragment_healthlist.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/layout/fragment_home.xml" value="0.12916666666666668" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/layout/fragment_sns.xml" value="0.1296875" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/layout/item_healthlist.xml" value="0.264" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.25364583333333335" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/mipmap-anydpi-v26/ic_khealth.xml" value="0.14583333333333334" />
+        <entry key="..\:/Users/syt11/AndroidStudioProjects/K-Health/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.13854166666666667" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable-v24/calendar_background.xml" value="0.13240740740740742" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable-v24/cardview_background.xml" value="0.13645833333333332" />
         <entry key="..\:/Users/syt11/AndroidStudioProjects/KHealth/app/src/main/res/drawable-v24/healthlist_bottom_sheet_dialog_background.xml" value="0.265625" />

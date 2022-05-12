@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.k_health.R
 import com.example.k_health.databinding.ItemHealthlistBinding
 import com.example.k_health.health.model.HealthList
 
@@ -36,6 +37,7 @@ class HealthListAdapter(private val healthData: ArrayList<HealthList>) :
 
             Glide.with(binding.healthImageView.context)
                 .load(healthlist.imageUrl)
+                .placeholder(R.drawable.loading)
                 .into(binding.healthImageView)
 
 

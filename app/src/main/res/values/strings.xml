@@ -6,7 +6,7 @@
     <string name="naver_client_password">wkVRZxuSzL</string>
     <string name="naver_client_name">K-Health</string>
     <string name="fb_login_protocol_scheme">fb4688792001180912</string>
-    <string name="google_webclient_id">1038647039912-71ghvqrg7ukrtc7vcqact482lsrralra.apps.googleusercontent.com</string>
+    <string name="google_webclient_id">1038647039912-ol1647mlm1l9ve85pqiftdjj2gbt8vro.apps.googleusercontent.com</string>
     <string name="weight">체중</string>
     <string name="height">신장</string>
     <string name="Skeletal_Muscle_Mass">골격근량</string>
@@ -15,7 +15,8 @@
     <string name="kg">kg</string>
     <string name="cm">cm</string>
     <string name="default_value">00.0</string>
-    <string name="today_kcal">오늘의 칼로리 섭취량</string>
+    <string name="label_food_diary">식단 다이어리</string>
+    <string name="label_health_diary">운동 다이어리</string>
     <string name="goal_kcal">목표 섭취량</string>
     <string name="recommend_kcal">권장 섭취량</string>
     <string name="today_total_kcal">오늘의 섭취량</string>
@@ -64,6 +65,10 @@
     <string name="label_description4">활동적인 일을 하거나 평소에 가벼운 \n운동을 즐겨 하는 정도에 해당됩니다.</string>
     <string name="label_description5">건설일과 같이 직업 특성상 격한 활동 \n및 평소 신체적 활동이 많은 경우입니다.</string>
     <string name="logout">로그아웃</string>
+
+    <string name="admob_app_id">ca-app-pub-2938102385338359~3538237798</string>
+    <string name="admob_ad_id">ca-app-pub-2938102385338359/2256660306</string>
+    <string name="admob_test_id">ca-app-pub-3940256099942544/6300978111</string>
 
     <string name="foodservicekey">인증키 입력</string>
     <string name="label_recommend_kcal">일일 권장량 계산</string>

@@ -1,7 +1,5 @@
 package com.example.k_health
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -17,6 +15,8 @@ import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginResult
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -33,7 +33,6 @@ import com.kakao.sdk.common.model.AuthErrorCause.*
 import com.nhn.android.naverlogin.OAuthLogin
 import com.royrodriguez.transitionbutton.TransitionButton
 import com.royrodriguez.transitionbutton.TransitionButton.OnAnimationStopEndListener
-import kotlinx.coroutines.tasks.await
 
 
 class LoginActivity : AppCompatActivity() {
@@ -43,7 +42,6 @@ class LoginActivity : AppCompatActivity() {
     private val userId = Firebase.auth.currentUser?.uid.orEmpty()
     private lateinit var callbackManager: CallbackManager
     private lateinit var mOAuthLoginInstance: OAuthLogin
-    private lateinit var mContext: Context
     private var googleSignInClient: GoogleSignInClient? = null
     private val db = FirebaseFirestore.getInstance()
 
@@ -57,25 +55,29 @@ class LoginActivity : AppCompatActivity() {
         _binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        MobileAds.initialize(this)
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
 
         //구글 로그인 옵션
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.google_webclient_id))
             .requestEmail()
             .build()
+
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         // Facebook 로그인 처리 결과 관리 클래스
         callbackManager = CallbackManager.Factory.create()
 
-
-        mOAuthLoginInstance = OAuthLogin.getInstance()
+        // 네이버 로그인
+        /*mOAuthLoginInstance = OAuthLogin.getInstance()
         mOAuthLoginInstance.init(
             this,
             getString(R.string.naver_client_id),
             getString(R.string.naver_client_password),
             getString(R.string.naver_client_name)
-        )
+        )*/
         initSignInWithEmailAndPassword()
         initRegisterButton()
         // initNaverLoginButton()
@@ -94,7 +96,7 @@ class LoginActivity : AppCompatActivity() {
                 val handler = Handler(Looper.getMainLooper())
                 handler.postDelayed(Runnable {
                     if (emailEdittext.text!!.isNotEmpty() && passwordEdittext.text!!.isNotEmpty()) {
-                        auth.signInWithEmailAndPassword(emailEdittext.text.toString(), passwordEdittext.text.toString())
+                        auth.signInWithEmailAndPassword(emailEdittext.text.toString().trim(), passwordEdittext.text.toString().trim())
                             .addOnCompleteListener() { task ->
                                 if (task.isSuccessful) {
                                     loginButton.stopAnimation(TransitionButton.StopAnimationStyle.EXPAND,
@@ -108,6 +110,8 @@ class LoginActivity : AppCompatActivity() {
                                     loginButton.stopAnimation(TransitionButton.StopAnimationStyle.SHAKE, null)
                                 }
                             }
+                    } else {
+                        loginButton.stopAnimation(TransitionButton.StopAnimationStyle.SHAKE, null)
                     }
                 }, 2000)
             }
@@ -139,6 +143,145 @@ class LoginActivity : AppCompatActivity() {
                 }, 1000)
             }
         })
+    }
+
+    private fun initFacebookLoginButton() {
+        binding.facebookLoginButton.setPermissions("email", "public_profile")
+        binding.facebookLoginButton.registerCallback(callbackManager, object :
+            FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult) {
+                // 로그인이 성공됐을때
+                Log.d(TAG,"페북 로그인 성공")
+                // token 넘겨주기
+                handleFacebookAccessToken(result.accessToken)
+                // setUidFireStore()
+                startMainActivity()
+            }
+
+            override fun onCancel() {}
+
+            override fun onError(error: FacebookException?) {
+                Toast.makeText(this@LoginActivity, "로그인이 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun initGoogleLoginButton() {
+        binding.googleLoginButton.setOnClickListener { googleLogin() }
+    }
+
+    private fun handleFacebookAccessToken(token: AccessToken) {
+        val credential = FacebookAuthProvider.getCredential(token.token)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this@LoginActivity) { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG,"userId: $userId")
+                } else {
+                    Log.d(TAG,"task: ${task.exception}")
+                    Toast.makeText(this@LoginActivity, "페이스북 로그인이 실패했습니다.", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+    }
+
+    private fun googleLogin() {
+        val signInIntent = googleSignInClient?.signInIntent
+        startActivityForResult(signInIntent, GOOGLE_LOGIN_CODE)
+        Log.d(TAG,"signInIntent :$signInIntent")
+    }
+
+    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account?.idToken, null)
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this@LoginActivity) { task ->
+                if (task.isSuccessful) {
+                    setUidFireStore()
+                    moveMainPage(auth.currentUser)
+                } else {
+                    // 틀렸을 때
+                        Log.d(TAG,"Firebase Auth 등록 실패")
+                }
+            }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        callbackManager.onActivityResult(requestCode, resultCode, data)
+
+        // 구글에서 승인된 정보를 가지고 오기
+        if (requestCode == GOOGLE_LOGIN_CODE) {
+
+            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
+
+            if (result.isSuccess) {
+                val account = result.signInAccount
+                firebaseAuthWithGoogle(account!!)
+            } else {
+                // 이곳이 반환됨
+                Repository.showSnackBar(binding.root,"구글 로그인 실패")
+            }
+        } else {
+            Log.d(TAG,"request failed")
+        }
+    }
+
+    private fun setUidFireStore() {
+        auth.currentUser?.let {
+            Toast.makeText(this, "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            Log.d(TAG,"facebook 로그인 실패")
+            return
+        }
+
+        val user = mutableMapOf<String, Any>()
+
+        user.put("userWeight","00.0")
+        user.put("userMuscle","00.0")
+        user.put("userFat","00.0")
+
+        db.collection(COLLECTION_NAME_USERS)
+            .document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                document["userId"]?.let {
+                    user["userId"] = userId
+                    db.collection(COLLECTION_NAME_USERS)
+                        .document(userId)
+                        .set(user)
+                        .addOnCompleteListener {
+                            Log.d(TAG, "유저가 등록되었습니다")
+                        }
+                        .addOnFailureListener { errorMessage ->
+                            Log.d(TAG, "Error: $errorMessage")
+                        }
+                }
+                finish()
+            }
+            .addOnFailureListener {
+                Log.d(TAG,"$it")
+            }
+    }
+
+
+    private fun startMainActivity() {
+        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+    }
+
+    private fun startLoginActivity() {
+        startActivity(Intent(this@LoginActivity, LoginActivity::class.java))
+    }
+
+    private fun startRegisterActivity() {
+        startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+    }
+
+    fun moveMainPage(user: FirebaseUser?) {
+
+        if (user != null) {
+            startMainActivity()
+        } else {
+            startLoginActivity()
+        }
     }
 
     /*private fun initNaverLoginButton() {
@@ -214,137 +357,5 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }*/
-
-    private fun initFacebookLoginButton() {
-        binding.facebookLoginButton.setPermissions("email", "public_profile")
-        binding.facebookLoginButton.registerCallback(callbackManager, object :
-            FacebookCallback<LoginResult> {
-            override fun onSuccess(result: LoginResult) {
-                // 로그인이 성공됐을때
-                // token 넘겨주기
-                handleFacebookAccessToken(result.accessToken)
-                setUidFireStore()
-                startMainActivity()
-            }
-
-            override fun onCancel() {}
-
-            override fun onError(error: FacebookException?) {
-                Toast.makeText(this@LoginActivity, "로그인이 실패했습니다.", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    private fun initGoogleLoginButton() {
-        binding.googleLoginButton.setOnClickListener { googleLogin() }
-    }
-
-    private fun handleFacebookAccessToken(token: AccessToken) {
-        val credential = FacebookAuthProvider.getCredential(token.token)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this@LoginActivity) { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG,"userId: $userId")
-
-                } else {
-                    Toast.makeText(this@LoginActivity, "페이스북 로그인이 실패했습니다.", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-    }
-
-    private fun googleLogin() {
-        val signInIntent = googleSignInClient?.signInIntent
-        startActivityForResult(signInIntent, GOOGLE_LOGIN_CODE)
-    }
-
-    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
-        val credential = GoogleAuthProvider.getCredential(account?.idToken, null)
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this@LoginActivity) { task ->
-                if (task.isSuccessful) {
-                    setUidFireStore()
-                    moveMainPage(auth.currentUser)
-                } else {
-                    // 틀렸을 때
-                    Toast.makeText(this@LoginActivity, "구글 로그인이 실패했습니다", Toast.LENGTH_SHORT).show()
-                }
-            }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        callbackManager.onActivityResult(requestCode, resultCode, data)
-
-        // 구글에서 승인된 정보를 가지고 오기
-        if (requestCode == GOOGLE_LOGIN_CODE && resultCode == Activity.RESULT_OK) {
-
-            val result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)
-            println(result.status.toString())
-            if (result.isSuccess) {
-                val account = result.signInAccount
-                firebaseAuthWithGoogle(account!!)
-            } else {
-                Toast.makeText(this, "로그인 실패", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-    }
-
-    private fun setUidFireStore() {
-        if (auth.currentUser == null) {
-            Toast.makeText(this, "로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val user = mutableMapOf<String, Any>()
-
-        user.put("userWeight","00.0")
-        user.put("userMuscle","00.0")
-        user.put("userFat","00.0")
-
-        db.collection(COLLECTION_NAME_USERS)
-            .document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document["userId"] == null) {
-                    Log.d(TAG,"document[userId]:${document["userId"]} ")
-                    user["userId"] = userId
-                    db.collection(COLLECTION_NAME_USERS)
-                        .document(userId)
-                        .set(user)
-                        .addOnCompleteListener {
-                            Log.d(TAG, "유저가 등록되었습니다")
-                        }
-                        .addOnFailureListener { errorMessage ->
-                            Log.d(TAG, "Error: $errorMessage")
-                        }
-                }
-                finish()
-            }
-    }
-
-
-    private fun startMainActivity() {
-        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-    }
-
-    private fun startLoginActivity() {
-        startActivity(Intent(this@LoginActivity, LoginActivity::class.java))
-    }
-
-    private fun startRegisterActivity() {
-        startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
-    }
-
-    fun moveMainPage(user: FirebaseUser?) {
-
-        if (user != null) {
-            startMainActivity()
-        } else {
-            startLoginActivity()
-        }
-    }
 
 }

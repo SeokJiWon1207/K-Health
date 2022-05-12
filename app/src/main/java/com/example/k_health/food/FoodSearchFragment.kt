@@ -49,8 +49,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentFoodSearchBinding.bind(view)
 
-        Log.d(TAG, "onViewCreated")
-
         roomDB = getAppDatabase(requireContext())
 
         recordFoods()
@@ -70,8 +68,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         val todayNow = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"))
         val selectedDate = arguments?.getString("selectedDate") ?: todayNow
         foodDateTextView.text = arguments?.getString("todayDate") ?: today
-
-        Log.d(TAG, "selectedDate: $selectedDate")
 
         enrollButton.setOnClickListener {
             val mealtime = spinner.selectedItem.toString()
@@ -192,7 +188,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
             Repository.getFoodItems()?.let {
                 (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
                     Log.d(TAG, "items : ${it.body!!.items}")
-                    submitList(it.body.items!!)
+                    submitList(it.body.items!!.filterNot { it.gram == "0" || it.foodName == null })
                     hideRetryButton()
                 }
                 hideProgress()
@@ -200,7 +196,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         } catch (exception: Exception) {
             hideProgress()
             showRetryButton()
-            Log.d(TAG, "exception : $exception")
         }
     }
 
@@ -256,20 +251,19 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         searchEditTextClear()
     }
 
-    private fun search(keyword: String) {
+    private fun search(keyword: String) = scope.launch {
         try {
-            CoroutineScope(Dispatchers.IO).launch {
-                Repository.getFoodByName(keyword)?.let {
-                    if (it.body!!.totalCount == 0) {
-                        showAlertTextView(keyword)
-                    } else {
-                        (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
-                            hideHistoryView()
-                            hideAlertTextView()
-                            showFoodListView()
-                            saveSearchKeyword(keyword)
-                            submitList(it.body.items)
-                        }
+            Repository.getFoodByName(keyword)?.let {
+                if (it.body!!.totalCount == 0) {
+                    hideFoodListView()
+                    showAlertTextView(keyword)
+                } else {
+                    (binding.foodRecyclerView.adapter as? FoodListAdapter)?.apply {
+                        hideHistoryView()
+                        hideAlertTextView()
+                        showFoodListView()
+                        saveSearchKeyword(keyword)
+                        submitList(it.body.items?.filterNot { it.gram == "0" })
                     }
                 }
             }
@@ -313,6 +307,7 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         // Room과 관련된 액션은 Thread, Coroutine 등을 이용해 백그라운드에서 작업해야 한다.
         CoroutineScope(Dispatchers.IO).launch {
             scope.launch {
+                // 중복 검색어 제거
                 roomDB.historyDao().getAll().distinctBy { it.keyword }.reversed().run {
                     foodHistoryAdapter.submitList(this)
                     binding.historyRecyclerView.isVisible = true
@@ -375,36 +370,6 @@ class FoodSearchFragment : Fragment(R.layout.fragment_food_search), TimeInterfac
         val todayNow = now.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"))
 
         return todayNow
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "onStop")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d(TAG, "onDestroyView")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy")
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Log.d(TAG, "onDetach")
     }
 
 }

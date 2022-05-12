@@ -69,29 +69,18 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
 
     }
 
-    private fun setDefaultFoodValues() {
+    private fun setDefaultValues() {
+        Log.d(TAG,"실행")
         val defaultValuesData = mutableMapOf<String, Any>()
+        defaultValuesData.set("userWeight", "00.0")
+        defaultValuesData.set("userheight", "00.0")
+        defaultValuesData.set("userMuscle", "00.0")
+        defaultValuesData.set("userFat", "00.0")
         defaultValuesData.set("userActivityLevel", "0")
         defaultValuesData.set("userRecommendedKcal", "0")
         db.collection(DBKey.COLLECTION_NAME_USERS)
             .document(userId)
-            .update(defaultValuesData)
-            .addOnSuccessListener {
-            }
-            .addOnFailureListener {
-
-            }
-    }
-
-
-    private fun setDefaultValues() {
-        val defaultValuesData = mutableMapOf<String, Any>()
-        defaultValuesData.set("userWeight", "00.0")
-        defaultValuesData.set("userheight", "00.0")
-        defaultValuesData.set("userFat", "00.0")
-        db.collection(DBKey.COLLECTION_NAME_USERS)
-            .document(userId)
-            .update(defaultValuesData)
+            .set(defaultValuesData)
             .addOnSuccessListener {
             }
             .addOnFailureListener {
@@ -110,7 +99,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                     setProgressView()
                 } else {
                     // 초기단계
-                    setDefaultFoodValues()
                     setDefaultValues()
                     setUserProfile()
                     showNicknameInputPopup()
@@ -126,7 +114,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
             .document(userId)
             .get()
             .addOnSuccessListener { document ->
-                userNameTextView.text = (document["userNickname"].toString()).plus("님")
+                userNameTextView.text = if(document["userNickname"]==null) "K-Health" else (document["userNickname"].toString()).plus("님")
                 userWeightTextView.text = document["userWeight"].toString()
                 userMuscleTextView.text = document["userMuscle"].toString()
                 userFatTextView.text = document["userFat"].toString()
@@ -451,6 +439,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
             .addOnFailureListener {
 
             }
+        setUserProfile()
     }
 
 
@@ -539,7 +528,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
                 foodSearchFragment.arguments = bundle
 
                 data.todoName.apply {
-                    if (this.equals("아침식사") || this.equals("점심식사") || this.equals("점심식사")) {
+                    if (this.equals("아침식사") || this.equals("점심식사") || this.equals("저녁식사")) {
                             (activity as MainActivity).replaceFragment(foodSearchFragment)
                     } else {
                         (activity as MainActivity).replaceFragment(healthFragment)
@@ -569,9 +558,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), TimeInterface {
     }
 
     private fun hideCongratulationView() = with(binding) {
-        congratulationView.apply {
-            visibility = View.GONE
-        }
+        congratulationView.visibility = View.GONE
     }
 
     private fun showAlertText() = with(binding) {

@@ -16,7 +16,7 @@ class SnsArticleListAdapter() : ListAdapter<SNS, SnsArticleListAdapter.ViewHolde
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(sns: SNS) = with(binding) {
-            boardNumberTextView.text = sns.boardNumber.plus("번째 게시물")
+            boardNumberTextView.text = "오늘의 " + sns.boardNumber.plus("번째 게시물")
             userNicknameTextView.text = sns.userNickname
             userSnsContentTextView.text = sns.userSnsContent
 

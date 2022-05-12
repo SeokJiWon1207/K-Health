@@ -208,10 +208,10 @@
             android:id="@+id/non_activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="100dp"
+            android:layout_marginLeft="10dp"
             android:text="비활동적 - "
             android:textStyle="bold"
-            app:layout_constraintRight_toLeftOf="@id/description2"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@id/description2" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -226,9 +226,10 @@
             android:id="@+id/low_activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="낮은활동적 - "
             android:textStyle="bold"
-            app:layout_constraintRight_toLeftOf="@id/description3"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@id/description3" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -243,9 +244,10 @@
             android:id="@+id/normal_activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="보통활동적 - "
             android:textStyle="bold"
-            app:layout_constraintRight_toLeftOf="@id/description4"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@id/description4" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -260,9 +262,10 @@
             android:id="@+id/high_activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
             android:text="높은활동적 - "
             android:textStyle="bold"
-            app:layout_constraintRight_toLeftOf="@id/description5"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@id/description5" />
 
         <androidx.appcompat.widget.AppCompatTextView

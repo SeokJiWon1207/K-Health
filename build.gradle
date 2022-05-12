@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
         jcenter()
         // 카카오 SDK Repository 설정
-        maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
+        // maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:7.0.1"

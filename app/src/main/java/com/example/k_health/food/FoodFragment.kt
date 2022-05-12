@@ -296,12 +296,12 @@ class FoodFragment : Fragment(R.layout.fragment_food), TimeInterface {
             }
         }
 
-        submitButton.setOnClickListener { _ ->
+        submitButton.setOnClickListener { view ->
             if (userheightEditText.text.isEmpty() || userAgeEditText.text.isEmpty() || userWeightEditText.text.isEmpty()
                 || userActivityLevel.equals(0) || userSex.equals(null)
             ) {
                 Repository.showSnackBar(
-                    requireView(),
+                    view,
                     "항목을 다 채워주세요"
                 )
                 return@setOnClickListener

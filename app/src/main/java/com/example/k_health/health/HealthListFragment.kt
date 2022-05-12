@@ -20,11 +20,11 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
     private var healthList: ArrayList<HealthList> = arrayListOf()
     private var healthListAdapter = HealthListAdapter(healthData = healthList)
 
-    val tabMainList = listOf("가슴", "등", "어깨", "하체", "복근", "삼두", "이두", "전신", "코어")
-    val tabSubList = listOf("바벨", "덤벨", "머신", "케틀벨", "케이블", "스미스머신")
+    private val tabMainList = listOf("가슴", "등", "어깨", "하체", "복근", "삼두", "이두", "전신")
+    private val tabSubList = listOf("바벨", "덤벨", "머신", "케틀벨", "케이블", "스미스머신")
 
-    var mainPosition: Int = 0 // 메인탭의 포지션
-    var subPosition: Int = 0 // 서브탭의 포지션
+    private var mainPosition: Int = 0 // 메인탭의 포지션
+    private var subPosition: Int = 0 // 서브탭의 포지션
 
 
     init {
@@ -32,7 +32,7 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 healthList.clear()
                 for (snapshot in querySnapshot!!.documents) {
-                    var healthItem = snapshot.toObject(HealthList::class.java)
+                    val healthItem = snapshot.toObject(HealthList::class.java)
 
                     healthList.add(healthItem!!)
                 }
@@ -56,19 +56,19 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
     }
 
-    private fun initTab() {
+    private fun initTab() = with(binding) {
 
         for (i in tabMainList.indices) {
-            binding.mainTabLayout.addTab(
-                binding.mainTabLayout.newTab().setText(
+            mainTabLayout.addTab(
+                mainTabLayout.newTab().setText(
                     tabMainList[i]
                 )
             )
         }
 
         for (i in tabSubList.indices) {
-            binding.subTabLayout.addTab(
-                binding.subTabLayout.newTab().setText(
+            subTabLayout.addTab(
+                subTabLayout.newTab().setText(
                     tabSubList[i]
                 )
             )
@@ -78,8 +78,8 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
 
     }
 
-    private fun initRecyclerView() = with(binding){
-        recyclerView.apply {
+    private fun initRecyclerView() = with(binding) {
+        healthlistRecyclerView.apply {
             adapter = healthListAdapter
             layoutManager = LinearLayoutManager(context)
         }
@@ -115,28 +115,22 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
                     maintab?.position -> db.collection("Health/${mainText[maintab?.position!!]}/${subText[subPosition]}")
                         .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                             healthList.clear()
-                            Log.d("TAG", "mainText: ${mainText[maintab.position]}")
                             for (snapshot in querySnapshot!!.documents) {
-                                var healthitem = snapshot.toObject(HealthList::class.java)
+                                val healthitem = snapshot.toObject(HealthList::class.java)
 
                                 healthList.add(healthitem!!)
                             }
 
-                            mainPosition = maintab.position
                             healthListAdapter.notifyDataSetChanged()
-                            Log.d("TAG", "${firebaseFirestoreException}")
 
+                            mainPosition = maintab.position
                         }
                 }
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                Log.d("TAG", "unselect")
-            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                Log.d("TAG", "Reselect")
-            }
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
 
         })
 
@@ -148,33 +142,46 @@ class HealthListFragment : Fragment(R.layout.fragment_healthlist) {
                         .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                             healthList.clear()
                             for (snapshot in querySnapshot!!.documents) {
-                                var healthitem = snapshot.toObject(HealthList::class.java)
+                                val healthitem = snapshot.toObject(HealthList::class.java)
 
                                 healthList.add(healthitem!!)
                             }
-                            subPosition = subtab.position
-                            healthListAdapter.notifyDataSetChanged()
-                            Log.d("TAG", "${firebaseFirestoreException}")
 
+                            if (healthList.isEmpty()) {
+                                hideRecyclerView()
+                                showUpdateView()
+                            } else {
+                                showRecyclerView()
+                                hideUpdateView()
+                                healthListAdapter.notifyDataSetChanged()
+                            }
+                            subPosition = subtab.position
                         }
                 }
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                Log.d("TAG", "unselect")
-            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                Log.d("TAG", "Reselect")
-            }
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
 
         })
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // _binding = null
+    private fun showUpdateView() = with(binding) {
+        updateView.visibility = View.VISIBLE
+    }
+
+    private fun hideUpdateView() = with(binding) {
+        updateView.visibility = View.GONE
+    }
+
+    private fun showRecyclerView() = with(binding) {
+        healthlistRecyclerView.visibility = View.VISIBLE
+    }
+
+    private fun hideRecyclerView() = with(binding) {
+        healthlistRecyclerView.visibility = View.GONE
     }
 
 }
