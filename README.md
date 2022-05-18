@@ -2,7 +2,9 @@
 
 ### 다이어트, 운동 기록하면서 하자! 운동&식단 관리 안드로이드 애플리케이션
 
-● 구글 플레이 링크
+● #### ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 구글 플레이 다운로드 링크 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+
+https://play.google.com/store/apps/details?id=com.Jiwon.K_Health
 
 -------------------------------------------------------------------------------------------------------------
 
@@ -18,8 +20,8 @@
 <img src="https://img.shields.io/badge/Google-596164?style=flat-square&logo=Google&logoColor=red"/>
 </p>
 
-#### 기록하고 관리하면 다이어트&운동효과 ↑↑↑
-오늘 먹고 운동한 것을 기록해보세요
+#### 기록하고 관리하면 다이어트&운동효과 상승!
+#### 먹고, 운동한 것을 캘린더 형식으로 기록하고 다른 사람들과 운동루틴 또는 식단을 공유해보세요
 
 
 ## 🚀 Demo
@@ -96,8 +98,86 @@
   * 이미지, 오디오, 동영상 등의 저장소로 활용할 수 있는 Firebase Storage를 이용해 사용자 설정 프로필 이미지를 데이터베이스에 넣어 관리합니다.  
 
 ### SharedPreferences
+* #### 간단한 flag값이나 문자열, 정수들을 관리하기 위해 SharedPreferences를 사용했습니다.
+
+### Room  
+* #### 위에서 설명했듯이, 검색한 음식 리스트들을 저장하기 위해 사용했습니다.
   
-  * #### 간단한 flag값이나 문자열, 정수들을 관리하기 위해 SharedPreferences를 사용했습니다.
+## 🐞 버그
 
-## 💾 License
+ ### 현재 확인된 문제점(22.05.18)
+   * #### 구글 로그인 이슈가 있습니다.
+   * #### 식단 삭제시 '오늘의 섭취량'이 늘어나는 문제가 있습니다. / 다른 화면으로 갔다올 시에는 정상 표기됩니다.  
+   
+## 📶 버전 및 업데이트 예정사항
 
+ ### version 1.0 (현재)
+   * #### 첫 런칭 버전
+ ### version 1.1 (다음 업데이트 예정사항)
+   * 소셜 로그인(카카오, 네이버)구현 -> 이미 구현은 해놨지만 Firebase Authencation에 연동하는 것이 문제
+   * 자동로그인 기능 -> 기존에 있던 SharedPreferences를 사용하면 될 것 
+
+## 🙋 프로젝트 참여자
+|개발자|디자인|기획자|
+|------|------|------|
+|석지원|석지원|석지원|
+
+## 💣 트러블 슈팅
+ ##### #1 Retrofit TimeoutException -> 기본 Timeout 시간을 초과하면 연결이 안된다는것을 인지 -> OkHttpClient를 이용해 Timeout 시간 재설정
+ ##### #2 홈 화면의 오늘 할 일 데이터 불일치 -> firebase는 데이터를 비동기식으로 가져온다는 사실을 인지 -> Coroutine을 사용해서 IO 쓰레드에서 데이터를 받아 온 뒤 Main 쓰레드에서 UI 업데이트 
+ ##### #3 RecyclerView Adapter Edittext값들 가져오지 못함 -> TextView와는 달리 EditText는 좀 방식이 달라서 TextWatcher를 이용해 data class로 담아서 fragment에서 사용
+ ##### 그 외의 문제 해결 기록 https://syt1114.tistory.com/category/Android/Error
+ 
+ ## 🤔 후기
+  ##### #1 혼자진행한점 -> 디자인, 기획, 개발을 혼자하기가 힘듦 온라인 스터디를 통해 개발 인원이라도 1명 늘렸었다면 제작 기간이 짧아지고 나와는 다른 견해를 구할 수 있지 않았을까라는 생각이 듦. 또한, 둘 이상에서 진행했다면 git의 다양한 기능을 사용해봤을텐데 하는 아쉬움.
+  ##### #2 코드의 아쉬움 -> 쓰는 문법만 쓰다보니까 남의 잘 짜여진 코드들을 보니 아쉬움. 
+  ##### #3 MVVM 패턴으로 개발하지 않은 것 -> Model View ViewModel의 아키텍쳐 패턴으로 MVC처럼 양방향이 아닌 단방향 패턴으로 유지보수가 능이함. 간단한 프로젝트라 사         용하진 않았지만 요즘 많이 MVVM 패턴으로 개발을 하는걸 보고 후회중 이 부분은 따로 프로젝트를 만들어서 하거나 리팩토링으로 해결하도록...
+  ##### #4 앱을 출시했을때의 보람 -> 혼자 진행한만큼 기쁨이 배가 되는듯함. 다른 패턴, 기술들을 이용해 다른 앱을 만들어내고 싶다는 생각이 들음. 뭔가 안드로이드 개발         자로써 첫걸음을 내딘듯함.
+  
+  
+## ⚠ 저작권 및 사용권 정보
+
+### 아이콘 저작권 표시
+<a href="https://www.flaticon.com/kr/free-icons/" title="아침 아이콘">아침 아이콘  제작자: Icon Place - Flaticon</a>
+
+<a href="https://www.flaticon.com/kr/free-icons/" title="태양 아이콘">태양 아이콘  제작자: Freepik - Flaticon</a>
+
+<a href="https://www.flaticon.com/kr/free-icons/" title="달 아이콘">달 아이콘  제작자: Freepik - Flaticon</a>
+
+<a href="https://www.flaticon.com/kr/free-icons/" title="간식 아이콘">간식 아이콘  제작자: Freepik - Flaticon</a>
+
+### skydove's Custom ProgressBar 
+```javascript
+Copyright 2019 skydoves (Jaewoong Eum)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+
+### Konfetti's Party Effect
+```javascript
+ISC License
+
+Copyright (c) 2017 Dion Segijn
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+```       
